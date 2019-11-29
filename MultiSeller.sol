@@ -1,13 +1,20 @@
 pragma solidity ^0.4.24;
 
+// File: openzeppelin-solidity/contracts/math/SafeMath.sol
 
-
+/**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
 library SafeMath {
 
+  /**
+  * @dev Multiplies two numbers, throws on overflow.
+  */
   function mul(uint256 a, uint256 b) internal pure returns (uint256 c) {
-    
-    
-    
+    // Gas optimization: this is cheaper than asserting 'a' not being zero, but the
+    // benefit is lost if 'b' is also tested.
+    // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
     if (a == 0) {
       return 0;
     }
@@ -17,18 +24,27 @@ library SafeMath {
     return c;
   }
 
+  /**
+  * @dev Integer division of two numbers, truncating the quotient.
+  */
   function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    
-    
-    
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    // uint256 c = a / b;
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return a / b;
   }
 
+  /**
+  * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+  */
   function sub(uint256 a, uint256 b) internal pure returns (uint256) {
     assert(b <= a);
     return a - b;
   }
 
+  /**
+  * @dev Adds two numbers, throws on overflow.
+  */
   function add(uint256 a, uint256 b) internal pure returns (uint256 c) {
     c = a + b;
     assert(c >= a);
@@ -36,8 +52,13 @@ library SafeMath {
   }
 }
 
+// File: openzeppelin-solidity/contracts/token/ERC20/ERC20Basic.sol
 
-
+/**
+ * @title ERC20Basic
+ * @dev Simpler version of ERC20 interface
+ * @dev see https://github.com/ethereum/EIPs/issues/179
+ */
 contract ERC20Basic {
   function totalSupply() public view returns (uint256);
   function balanceOf(address who) public view returns (uint256);
@@ -45,8 +66,12 @@ contract ERC20Basic {
   event Transfer(address indexed from, address indexed to, uint256 value);
 }
 
+// File: openzeppelin-solidity/contracts/token/ERC20/ERC20.sol
 
-
+/**
+ * @title ERC20 interface
+ * @dev see https://github.com/ethereum/EIPs/issues/20
+ */
 contract ERC20 is ERC20Basic {
   function allowance(address owner, address spender)
     public view returns (uint256);
@@ -62,7 +87,7 @@ contract ERC20 is ERC20Basic {
   );
 }
 
-
+// File: contracts/ext/CheckedERC20.sol
 
 library CheckedERC20 {
     using SafeMath for uint;
@@ -86,7 +111,7 @@ library CheckedERC20 {
     }
 }
 
-
+// File: contracts/interface/IBasicMultiToken.sol
 
 contract IBasicMultiToken is ERC20 {
     event Bundle(address indexed who, address indexed beneficiary, uint256 value);
@@ -106,7 +131,7 @@ contract IBasicMultiToken is ERC20 {
     function unbundleSome(address _beneficiary, uint256 _value, ERC20[] _tokens) public;
 }
 
-
+// File: contracts/interface/IMultiToken.sol
 
 contract IMultiToken is IBasicMultiToken {
     event Update();
@@ -119,8 +144,14 @@ contract IMultiToken is IBasicMultiToken {
     function allTokensDecimalsBalancesWeights() public view returns(ERC20[] _tokens, uint8[] _decimals, uint256[] _balances, uint256[] _weights);
 }
 
+// File: openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol
 
-
+/**
+ * @title SafeERC20
+ * @dev Wrappers around ERC20 operations that throw on failure.
+ * To use this library you can add a `using SafeERC20 for ERC20;` statement to your contract,
+ * which allows you to call the safe operations as `token.safeTransfer(...)`, etc.
+ */
 library SafeERC20 {
   function safeTransfer(ERC20Basic token, address to, uint256 value) internal {
     require(token.transfer(to, value));
@@ -142,8 +173,13 @@ library SafeERC20 {
   }
 }
 
+// File: openzeppelin-solidity/contracts/ownership/Ownable.sol
 
-
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
 contract Ownable {
   address public owner;
 
@@ -155,24 +191,42 @@ contract Ownable {
   );
 
 
+  /**
+   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+   * account.
+   */
   constructor() public {
     owner = msg.sender;
   }
 
+  /**
+   * @dev Throws if called by any account other than the owner.
+   */
   modifier onlyOwner() {
     require(msg.sender == owner);
     _;
   }
 
+  /**
+   * @dev Allows the current owner to relinquish control of the contract.
+   */
   function renounceOwnership() public onlyOwner {
     emit OwnershipRenounced(owner);
     owner = address(0);
   }
 
+  /**
+   * @dev Allows the current owner to transfer control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
   function transferOwnership(address _newOwner) public onlyOwner {
     _transferOwnership(_newOwner);
   }
 
+  /**
+   * @dev Transfers control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
   function _transferOwnership(address _newOwner) internal {
     require(_newOwner != address(0));
     emit OwnershipTransferred(owner, _newOwner);
@@ -180,11 +234,21 @@ contract Ownable {
   }
 }
 
+// File: openzeppelin-solidity/contracts/ownership/CanReclaimToken.sol
 
-
+/**
+ * @title Contracts that should be able to recover tokens
+ * @author SylTi
+ * @dev This allow a contract to recover any ERC20 token received in a contract by transferring the balance to the contract owner.
+ * This will prevent any accidental loss of tokens.
+ */
 contract CanReclaimToken is Ownable {
   using SafeERC20 for ERC20Basic;
 
+  /**
+   * @dev Reclaim all ERC20Basic compatible tokens
+   * @param token ERC20Basic The address of the token contract
+   */
   function reclaimToken(ERC20Basic token) external onlyOwner {
     uint256 balance = token.balanceOf(this);
     token.safeTransfer(owner, balance);
@@ -192,7 +256,7 @@ contract CanReclaimToken is Ownable {
 
 }
 
-
+// File: contracts/registry/MultiSeller.sol
 
 contract MultiSeller is CanReclaimToken {
     using SafeMath for uint256;
@@ -208,7 +272,7 @@ contract MultiSeller is CanReclaimToken {
         uint256 _amount,
         address[] _exchanges,
         bytes _datas,
-        uint[] _datasIndexes 
+        uint[] _datasIndexes // including 0 and LENGTH values
     )
         public
         payable

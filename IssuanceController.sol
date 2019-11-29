@@ -1,10 +1,45 @@
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       Owned.sol
+version:    1.1
+author:     Anton Jurisevic
+            Dominic Romanowski
+
+date:       2018-2-26
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+An Owned contract, to be inherited by other contracts.
+Requires its owner to be explicitly set in the constructor.
+Provides an onlyOwner access modifier.
+
+To change owner, the current owner must nominate the next owner,
+who then has to accept the nomination. The nomination can be
+cancelled before it is accepted by the new owner by having the
+previous owner change the nomination (setting it to 0).
+
+-----------------------------------------------------------------
+*/
 
 pragma solidity 0.4.24;
 
+/**
+ * @title A contract with an owner.
+ * @notice Contract ownership can be transferred by first nominating the new owner,
+ * who must then accept the ownership, which prevents accidental incorrect ownership transfers.
+ */
 contract Owned {
     address public owner;
     address public nominatedOwner;
 
+    /**
+     * @dev Owned Constructor
+     */
     constructor(address _owner)
         public
     {
@@ -13,6 +48,10 @@ contract Owned {
         emit OwnerChanged(address(0), _owner);
     }
 
+    /**
+     * @notice Nominate a new owner of this contract.
+     * @dev Only the current owner may nominate a new owner.
+     */
     function nominateNewOwner(address _owner)
         external
         onlyOwner
@@ -21,6 +60,9 @@ contract Owned {
         emit OwnerNominated(_owner);
     }
 
+    /**
+     * @notice Accept the nomination to be owner.
+     */
     function acceptOwnership()
         external
     {
@@ -40,8 +82,33 @@ contract Owned {
     event OwnerChanged(address oldOwner, address newOwner);
 }
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       SelfDestructible.sol
+version:    1.2
+author:     Anton Jurisevic
+
+date:       2018-05-29
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+This contract allows an inheriting contract to be destroyed after
+its owner indicates an intention and then waits for a period
+without changing their mind. All ether contained in the contract
+is forwarded to a nominated beneficiary upon destruction.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title A contract that can be destroyed by its owner after a delay elapses.
+ */
 contract SelfDestructible is Owned {
 	
 	uint public initiationTime;
@@ -49,6 +116,10 @@ contract SelfDestructible is Owned {
 	address public selfDestructBeneficiary;
 	uint public constant SELFDESTRUCT_DELAY = 4 weeks;
 
+	/**
+	 * @dev Constructor
+	 * @param _owner The account which controls this contract.
+	 */
 	constructor(address _owner)
 	    Owned(_owner)
 	    public
@@ -58,6 +129,11 @@ contract SelfDestructible is Owned {
 		emit SelfDestructBeneficiaryUpdated(_owner);
 	}
 
+	/**
+	 * @notice Set the beneficiary address of this contract.
+	 * @dev Only the contract owner may call this. The provided beneficiary must be non-null.
+	 * @param _beneficiary The address to pay any eth contained in this contract to upon self-destruction.
+	 */
 	function setSelfDestructBeneficiary(address _beneficiary)
 		external
 		onlyOwner
@@ -67,6 +143,11 @@ contract SelfDestructible is Owned {
 		emit SelfDestructBeneficiaryUpdated(_beneficiary);
 	}
 
+	/**
+	 * @notice Begin the self-destruction counter of this contract.
+	 * Once the delay has elapsed, the contract may be self-destructed.
+	 * @dev Only the contract owner may call this.
+	 */
 	function initiateSelfDestruct()
 		external
 		onlyOwner
@@ -76,6 +157,10 @@ contract SelfDestructible is Owned {
 		emit SelfDestructInitiated(SELFDESTRUCT_DELAY);
 	}
 
+	/**
+	 * @notice Terminate and reset the self-destruction timer.
+	 * @dev Only the contract owner may call this.
+	 */
 	function terminateSelfDestruct()
 		external
 		onlyOwner
@@ -85,6 +170,11 @@ contract SelfDestructible is Owned {
 		emit SelfDestructTerminated();
 	}
 
+	/**
+	 * @notice If the self-destruction delay has elapsed, destroy this contract and
+	 * remit any ether it owns to the beneficiary address.
+	 * @dev Only the contract owner may call this.
+	 */
 	function selfDestruct()
 		external
 		onlyOwner
@@ -103,38 +193,70 @@ contract SelfDestructible is Owned {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       Pausable.sol
+version:    1.0
+author:     Kevin Brown
+
+date:       2018-05-22
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+This contract allows an inheriting contract to be marked as
+paused. It also defines a modifier which can be used by the
+inheriting contract to prevent actions while paused.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title A contract that can be paused by its owner
+ */
 contract Pausable is Owned {
     
     uint public lastPauseTime;
     bool public paused;
 
+    /**
+     * @dev Constructor
+     * @param _owner The account which controls this contract.
+     */
     constructor(address _owner)
         Owned(_owner)
         public
     {
-        
+        // Paused will be false, and lastPauseTime will be 0 upon initialisation
     }
 
+    /**
+     * @notice Change the paused state of the contract
+     * @dev Only the contract owner may call this.
+     */
     function setPaused(bool _paused)
         external
         onlyOwner
     {
-        
+        // Ensure we're actually changing the state before we do anything
         if (_paused == paused) {
             return;
         }
 
-        
+        // Set our paused state.
         paused = _paused;
         
-        
+        // If applicable, set the last pause time.
         if (paused) {
             lastPauseTime = now;
         }
 
-        
+        // Let everyone know that our pause state has changed.
         emit PauseChanged(paused);
     }
 
@@ -147,14 +269,51 @@ contract Pausable is Owned {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       SafeDecimalMath.sol
+version:    1.0
+author:     Anton Jurisevic
+
+date:       2018-2-5
+
+checked:    Mike Spain
+approved:   Samuel Brooks
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A fixed point decimal library that provides basic mathematical
+operations, and checks for unsafe arguments, for example that
+would lead to overflows.
+
+Exceptions are thrown whenever those unsafe operations
+occur.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title Safely manipulate unsigned fixed-point decimals at a given precision level.
+ * @dev Functions accepting uints in this contract and derived contracts
+ * are taken to be such fixed point decimals (including fiat, ether, and nomin quantities).
+ */
 contract SafeDecimalMath {
 
+    /* Number of decimal places in the representation. */
     uint8 public constant decimals = 18;
 
+    /* The number representing 1.0. */
     uint public constant UNIT = 10 ** uint(decimals);
 
+    /**
+     * @return True iff adding x and y will not overflow.
+     */
     function addIsSafe(uint x, uint y)
         pure
         internal
@@ -163,6 +322,9 @@ contract SafeDecimalMath {
         return x + y >= y;
     }
 
+    /**
+     * @return The result of adding x and y, throwing an exception in case of overflow.
+     */
     function safeAdd(uint x, uint y)
         pure
         internal
@@ -172,6 +334,9 @@ contract SafeDecimalMath {
         return x + y;
     }
 
+    /**
+     * @return True iff subtracting y from x will not overflow in the negative direction.
+     */
     function subIsSafe(uint x, uint y)
         pure
         internal
@@ -180,6 +345,9 @@ contract SafeDecimalMath {
         return y <= x;
     }
 
+    /**
+     * @return The result of subtracting y from x, throwing an exception in case of overflow.
+     */
     function safeSub(uint x, uint y)
         pure
         internal
@@ -189,6 +357,9 @@ contract SafeDecimalMath {
         return x - y;
     }
 
+    /**
+     * @return True iff multiplying x and y would not overflow.
+     */
     function mulIsSafe(uint x, uint y)
         pure
         internal
@@ -200,6 +371,9 @@ contract SafeDecimalMath {
         return (x * y) / x == y;
     }
 
+    /**
+     * @return The result of multiplying x and y, throwing an exception in case of overflow.
+     */
     function safeMul(uint x, uint y)
         pure
         internal
@@ -213,15 +387,31 @@ contract SafeDecimalMath {
         return p;
     }
 
+    /**
+     * @return The result of multiplying x and y, interpreting the operands as fixed-point
+     * decimals. Throws an exception in case of overflow.
+     * 
+     * @dev A unit factor is divided out after the product of x and y is evaluated,
+     * so that product must be less than 2**256.
+     * Incidentally, the internal division always rounds down: one could have rounded to the nearest integer,
+     * but then one would be spending a significant fraction of a cent (of order a microether
+     * at present gas prices) in order to save less than one part in 0.5 * 10^18 per operation, if the operands
+     * contain small enough fractional components. It would also marginally diminish the 
+     * domain this function is defined upon. 
+     */
     function safeMul_dec(uint x, uint y)
         pure
         internal
         returns (uint)
     {
+        /* Divide by UNIT to remove the extra factor introduced by the product. */
         return safeMul(x, y) / UNIT;
 
     }
 
+    /**
+     * @return True iff the denominator of x/y is nonzero.
+     */
     function divIsSafe(uint x, uint y)
         pure
         internal
@@ -230,23 +420,39 @@ contract SafeDecimalMath {
         return y != 0;
     }
 
+    /**
+     * @return The result of dividing x by y, throwing an exception if the divisor is zero.
+     */
     function safeDiv(uint x, uint y)
         pure
         internal
         returns (uint)
     {
+        /* Although a 0 denominator already throws an exception,
+         * it is equivalent to a THROW operation, which consumes all gas.
+         * A require statement emits REVERT instead, which remits remaining gas. */
         require(y != 0, "Denominator cannot be zero");
         return x / y;
     }
 
+    /**
+     * @return The result of dividing x by y, interpreting the operands as fixed point decimal numbers.
+     * @dev Throws an exception in case of overflow or zero divisor; x must be less than 2^256 / UNIT.
+     * Internal rounding is downward: a similar caveat holds as with safeDecMul().
+     */
     function safeDiv_dec(uint x, uint y)
         pure
         internal
         returns (uint)
     {
+        /* Reintroduce the UNIT factor that will be divided out by y. */
         return safeDiv(safeMul(x, UNIT), y);
     }
 
+    /**
+     * @dev Convert an unsigned integer to a unsigned fixed-point decimal.
+     * Throw an exception if the result would be out of range.
+     */
     function intToDec(uint i)
         pure
         internal
@@ -257,11 +463,42 @@ contract SafeDecimalMath {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       State.sol
+version:    1.1
+author:     Dominic Romanowski
+            Anton Jurisevic
+
+date:       2018-05-15
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+This contract is used side by side with external state token
+contracts, such as Havven and Nomin.
+It provides an easy way to upgrade contract logic while
+maintaining all user balances and allowances. This is designed
+to make the changeover as easy as possible, since mappings
+are not so cheap or straightforward to migrate.
+
+The first deployed contract would create this state contract,
+using it as its store of balances.
+When a new contract is deployed, it links to the existing
+state contract, whose owner would then change its associated
+contract to the new one.
+
+-----------------------------------------------------------------
+*/
 
 
 contract State is Owned {
-    
-    
+    // the address of the contract that can modify variables
+    // this can only be changed by the owner of this contract
     address public associatedContract;
 
 
@@ -273,8 +510,9 @@ contract State is Owned {
         emit AssociatedContractUpdated(_associatedContract);
     }
 
+    /* ========== SETTERS ========== */
 
-    
+    // Change the associated contract to a new address
     function setAssociatedContract(address _associatedContract)
         external
         onlyOwner
@@ -283,6 +521,7 @@ contract State is Owned {
         emit AssociatedContractUpdated(_associatedContract);
     }
 
+    /* ========== MODIFIERS ========== */
 
     modifier onlyAssociatedContract
     {
@@ -290,24 +529,77 @@ contract State is Owned {
         _;
     }
 
+    /* ========== EVENTS ========== */
 
     event AssociatedContractUpdated(address associatedContract);
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       TokenState.sol
+version:    1.1
+author:     Dominic Romanowski
+            Anton Jurisevic
+
+date:       2018-05-15
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A contract that holds the state of an ERC20 compliant token.
+
+This contract is used side by side with external state token
+contracts, such as Havven and Nomin.
+It provides an easy way to upgrade contract logic while
+maintaining all user balances and allowances. This is designed
+to make the changeover as easy as possible, since mappings
+are not so cheap or straightforward to migrate.
+
+The first deployed contract would create this state contract,
+using it as its store of balances.
+When a new contract is deployed, it links to the existing
+state contract, whose owner would then change its associated
+contract to the new one.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title ERC20 Token State
+ * @notice Stores balance information of an ERC20 token contract.
+ */
 contract TokenState is State {
 
+    /* ERC20 fields. */
     mapping(address => uint) public balanceOf;
     mapping(address => mapping(address => uint)) public allowance;
 
+    /**
+     * @dev Constructor
+     * @param _owner The address which controls this contract.
+     * @param _associatedContract The ERC20 contract whose state this composes.
+     */
     constructor(address _owner, address _associatedContract)
         State(_owner, _associatedContract)
         public
     {}
 
+    /* ========== SETTERS ========== */
 
+    /**
+     * @notice Set ERC20 allowance.
+     * @dev Only the associated contract may call this.
+     * @param tokenOwner The authorising party.
+     * @param spender The authorised party.
+     * @param value The total value the authorised party may spend on the
+     * authorising party's behalf.
+     */
     function setAllowance(address tokenOwner, address spender, uint value)
         external
         onlyAssociatedContract
@@ -315,6 +607,12 @@ contract TokenState is State {
         allowance[tokenOwner][spender] = value;
     }
 
+    /**
+     * @notice Set the balance in a given account
+     * @dev Only the associated contract may call this.
+     * @param account The account whose value to set.
+     * @param value The new balance of the given account.
+     */
     function setBalanceOf(address account, uint value)
         external
         onlyAssociatedContract
@@ -324,6 +622,36 @@ contract TokenState is State {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       Proxy.sol
+version:    1.3
+author:     Anton Jurisevic
+
+date:       2018-05-29
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A proxy contract that, if it does not recognise the function
+being called on it, passes all value and call data to an
+underlying target contract.
+
+This proxy has the capacity to toggle between DELEGATECALL
+and CALL style proxy functionality.
+
+The former executes in the proxy's context, and so will preserve 
+msg.sender and store data at the proxy address. The latter will not.
+Therefore, any contract the proxy wraps in the CALL style must
+implement the Proxyable interface, in order that it can pass msg.sender
+into the underlying contract as the state parameter, messageSender.
+
+-----------------------------------------------------------------
+*/
 
 
 contract Proxy is Owned {
@@ -361,6 +689,11 @@ contract Proxy is Owned {
         bytes memory _callData = callData;
 
         assembly {
+            /* The first 32 bytes of callData contain its length (as specified by the abi). 
+             * Length is assumed to be a uint256 and therefore maximum of 32 bytes
+             * in length. It is also leftpadded to be a multiple of 32 bytes.
+             * This means moving call_data across 32 bytes guarantees we correctly access
+             * the data itself. */
             switch numTopics
             case 0 {
                 log0(add(_callData, 32), size)
@@ -386,21 +719,27 @@ contract Proxy is Owned {
     {
         if (useDELEGATECALL) {
             assembly {
+                /* Copy call data into free memory region. */
                 let free_ptr := mload(0x40)
                 calldatacopy(free_ptr, 0, calldatasize)
 
+                /* Forward all gas and call data to the target contract. */
                 let result := delegatecall(gas, sload(target_slot), free_ptr, calldatasize, 0, 0)
                 returndatacopy(free_ptr, 0, returndatasize)
 
+                /* Revert if the call failed, otherwise return the result. */
                 if iszero(result) { revert(free_ptr, returndatasize) }
                 return(free_ptr, returndatasize)
             }
         } else {
+            /* Here we are as above, but must send the messageSender explicitly 
+             * since we are using CALL rather than DELEGATECALL. */
             target.setMessageSender(msg.sender);
             assembly {
                 let free_ptr := mload(0x40)
                 calldatacopy(free_ptr, 0, calldatasize)
 
+                /* We must explicitly forward ether to the underlying contract as well. */
                 let result := call(gas, sload(target_slot), callvalue, free_ptr, calldatasize, 0, 0)
                 returndatacopy(free_ptr, 0, returndatasize)
 
@@ -419,12 +758,40 @@ contract Proxy is Owned {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       Proxyable.sol
+version:    1.1
+author:     Anton Jurisevic
+
+date:       2018-05-15
+
+checked:    Mike Spain
+approved:   Samuel Brooks
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A proxyable contract that works hand in hand with the Proxy contract
+to allow for anyone to interact with the underlying contract both
+directly and through the proxy.
+
+-----------------------------------------------------------------
+*/
 
 
-
+// This contract should be treated like an abstract contract
 contract Proxyable is Owned {
+    /* The proxy this contract exists behind. */
     Proxy public proxy;
 
+    /* The caller of the proxy, passed through to this contract.
+     * Note that every function using this member must apply the onlyProxy or
+     * optionalProxy modifiers, otherwise their invocations can use stale values. */ 
     address messageSender; 
 
     constructor(address _proxy, address _owner)
@@ -476,8 +843,30 @@ contract Proxyable is Owned {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       ExternStateToken.sol
+version:    1.0
+author:     Kevin Brown
+date:       2018-08-06
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+This contract offers a modifer that can prevent reentrancy on
+particular actions. It will not work if you put it on multiple
+functions that can be called from each other. Specifically guard
+external entry points to the contract with the modifier only.
+
+-----------------------------------------------------------------
+*/
 
 contract ReentrancyPreventer {
+    /* ========== MODIFIERS ========== */
     bool isInFunctionBody = false;
 
     modifier preventReentrancy {
@@ -488,17 +877,57 @@ contract ReentrancyPreventer {
     }
 }
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       ExternStateToken.sol
+version:    1.3
+author:     Anton Jurisevic
+            Dominic Romanowski
+
+date:       2018-05-29
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A partial ERC20 token contract, designed to operate with a proxy.
+To produce a complete ERC20 token, transfer and transferFrom
+tokens must be implemented, using the provided _byProxy internal
+functions.
+This contract utilises an external state for upgradeability.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title ERC20 Token contract, with detached state and designed to operate behind a proxy.
+ */
 contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, ReentrancyPreventer {
 
+    /* ========== STATE VARIABLES ========== */
 
+    /* Stores balances and allowances. */
     TokenState public tokenState;
 
+    /* Other ERC20 fields.
+     * Note that the decimals field is defined in SafeDecimalMath.*/
     string public name;
     string public symbol;
     uint public totalSupply;
 
+    /**
+     * @dev Constructor.
+     * @param _proxy The proxy associated with this contract.
+     * @param _name Token's ERC20 name.
+     * @param _symbol Token's ERC20 symbol.
+     * @param _totalSupply The total supply of the token.
+     * @param _tokenState The TokenState contract address.
+     * @param _owner The owner of this contract.
+     */
     constructor(address _proxy, TokenState _tokenState,
                 string _name, string _symbol, uint _totalSupply,
                 address _owner)
@@ -512,7 +941,13 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
         tokenState = _tokenState;
     }
 
+    /* ========== VIEWS ========== */
 
+    /**
+     * @notice Returns the ERC20 allowance of one party to spend on behalf of another.
+     * @param owner The party authorising spending of their funds.
+     * @param spender The party spending tokenOwner's funds.
+     */
     function allowance(address owner, address spender)
         public
         view
@@ -521,6 +956,9 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
         return tokenState.allowance(owner, spender);
     }
 
+    /**
+     * @notice Returns the ERC20 token balance of a given account.
+     */
     function balanceOf(address account)
         public
         view
@@ -529,7 +967,13 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
         return tokenState.balanceOf(account);
     }
 
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
+    /**
+     * @notice Set the address of the TokenState contract.
+     * @dev This can be used to "pause" transfer functionality, by pointing the tokenState at 0x000..
+     * as balances would be unreachable.
+     */ 
     function setTokenState(TokenState _tokenState)
         external
         optionalProxy_onlyOwner
@@ -543,42 +987,63 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
         preventReentrancy
         returns (bool)
     { 
+        /* Disallow transfers to irretrievable-addresses. */
         require(to != address(0), "Cannot transfer to the 0 address");
         require(to != address(this), "Cannot transfer to the underlying contract");
         require(to != address(proxy), "Cannot transfer to the proxy contract");
 
+        /* Insufficient balance will be handled by the safe subtraction. */
         tokenState.setBalanceOf(from, safeSub(tokenState.balanceOf(from), value));
         tokenState.setBalanceOf(to, safeAdd(tokenState.balanceOf(to), value));
 
+        /*
+        If we're transferring to a contract and it implements the havvenTokenFallback function, call it.
+        This isn't ERC223 compliant because:
+           1. We don't revert if the contract doesn't implement havvenTokenFallback.
+              This is because many DEXes and other contracts that expect to work with the standard
+              approve / transferFrom workflow don't implement tokenFallback but can still process our tokens as
+              usual, so it feels very harsh and likely to cause trouble if we add this restriction after having
+              previously gone live with a vanilla ERC20.
+           2. We don't pass the bytes parameter.
+              This is because of this solidity bug: https://github.com/ethereum/solidity/issues/2884
+           3. We also don't let the user use a custom tokenFallback. We figure as we're already not standards
+              compliant, there won't be a use case where users can't just implement our specific function.
 
-        
+        As such we've called the function havvenTokenFallback to be clear that we are not following the standard.
+        */
+
+        // Is the to address a contract? We can check the code size on that address and know.
         uint length;
 
-        
+        // solium-disable-next-line security/no-inline-assembly
         assembly {
-            
+            // Retrieve the size of the code on the recipient address
             length := extcodesize(to)
         }
 
-        
+        // If there's code there, it's a contract
         if (length > 0) {
-            
-            
-            
-            
+            // Now we need to optionally call havvenTokenFallback(address from, uint value).
+            // We can't call it the normal way because that reverts when the recipient doesn't implement the function.
+            // We'll use .call(), which means we need the function selector. We've pre-computed
+            // abi.encodeWithSignature("havvenTokenFallback(address,uint256)"), to save some gas.
 
-            
+            // solium-disable-next-line security/no-low-level-calls
             to.call(0xcbff5d96, messageSender, value);
 
-            
+            // And yes, we specifically don't care if this call fails, so we're not checking the return value.
         }
 
-        
+        // Emit a standard ERC20 transfer event
         emitTransfer(from, to, value);
 
         return true;
     }
 
+    /**
+     * @dev Perform an ERC20 token transfer. Designed to be called by transfer functions possessing
+     * the onlyProxy or optionalProxy modifiers.
+     */
     function _transfer_byProxy(address from, address to, uint value)
         internal
         returns (bool)
@@ -586,14 +1051,22 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
         return _internalTransfer(from, to, value);
     }
 
+    /**
+     * @dev Perform an ERC20 token transferFrom. Designed to be called by transferFrom functions
+     * possessing the optionalProxy or optionalProxy modifiers.
+     */
     function _transferFrom_byProxy(address sender, address from, address to, uint value)
         internal
         returns (bool)
     {
+        /* Insufficient allowance will be handled by the safe subtraction. */
         tokenState.setAllowance(from, sender, safeSub(tokenState.allowance(from, sender), value));
         return _internalTransfer(from, to, value);
     }
 
+    /**
+     * @notice Approves spender to transfer on the message sender's behalf.
+     */
     function approve(address spender, uint value)
         public
         optionalProxy
@@ -606,6 +1079,7 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
         return true;
     }
 
+    /* ========== EVENTS ========== */
 
     event Transfer(address indexed from, address indexed to, uint value);
     bytes32 constant TRANSFER_SIG = keccak256("Transfer(address,address,uint256)");
@@ -627,19 +1101,68 @@ contract ExternStateToken is SafeDecimalMath, SelfDestructible, Proxyable, Reent
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       FeeToken.sol
+version:    1.3
+author:     Anton Jurisevic
+            Dominic Romanowski
+            Kevin Brown
+
+date:       2018-05-29
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A token which also has a configurable fee rate
+charged on its transfers. This is designed to be overridden in
+order to produce an ERC20-compliant token.
+
+These fees accrue into a pool, from which a nominated authority
+may withdraw.
+
+This contract utilises an external state for upgradeability.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title ERC20 Token contract, with detached state.
+ * Additionally charges fees on each transfer.
+ */
 contract FeeToken is ExternStateToken {
 
+    /* ========== STATE VARIABLES ========== */
 
+    /* ERC20 members are declared in ExternStateToken. */
 
+    /* A percentage fee charged on each transfer. */
     uint public transferFeeRate;
+    /* Fee may not exceed 10%. */
     uint constant MAX_TRANSFER_FEE_RATE = UNIT / 10;
+    /* The address with the authority to distribute fees. */
     address public feeAuthority;
+    /* The address that fees will be pooled in. */
     address public constant FEE_ADDRESS = 0xfeefeefeefeefeefeefeefeefeefeefeefeefeef;
 
 
+    /* ========== CONSTRUCTOR ========== */
 
+    /**
+     * @dev Constructor.
+     * @param _proxy The proxy associated with this contract.
+     * @param _name Token's ERC20 name.
+     * @param _symbol Token's ERC20 symbol.
+     * @param _totalSupply The total supply of the token.
+     * @param _transferFeeRate The fee rate to charge on transfers.
+     * @param _feeAuthority The address which has the authority to withdraw fees from the accumulated pool.
+     * @param _owner The owner of this contract.
+     */
     constructor(address _proxy, TokenState _tokenState, string _name, string _symbol, uint _totalSupply,
                 uint _transferFeeRate, address _feeAuthority, address _owner)
         ExternStateToken(_proxy, _tokenState,
@@ -649,11 +1172,17 @@ contract FeeToken is ExternStateToken {
     {
         feeAuthority = _feeAuthority;
 
+        /* Constructed transfer fee rate should respect the maximum fee rate. */
         require(_transferFeeRate <= MAX_TRANSFER_FEE_RATE, "Constructed transfer fee rate should respect the maximum fee rate");
         transferFeeRate = _transferFeeRate;
     }
 
+    /* ========== SETTERS ========== */
 
+    /**
+     * @notice Set the transfer fee, anywhere within the range 0-10%.
+     * @dev The fee rate is in decimal format, with UNIT being the value of 100%.
+     */
     function setTransferFeeRate(uint _transferFeeRate)
         external
         optionalProxy_onlyOwner
@@ -663,6 +1192,10 @@ contract FeeToken is ExternStateToken {
         emitTransferFeeRateUpdated(_transferFeeRate);
     }
 
+    /**
+     * @notice Set the address of the user/contract responsible for collecting or
+     * distributing fees.
+     */
     function setFeeAuthority(address _feeAuthority)
         public
         optionalProxy_onlyOwner
@@ -671,15 +1204,32 @@ contract FeeToken is ExternStateToken {
         emitFeeAuthorityUpdated(_feeAuthority);
     }
 
+    /* ========== VIEWS ========== */
 
+    /**
+     * @notice Calculate the Fee charged on top of a value being sent
+     * @return Return the fee charged
+     */
     function transferFeeIncurred(uint value)
         public
         view
         returns (uint)
     {
         return safeMul_dec(value, transferFeeRate);
+        /* Transfers less than the reciprocal of transferFeeRate should be completely eaten up by fees.
+         * This is on the basis that transfers less than this value will result in a nil fee.
+         * Probably too insignificant to worry about, but the following code will achieve it.
+         *      if (fee == 0 && transferFeeRate != 0) {
+         *          return _value;
+         *      }
+         *      return fee;
+         */
     }
 
+    /**
+     * @notice The value that you would need to send so that the recipient receives
+     * a specified value.
+     */
     function transferPlusFee(uint value)
         external
         view
@@ -688,6 +1238,9 @@ contract FeeToken is ExternStateToken {
         return safeAdd(value, transferFeeIncurred(value));
     }
 
+    /**
+     * @notice The amount the recipient will receive if you send a certain number of tokens.
+     */
     function amountReceived(uint value)
         public
         view
@@ -696,6 +1249,10 @@ contract FeeToken is ExternStateToken {
         return safeDiv_dec(value, safeAdd(UNIT, transferFeeRate));
     }
 
+    /**
+     * @notice Collected fees sit here until they are distributed.
+     * @dev The balance of the nomin contract itself is the fee pool.
+     */
     function feePool()
         external
         view
@@ -704,25 +1261,35 @@ contract FeeToken is ExternStateToken {
         return tokenState.balanceOf(FEE_ADDRESS);
     }
 
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
+    /**
+     * @notice Base of transfer functions
+     */
     function _internalTransfer(address from, address to, uint amount, uint fee)
         internal
         returns (bool)
     {
+        /* Disallow transfers to irretrievable-addresses. */
         require(to != address(0), "Cannot transfer to the 0 address");
         require(to != address(this), "Cannot transfer to the underlying contract");
         require(to != address(proxy), "Cannot transfer to the proxy contract");
 
+        /* Insufficient balance will be handled by the safe subtraction. */
         tokenState.setBalanceOf(from, safeSub(tokenState.balanceOf(from), safeAdd(amount, fee)));
         tokenState.setBalanceOf(to, safeAdd(tokenState.balanceOf(to), amount));
         tokenState.setBalanceOf(FEE_ADDRESS, safeAdd(tokenState.balanceOf(FEE_ADDRESS), fee));
 
+        /* Emit events for both the transfer itself and the fee. */
         emitTransfer(from, to, amount);
         emitTransfer(from, FEE_ADDRESS, fee);
 
         return true;
     }
 
+    /**
+     * @notice ERC20 friendly transfer function.
+     */
     function _transfer_byProxy(address sender, address to, uint value)
         internal
         returns (bool)
@@ -733,38 +1300,57 @@ contract FeeToken is ExternStateToken {
         return _internalTransfer(sender, to, received, fee);
     }
 
+    /**
+     * @notice ERC20 friendly transferFrom function.
+     */
     function _transferFrom_byProxy(address sender, address from, address to, uint value)
         internal
         returns (bool)
     {
+        /* The fee is deducted from the amount sent. */
         uint received = amountReceived(value);
         uint fee = safeSub(value, received);
 
+        /* Reduce the allowance by the amount we're transferring.
+         * The safeSub call will handle an insufficient allowance. */
         tokenState.setAllowance(from, sender, safeSub(tokenState.allowance(from, sender), value));
 
         return _internalTransfer(from, to, received, fee);
     }
 
+    /**
+     * @notice Ability to transfer where the sender pays the fees (not ERC20)
+     */
     function _transferSenderPaysFee_byProxy(address sender, address to, uint value)
         internal
         returns (bool)
     {
+        /* The fee is added to the amount sent. */
         uint fee = transferFeeIncurred(value);
         return _internalTransfer(sender, to, value, fee);
     }
 
+    /**
+     * @notice Ability to transferFrom where they sender pays the fees (not ERC20).
+     */
     function _transferFromSenderPaysFee_byProxy(address sender, address from, address to, uint value)
         internal
         returns (bool)
     {
+        /* The fee is added to the amount sent. */
         uint fee = transferFeeIncurred(value);
         uint total = safeAdd(value, fee);
 
+        /* Reduce the allowance by the amount we're transferring. */
         tokenState.setAllowance(from, sender, safeSub(tokenState.allowance(from, sender), total));
 
         return _internalTransfer(from, to, value, fee);
     }
 
+    /**
+     * @notice Withdraw tokens from the fee pool into a given account.
+     * @dev Only the fee authority may call this.
+     */
     function withdrawFees(address account, uint value)
         external
         onlyFeeAuthority
@@ -772,10 +1358,12 @@ contract FeeToken is ExternStateToken {
     {
         require(account != address(0), "Must supply an account address to withdraw fees");
 
+        /* 0-value withdrawals do nothing. */
         if (value == 0) {
             return false;
         }
 
+        /* Safe subtraction ensures an exception is thrown if the balance is insufficient. */
         tokenState.setBalanceOf(FEE_ADDRESS, safeSub(tokenState.balanceOf(FEE_ADDRESS), value));
         tokenState.setBalanceOf(account, safeAdd(tokenState.balanceOf(account), value));
 
@@ -785,15 +1373,20 @@ contract FeeToken is ExternStateToken {
         return true;
     }
 
+    /**
+     * @notice Donate tokens from the sender's balance into the fee pool.
+     */
     function donateToFeePool(uint n)
         external
         optionalProxy
         returns (bool)
     {
         address sender = messageSender;
+        /* Empty donations are disallowed. */
         uint balance = tokenState.balanceOf(sender);
         require(balance != 0, "Must have a balance in order to donate to the fee pool");
 
+        /* safeSub ensures the donor has sufficient balance. */
         tokenState.setBalanceOf(sender, safeSub(balance, n));
         tokenState.setBalanceOf(FEE_ADDRESS, safeAdd(tokenState.balanceOf(FEE_ADDRESS), n));
 
@@ -804,6 +1397,7 @@ contract FeeToken is ExternStateToken {
     }
 
 
+    /* ========== MODIFIERS ========== */
 
     modifier onlyFeeAuthority
     {
@@ -812,6 +1406,7 @@ contract FeeToken is ExternStateToken {
     }
 
 
+    /* ========== EVENTS ========== */
 
     event TransferFeeRateUpdated(uint newFeeRate);
     bytes32 constant TRANSFERFEERATEUPDATED_SIG = keccak256("TransferFeeRateUpdated(uint256)");
@@ -839,21 +1434,55 @@ contract FeeToken is ExternStateToken {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       Nomin.sol
+version:    1.2
+author:     Anton Jurisevic
+            Mike Spain
+            Dominic Romanowski
+            Kevin Brown
+
+date:       2018-05-29
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+Havven-backed nomin stablecoin contract.
+
+This contract issues nomins, which are tokens worth 1 USD each.
+
+Nomins are issuable by Havven holders who have to lock up some
+value of their havvens to issue H * Cmax nomins. Where Cmax is
+some value less than 1.
+
+A configurable fee is charged on nomin transfers and deposited
+into a common pot, which havven holders may withdraw from once
+per fee period.
+
+-----------------------------------------------------------------
+*/
 
 
 contract Nomin is FeeToken {
 
+    /* ========== STATE VARIABLES ========== */
 
     Havven public havven;
 
-    
+    // Accounts which have lost the privilege to transact in nomins.
     mapping(address => bool) public frozen;
 
-    
+    // Nomin transfers incur a 15 bp fee by default.
     uint constant TRANSFER_FEE_RATE = 15 * UNIT / 10000;
     string constant TOKEN_NAME = "Nomin USD";
     string constant TOKEN_SYMBOL = "nUSD";
 
+    /* ========== CONSTRUCTOR ========== */
 
     constructor(address _proxy, TokenState _tokenState, Havven _havven,
                 uint _totalSupply,
@@ -861,7 +1490,7 @@ contract Nomin is FeeToken {
         FeeToken(_proxy, _tokenState,
                  TOKEN_NAME, TOKEN_SYMBOL, _totalSupply,
                  TRANSFER_FEE_RATE,
-                 _havven, 
+                 _havven, // The havven contract is the fee authority.
                  _owner)
         public
     {
@@ -869,25 +1498,32 @@ contract Nomin is FeeToken {
         require(address(_havven) != 0, "_havven cannot be 0");
         require(_owner != 0, "_owner cannot be 0");
 
-        
+        // It should not be possible to transfer to the fee pool directly (or confiscate its balance).
         frozen[FEE_ADDRESS] = true;
         havven = _havven;
     }
 
+    /* ========== SETTERS ========== */
 
     function setHavven(Havven _havven)
         external
         optionalProxy_onlyOwner
     {
-        
-        
+        // havven should be set as the feeAuthority after calling this depending on
+        // havven's internal logic
         havven = _havven;
         setFeeAuthority(_havven);
         emitHavvenUpdated(_havven);
     }
 
 
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
+    /* Override ERC20 transfer function in order to check
+     * whether the recipient account is frozen. Note that there is
+     * no need to check whether the sender has a frozen account,
+     * since their funds have already been confiscated,
+     * and no new funds can be transferred to it.*/
     function transfer(address to, uint value)
         public
         optionalProxy
@@ -897,6 +1533,8 @@ contract Nomin is FeeToken {
         return _transfer_byProxy(messageSender, to, value);
     }
 
+    /* Override ERC20 transferFrom function in order to check
+     * whether the recipient account is frozen. */
     function transferFrom(address from, address to, uint value)
         public
         optionalProxy
@@ -924,6 +1562,8 @@ contract Nomin is FeeToken {
         return _transferFromSenderPaysFee_byProxy(messageSender, from, to, value);
     }
 
+    /* The owner may allow a previously-frozen contract to once
+     * again accept and transfer nomins. */
     function unfreezeAccount(address target)
         external
         optionalProxy_onlyOwner
@@ -933,6 +1573,8 @@ contract Nomin is FeeToken {
         emitAccountUnfrozen(target);
     }
 
+    /* Allow havven to issue a certain number of
+     * nomins from an account. */
     function issue(address account, uint amount)
         external
         onlyHavven
@@ -943,6 +1585,8 @@ contract Nomin is FeeToken {
         emitIssued(account, amount);
     }
 
+    /* Allow havven to burn a certain number of
+     * nomins from an account. */
     function burn(address account, uint amount)
         external
         onlyHavven
@@ -953,12 +1597,14 @@ contract Nomin is FeeToken {
         emitBurned(account, amount);
     }
 
+    /* ========== MODIFIERS ========== */
 
     modifier onlyHavven() {
         require(Havven(msg.sender) == havven, "Only the Havven contract can perform this action");
         _;
     }
 
+    /* ========== EVENTS ========== */
 
     event HavvenUpdated(address newHavven);
     bytes32 constant HAVVENUPDATED_SIG = keccak256("HavvenUpdated(address)");
@@ -992,12 +1638,41 @@ contract Nomin is FeeToken {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       LimitedSetup.sol
+version:    1.1
+author:     Anton Jurisevic
+
+date:       2018-05-15
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+A contract with a limited setup period. Any function modified
+with the setup modifier will cease to work after the
+conclusion of the configurable-length post-construction setup period.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title Any function decorated with the modifier this contract provides
+ * deactivates after a specified setup period.
+ */
 contract LimitedSetup {
 
     uint setupExpiryTime;
 
+    /**
+     * @dev LimitedSetup Constructor.
+     * @param setupDuration The time the setup period will last for.
+     */
     constructor(uint setupDuration)
         public
     {
@@ -1012,23 +1687,65 @@ contract LimitedSetup {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       HavvenEscrow.sol
+version:    1.1
+author:     Anton Jurisevic
+            Dominic Romanowski
+            Mike Spain
+
+date:       2018-05-29
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+This contract allows the foundation to apply unique vesting
+schedules to havven funds sold at various discounts in the token
+sale. HavvenEscrow gives users the ability to inspect their
+vested funds, their quantities and vesting dates, and to withdraw
+the fees that accrue on those funds.
+
+The fees are handled by withdrawing the entire fee allocation
+for all havvens inside the escrow contract, and then allowing
+the contract itself to subdivide that pool up proportionally within
+itself. Every time the fee period rolls over in the main Havven
+contract, the HavvenEscrow fee pool is remitted back into the
+main fee pool to be redistributed in the next fee period.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title A contract to hold escrowed havvens and free them at given schedules.
+ */
 contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
+    /* The corresponding Havven contract. */
     Havven public havven;
 
+    /* Lists of (timestamp, quantity) pairs per account, sorted in ascending time order.
+     * These are the times at which each given quantity of havvens vests. */
     mapping(address => uint[2][]) public vestingSchedules;
 
+    /* An account's total vested havven balance to save recomputing this for fee extraction purposes. */
     mapping(address => uint) public totalVestedAccountBalance;
 
+    /* The total remaining vested balance, for verifying the actual havven balance of this contract against. */
     uint public totalVestedBalance;
 
     uint constant TIME_INDEX = 0;
     uint constant QUANTITY_INDEX = 1;
 
+    /* Limit vesting entries to disallow unbounded iteration over vesting schedules. */
     uint constant MAX_VESTING_ENTRIES = 20;
 
 
+    /* ========== CONSTRUCTOR ========== */
 
     constructor(address _owner, Havven _havven)
         Owned(_owner)
@@ -1038,6 +1755,7 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
     }
 
 
+    /* ========== SETTERS ========== */
 
     function setHavven(Havven _havven)
         external
@@ -1048,7 +1766,11 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
     }
 
 
+    /* ========== VIEW FUNCTIONS ========== */
 
+    /**
+     * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.
+     */
     function balanceOf(address account)
         public
         view
@@ -1057,6 +1779,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return totalVestedAccountBalance[account];
     }
 
+    /**
+     * @notice The number of vesting dates in an account's schedule.
+     */
     function numVestingEntries(address account)
         public
         view
@@ -1065,6 +1790,10 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return vestingSchedules[account].length;
     }
 
+    /**
+     * @notice Get a particular schedule entry for an account.
+     * @return A pair of uints: (timestamp, havven quantity).
+     */
     function getVestingScheduleEntry(address account, uint index)
         public
         view
@@ -1073,6 +1802,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return vestingSchedules[account][index];
     }
 
+    /**
+     * @notice Get the time at which a given schedule entry will vest.
+     */
     function getVestingTime(address account, uint index)
         public
         view
@@ -1081,6 +1813,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return getVestingScheduleEntry(account,index)[TIME_INDEX];
     }
 
+    /**
+     * @notice Get the quantity of havvens associated with a given schedule entry.
+     */
     function getVestingQuantity(address account, uint index)
         public
         view
@@ -1089,6 +1824,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return getVestingScheduleEntry(account,index)[QUANTITY_INDEX];
     }
 
+    /**
+     * @notice Obtain the index of the next schedule entry that will vest for a given user.
+     */
     function getNextVestingIndex(address account)
         public
         view
@@ -1103,6 +1841,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return len;
     }
 
+    /**
+     * @notice Obtain the next schedule entry that will vest for a given user.
+     * @return A pair of uints: (timestamp, havven quantity). */
     function getNextVestingEntry(address account)
         public
         view
@@ -1115,6 +1856,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return getVestingScheduleEntry(account, index);
     }
 
+    /**
+     * @notice Obtain the time at which the next schedule entry will vest for a given user.
+     */
     function getNextVestingTime(address account)
         external
         view
@@ -1123,6 +1867,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         return getNextVestingEntry(account)[TIME_INDEX];
     }
 
+    /**
+     * @notice Obtain the quantity which the next schedule entry will vest for a given user.
+     */
     function getNextVestingQuantity(address account)
         external
         view
@@ -1132,7 +1879,12 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
     }
 
 
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
+    /**
+     * @notice Withdraws a quantity of havvens back to the havven contract.
+     * @dev This may only be called by the owner during the contract's setup period.
+     */
     function withdrawHavvens(uint quantity)
         external
         onlyOwner
@@ -1141,6 +1893,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         havven.transfer(havven, quantity);
     }
 
+    /**
+     * @notice Destroy the vesting information associated with an account.
+     */
     function purgeAccount(address account)
         external
         onlyOwner
@@ -1151,23 +1906,41 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         delete totalVestedAccountBalance[account];
     }
 
+    /**
+     * @notice Add a new vesting entry at a given time and quantity to an account's schedule.
+     * @dev A call to this should be accompanied by either enough balance already available
+     * in this contract, or a corresponding call to havven.endow(), to ensure that when
+     * the funds are withdrawn, there is enough balance, as well as correctly calculating
+     * the fees.
+     * This may only be called by the owner during the contract's setup period.
+     * Note; although this function could technically be used to produce unbounded
+     * arrays, it's only in the foundation's command to add to these lists.
+     * @param account The account to append a new vesting entry to.
+     * @param time The absolute unix timestamp after which the vested quantity may be withdrawn.
+     * @param quantity The quantity of havvens that will vest.
+     */
     function appendVestingEntry(address account, uint time, uint quantity)
         public
         onlyOwner
         onlyDuringSetup
     {
+        /* No empty or already-passed vesting entries allowed. */
         require(now < time, "Time must be in the future");
         require(quantity != 0, "Quantity cannot be zero");
 
+        /* There must be enough balance in the contract to provide for the vesting entry. */
         totalVestedBalance = safeAdd(totalVestedBalance, quantity);
         require(totalVestedBalance <= havven.balanceOf(this), "Must be enough balance in the contract to provide for the vesting entry");
 
+        /* Disallow arbitrarily long vesting schedules in light of the gas limit. */
         uint scheduleLength = vestingSchedules[account].length;
         require(scheduleLength <= MAX_VESTING_ENTRIES, "Vesting schedule is too long");
 
         if (scheduleLength == 0) {
             totalVestedAccountBalance[account] = quantity;
         } else {
+            /* Disallow adding new vested havvens earlier than the last one.
+             * Since entries are only appended, this means that no vesting date can be repeated. */
             require(getVestingTime(account, numVestingEntries(account) - 1) < time, "Cannot add new vested entries earlier than the last one");
             totalVestedAccountBalance[account] = safeAdd(totalVestedAccountBalance[account], quantity);
         }
@@ -1175,6 +1948,13 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         vestingSchedules[account].push([time, quantity]);
     }
 
+    /**
+     * @notice Construct a vesting schedule to release a quantities of havvens
+     * over a series of intervals.
+     * @dev Assumes that the quantities are nonzero
+     * and that the sequence of timestamps is strictly increasing.
+     * This may only be called by the owner during the contract's setup period.
+     */
     function addVestingSchedule(address account, uint[] times, uint[] quantities)
         external
         onlyOwner
@@ -1186,6 +1966,9 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
 
     }
 
+    /**
+     * @notice Allow a user to withdraw any havvens in their schedule that have vested.
+     */
     function vest()
         external
     {
@@ -1193,6 +1976,7 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
         uint total;
         for (uint i = 0; i < numEntries; i++) {
             uint time = getVestingTime(msg.sender, i);
+            /* The list is sorted; when we reach the first future time, bail out. */
             if (time > now) {
                 break;
             }
@@ -1214,6 +1998,7 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
     }
 
 
+    /* ========== EVENTS ========== */
 
     event HavvenUpdated(address newHavven);
 
@@ -1221,43 +2006,195 @@ contract HavvenEscrow is SafeDecimalMath, Owned, LimitedSetup(8 weeks) {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION
+-----------------------------------------------------------------
+
+file:       Havven.sol
+version:    1.2
+author:     Anton Jurisevic
+            Dominic Romanowski
+
+date:       2018-05-15
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+Havven token contract. Havvens are transferable ERC20 tokens,
+and also give their holders the following privileges.
+An owner of havvens may participate in nomin confiscation votes, they
+may also have the right to issue nomins at the discretion of the
+foundation for this version of the contract.
+
+After a fee period terminates, the duration and fees collected for that
+period are computed, and the next period begins. Thus an account may only
+withdraw the fees owed to them for the previous period, and may only do
+so once per period. Any unclaimed fees roll over into the common pot for
+the next period.
+
+== Average Balance Calculations ==
+
+The fee entitlement of a havven holder is proportional to their average
+issued nomin balance over the last fee period. This is computed by
+measuring the area under the graph of a user's issued nomin balance over
+time, and then when a new fee period begins, dividing through by the
+duration of the fee period.
+
+We need only update values when the balances of an account is modified.
+This occurs when issuing or burning for issued nomin balances,
+and when transferring for havven balances. This is for efficiency,
+and adds an implicit friction to interacting with havvens.
+A havven holder pays for his own recomputation whenever he wants to change
+his position, which saves the foundation having to maintain a pot dedicated
+to resourcing this.
+
+A hypothetical user's balance history over one fee period, pictorially:
+
+      s ____
+       |    |
+       |    |___ p
+       |____|___|___ __ _  _
+       f    t   n
+
+Here, the balance was s between times f and t, at which time a transfer
+occurred, updating the balance to p, until n, when the present transfer occurs.
+When a new transfer occurs at time n, the balance being p,
+we must:
+
+  - Add the area p * (n - t) to the total area recorded so far
+  - Update the last transfer time to n
+
+So if this graph represents the entire current fee period,
+the average havvens held so far is ((t-f)*s + (n-t)*p) / (n-f).
+The complementary computations must be performed for both sender and
+recipient.
+
+Note that a transfer keeps global supply of havvens invariant.
+The sum of all balances is constant, and unmodified by any transfer.
+So the sum of all balances multiplied by the duration of a fee period is also
+constant, and this is equivalent to the sum of the area of every user's
+time/balance graph. Dividing through by that duration yields back the total
+havven supply. So, at the end of a fee period, we really do yield a user's
+average share in the havven supply over that period.
+
+A slight wrinkle is introduced if we consider the time r when the fee period
+rolls over. Then the previous fee period k-1 is before r, and the current fee
+period k is afterwards. If the last transfer took place before r,
+but the latest transfer occurred afterwards:
+
+k-1       |        k
+      s __|_
+       |  | |
+       |  | |____ p
+       |__|_|____|___ __ _  _
+          |
+       f  | t    n
+          r
+
+In this situation the area (r-f)*s contributes to fee period k-1, while
+the area (t-r)*s contributes to fee period k. We will implicitly consider a
+zero-value transfer to have occurred at time r. Their fee entitlement for the
+previous period will be finalised at the time of their first transfer during the
+current fee period, or when they query or withdraw their fee entitlement.
+
+In the implementation, the duration of different fee periods may be slightly irregular,
+as the check that they have rolled over occurs only when state-changing havven
+operations are performed.
+
+== Issuance and Burning ==
+
+In this version of the havven contract, nomins can only be issued by
+those that have been nominated by the havven foundation. Nomins are assumed
+to be valued at $1, as they are a stable unit of account.
+
+All nomins issued require a proportional value of havvens to be locked,
+where the proportion is governed by the current issuance ratio. This
+means for every $1 of Havvens locked up, $(issuanceRatio) nomins can be issued.
+i.e. to issue 100 nomins, 100/issuanceRatio dollars of havvens need to be locked up.
+
+To determine the value of some amount of havvens(H), an oracle is used to push
+the price of havvens (P_H) in dollars to the contract. The value of H
+would then be: H * P_H.
+
+Any havvens that are locked up by this issuance process cannot be transferred.
+The amount that is locked floats based on the price of havvens. If the price
+of havvens moves up, less havvens are locked, so they can be issued against,
+or transferred freely. If the price of havvens moves down, more havvens are locked,
+even going above the initial wallet balance.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title Havven ERC20 contract.
+ * @notice The Havven contracts does not only facilitate transfers and track balances,
+ * but it also computes the quantity of fees each havven holder is entitled to.
+ */
 contract Havven is ExternStateToken {
 
+    /* ========== STATE VARIABLES ========== */
 
+    /* A struct for handing values associated with average balance calculations */
     struct IssuanceData {
+        /* Sums of balances*duration in the current fee period.
+        /* range: decimals; units: havven-seconds */
         uint currentBalanceSum;
+        /* The last period's average balance */
         uint lastAverageBalance;
+        /* The last time the data was calculated */
         uint lastModified;
     }
 
+    /* Issued nomin balances for individual fee entitlements */
     mapping(address => IssuanceData) public issuanceData;
+    /* The total number of issued nomins for determining fee entitlements */
     IssuanceData public totalIssuanceData;
 
+    /* The time the current fee period began */
     uint public feePeriodStartTime;
+    /* The time the last fee period began */
     uint public lastFeePeriodStartTime;
 
+    /* Fee periods will roll over in no shorter a time than this. 
+     * The fee period cannot actually roll over until a fee-relevant
+     * operation such as withdrawal or a fee period duration update occurs,
+     * so this is just a target, and the actual duration may be slightly longer. */
     uint public feePeriodDuration = 4 weeks;
+    /* ...and must target between 1 day and six months. */
     uint constant MIN_FEE_PERIOD_DURATION = 1 days;
     uint constant MAX_FEE_PERIOD_DURATION = 26 weeks;
 
+    /* The quantity of nomins that were in the fee pot at the time */
+    /* of the last fee rollover, at feePeriodStartTime. */
     uint public lastFeesCollected;
 
+    /* Whether a user has withdrawn their last fees */
     mapping(address => bool) public hasWithdrawnFees;
 
     Nomin public nomin;
     HavvenEscrow public escrow;
 
+    /* The address of the oracle which pushes the havven price to this contract */
     address public oracle;
+    /* The price of havvens written in UNIT */
     uint public price;
+    /* The time the havven price was last updated */
     uint public lastPriceUpdateTime;
+    /* How long will the contract assume the price of havvens is correct */
     uint public priceStalePeriod = 3 hours;
 
+    /* A quantity of nomins greater than this ratio
+     * may not be issued against a given value of havvens. */
     uint public issuanceRatio = UNIT / 5;
+    /* No more nomins may be issued than the value of havvens backing them. */
     uint constant MAX_ISSUANCE_RATIO = UNIT;
 
+    /* Whether the address can issue nomins or not. */
     mapping(address => bool) public isIssuer;
+    /* The number of currently-outstanding nomins the user has issued. */
     mapping(address => uint) public nominsIssued;
 
     uint constant HAVVEN_SUPPLY = 1e8 * UNIT;
@@ -1265,7 +2202,14 @@ contract Havven is ExternStateToken {
     string constant TOKEN_NAME = "Havven";
     string constant TOKEN_SYMBOL = "HAV";
     
+    /* ========== CONSTRUCTOR ========== */
 
+    /**
+     * @dev Constructor
+     * @param _tokenState A pre-populated contract containing token balances.
+     * If the provided address is 0x0, then a fresh one will be constructed with the contract owning all tokens.
+     * @param _owner The owner of this contract.
+     */
     constructor(address _proxy, TokenState _tokenState, address _owner, address _oracle,
                 uint _price, address[] _issuers, Havven _oldHavven)
         ExternStateToken(_proxy, _tokenState, TOKEN_NAME, TOKEN_SYMBOL, HAVVEN_SUPPLY, _owner)
@@ -1299,8 +2243,8 @@ contract Havven is ExternStateToken {
                 isIssuer[issuer] = true;
                 uint nomins = _oldHavven.nominsIssued(issuer);
                 if (nomins == 0) {
-                    
-                    
+                    // It is not valid in general to skip those with no currently-issued nomins.
+                    // But for this release, issuers with nonzero issuanceData have current issuance.
                     continue;
                 }
                 (cbs, lab, lm) = _oldHavven.issuanceData(issuer);
@@ -1313,7 +2257,12 @@ contract Havven is ExternStateToken {
 
     }
 
+    /* ========== SETTERS ========== */
 
+    /**
+     * @notice Set the associated Nomin contract to collect fees from.
+     * @dev Only the contract owner may call this.
+     */
     function setNomin(Nomin _nomin)
         external
         optionalProxy_onlyOwner
@@ -1322,6 +2271,10 @@ contract Havven is ExternStateToken {
         emitNominUpdated(_nomin);
     }
 
+    /**
+     * @notice Set the associated havven escrow contract.
+     * @dev Only the contract owner may call this.
+     */
     function setEscrow(HavvenEscrow _escrow)
         external
         optionalProxy_onlyOwner
@@ -1330,6 +2283,12 @@ contract Havven is ExternStateToken {
         emitEscrowUpdated(_escrow);
     }
 
+    /**
+     * @notice Set the targeted fee period duration.
+     * @dev Only callable by the contract owner. The duration must fall within
+     * acceptable bounds (1 day to 26 weeks). Upon resetting this the fee period
+     * may roll over if the target duration was shortened sufficiently.
+     */
     function setFeePeriodDuration(uint duration)
         external
         optionalProxy_onlyOwner
@@ -1341,6 +2300,9 @@ contract Havven is ExternStateToken {
         rolloverFeePeriodIfElapsed();
     }
 
+    /**
+     * @notice Set the Oracle that pushes the havven price to this contract
+     */
     function setOracle(address _oracle)
         external
         optionalProxy_onlyOwner
@@ -1349,6 +2311,10 @@ contract Havven is ExternStateToken {
         emitOracleUpdated(_oracle);
     }
 
+    /**
+     * @notice Set the stale period on the updated havven price
+     * @dev No max/minimum, as changing it wont influence anything but issuance by the foundation
+     */
     function setPriceStalePeriod(uint time)
         external
         optionalProxy_onlyOwner
@@ -1356,6 +2322,10 @@ contract Havven is ExternStateToken {
         priceStalePeriod = time;
     }
 
+    /**
+     * @notice Set the issuanceRatio for issuance calculations.
+     * @dev Only callable by the contract owner.
+     */
     function setIssuanceRatio(uint _issuanceRatio)
         external
         optionalProxy_onlyOwner
@@ -1365,6 +2335,9 @@ contract Havven is ExternStateToken {
         emitIssuanceRatioUpdated(_issuanceRatio);
     }
 
+    /**
+     * @notice Set whether the specified can issue nomins or not.
+     */
     function setIssuer(address account, bool value)
         external
         optionalProxy_onlyOwner
@@ -1373,6 +2346,7 @@ contract Havven is ExternStateToken {
         emitIssuersUpdated(account, value);
     }
 
+    /* ========== VIEWS ========== */
 
     function issuanceCurrentBalanceSum(address account)
         external
@@ -1422,7 +2396,11 @@ contract Havven is ExternStateToken {
         return totalIssuanceData.lastModified;
     }
 
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
+    /**
+     * @notice ERC20 transfer function.
+     */
     function transfer(address to, uint value)
         public
         optionalProxy
@@ -1430,11 +2408,16 @@ contract Havven is ExternStateToken {
     {
         address sender = messageSender;
         require(nominsIssued[sender] == 0 || value <= transferableHavvens(sender), "Value to transfer exceeds available havvens");
+        /* Perform the transfer: if there is a problem,
+         * an exception will be thrown in this call. */
         _transfer_byProxy(sender, to, value);
 
         return true;
     }
 
+    /**
+     * @notice ERC20 transferFrom function.
+     */
     function transferFrom(address from, address to, uint value)
         public
         optionalProxy
@@ -1442,27 +2425,38 @@ contract Havven is ExternStateToken {
     {
         address sender = messageSender;
         require(nominsIssued[from] == 0 || value <= transferableHavvens(from), "Value to transfer exceeds available havvens");
+        /* Perform the transfer: if there is a problem,
+         * an exception will be thrown in this call. */
         _transferFrom_byProxy(sender, from, to, value);
 
         return true;
     }
 
+    /**
+     * @notice Compute the last period's fee entitlement for the message sender
+     * and then deposit it into their nomin account.
+     */
     function withdrawFees()
         external
         optionalProxy
     {
         address sender = messageSender;
         rolloverFeePeriodIfElapsed();
+        /* Do not deposit fees into frozen accounts. */
         require(!nomin.frozen(sender), "Cannot deposit fees into frozen accounts");
 
+        /* Check the period has rolled over first. */
         updateIssuanceData(sender, nominsIssued[sender], nomin.totalSupply());
 
+        /* Only allow accounts to withdraw fees once per period. */
         require(!hasWithdrawnFees[sender], "Fees have already been withdrawn in this period");
 
         uint feesOwed;
         uint lastTotalIssued = totalIssuanceData.lastAverageBalance;
 
         if (lastTotalIssued > 0) {
+            /* Sender receives a share of last period's collected fees proportional
+             * with their average fraction of the last period's issued nomins. */
             feesOwed = safeDiv_dec(
                 safeMul_dec(issuanceData[sender].lastAverageBalance, lastFeesCollected),
                 lastTotalIssued
@@ -1477,9 +2471,17 @@ contract Havven is ExternStateToken {
         emitFeesWithdrawn(messageSender, feesOwed);
     }
 
+    /**
+     * @notice Update the havven balance averages since the last transfer
+     * or entitlement adjustment.
+     * @dev Since this updates the last transfer timestamp, if invoked
+     * consecutively, this function will do nothing after the first call.
+     * Also, this will adjust the total issuance at the same time.
+     */
     function updateIssuanceData(address account, uint preBalance, uint lastTotalSupply)
         internal
     {
+        /* update the total balances first */
         totalIssuanceData = computeIssuanceData(lastTotalSupply, totalIssuanceData);
 
         if (issuanceData[account].lastModified < feePeriodStartTime) {
@@ -1490,6 +2492,9 @@ contract Havven is ExternStateToken {
     }
 
 
+    /**
+     * @notice Compute the new IssuanceData on the old balance
+     */
     function computeIssuanceData(uint preBalance, IssuanceData preIssuance)
         internal
         view
@@ -1502,15 +2507,22 @@ contract Havven is ExternStateToken {
 
         if (lastModified < feePeriodStartTime) {
             if (lastModified < lastFeePeriodStartTime) {
+                /* The balance was last updated before the previous fee period, so the average
+                 * balance in this period is their pre-transfer balance. */
                 lastAverageBalance = preBalance;
             } else {
+                /* The balance was last updated during the previous fee period. */
+                /* No overflow or zero denominator problems, since lastFeePeriodStartTime < feePeriodStartTime < lastModified. 
+                 * implies these quantities are strictly positive. */
                 uint timeUpToRollover = feePeriodStartTime - lastModified;
                 uint lastFeePeriodDuration = feePeriodStartTime - lastFeePeriodStartTime;
                 uint lastBalanceSum = safeAdd(currentBalanceSum, safeMul(preBalance, timeUpToRollover));
                 lastAverageBalance = lastBalanceSum / lastFeePeriodDuration;
             }
+            /* Roll over to the next fee period. */
             currentBalanceSum = safeMul(preBalance, now - feePeriodStartTime);
         } else {
+            /* The balance was last updated during the current fee period. */
             currentBalanceSum = safeAdd(
                 currentBalanceSum,
                 safeMul(preBalance, now - lastModified)
@@ -1520,6 +2532,9 @@ contract Havven is ExternStateToken {
         return IssuanceData(currentBalanceSum, lastAverageBalance, now);
     }
 
+    /**
+     * @notice Recompute and return the given account's last average balance.
+     */
     function recomputeLastAverageBalance(address account)
         external
         returns (uint)
@@ -1528,10 +2543,15 @@ contract Havven is ExternStateToken {
         return issuanceData[account].lastAverageBalance;
     }
 
+    /**
+     * @notice Issue nomins against the sender's havvens.
+     * @dev Issuance is only allowed if the havven price isn't stale and the sender is an issuer.
+     */
     function issueNomins(uint amount)
         public
         optionalProxy
         requireIssuer(messageSender)
+        /* No need to check if price is stale, as it is checked in issuableNomins. */
     {
         address sender = messageSender;
         require(amount <= remainingIssuableNomins(sender), "Amount must be less than or equal to remaining issuable nomins");
@@ -1549,7 +2569,11 @@ contract Havven is ExternStateToken {
         issueNomins(remainingIssuableNomins(messageSender));
     }
 
+    /**
+     * @notice Burn nomins to clear issued nomins/free havvens.
+     */
     function burnNomins(uint amount)
+        /* it doesn't matter if the price is stale or if the user is an issuer, as non-issuers have issued no nomins.*/
         external
         optionalProxy
     {
@@ -1557,14 +2581,21 @@ contract Havven is ExternStateToken {
 
         uint lastTot = nomin.totalSupply();
         uint preIssued = nominsIssued[sender];
+        /* nomin.burn does a safeSub on balance (so it will revert if there are not enough nomins). */
         nomin.burn(sender, amount);
+        /* This safe sub ensures amount <= number issued */
         nominsIssued[sender] = safeSub(preIssued, amount);
         updateIssuanceData(sender, preIssued, lastTot);
     }
 
+    /**
+     * @notice Check if the fee period has rolled over. If it has, set the new fee period start
+     * time, and record the fees collected in the nomin contract.
+     */
     function rolloverFeePeriodIfElapsed()
         public
     {
+        /* If the fee period has rolled over... */
         if (now >= feePeriodStartTime + feePeriodDuration) {
             lastFeesCollected = nomin.feePool();
             lastFeePeriodStartTime = feePeriodStartTime;
@@ -1573,7 +2604,12 @@ contract Havven is ExternStateToken {
         }
     }
 
+    /* ========== Issuance/Burning ========== */
 
+    /**
+     * @notice The maximum nomins an issuer can issue against their total havven quantity. This ignores any
+     * already issued nomins.
+     */
     function maxIssuableNomins(address issuer)
         view
         public
@@ -1591,6 +2627,9 @@ contract Havven is ExternStateToken {
         }
     }
 
+    /**
+     * @notice The remaining nomins an issuer can issue against their total havven quantity.
+     */
     function remainingIssuableNomins(address issuer)
         view
         public
@@ -1605,6 +2644,12 @@ contract Havven is ExternStateToken {
         }
     }
 
+    /**
+     * @notice The total havvens owned by this account, both escrowed and unescrowed,
+     * against which nomins can be issued.
+     * This includes those already being used as collateral (locked), and those
+     * available for further issuance (unlocked).
+     */
     function collateral(address account)
         public
         view
@@ -1617,6 +2662,9 @@ contract Havven is ExternStateToken {
         return bal;
     }
 
+    /**
+     * @notice The collateral that would be locked by issuance, which can exceed the account's actual collateral.
+     */
     function issuanceDraft(address account)
         public
         view
@@ -1629,6 +2677,10 @@ contract Havven is ExternStateToken {
         return USDtoHAV(safeDiv_dec(issued, issuanceRatio));
     }
 
+    /**
+     * @notice Collateral that has been locked due to issuance, and cannot be
+     * transferred to other addresses. This is capped at the account's total collateral.
+     */
     function lockedCollateral(address account)
         public
         view
@@ -1642,6 +2694,9 @@ contract Havven is ExternStateToken {
         return debt;
     }
 
+    /**
+     * @notice Collateral that is not locked and available for issuance.
+     */
     function unlockedCollateral(address account)
         public
         view
@@ -1652,6 +2707,13 @@ contract Havven is ExternStateToken {
         return safeSub(collat, locked);
     }
 
+    /**
+     * @notice The number of havvens that are free to be transferred by an account.
+     * @dev If they have enough available Havvens, it could be that
+     * their havvens are escrowed, however the transfer would then
+     * fail. This means that escrowed havvens are locked first,
+     * and then the actual transferable ones.
+     */
     function transferableHavvens(address account)
         public
         view
@@ -1659,21 +2721,24 @@ contract Havven is ExternStateToken {
     {
         uint draft = issuanceDraft(account);
         uint collat = collateral(account);
-        
+        // In the case where the issuanceDraft exceeds the collateral, nothing is free
         if (draft > collat) {
             return 0;
         }
 
         uint bal = balanceOf(account);
-        
-        
+        // In the case where the draft exceeds the escrow, but not the whole collateral
+        //   return the fraction of the balance that remains free
         if (draft > safeSub(collat, bal)) {
             return safeSub(collat, draft);
         }
-        
+        // In the case where the draft doesn't exceed the escrow, return the entire balance
         return bal;
     }
 
+    /**
+     * @notice The value in USD for a given amount of HAV
+     */
     function HAVtoUSD(uint hav_dec)
         public
         view
@@ -1683,6 +2748,9 @@ contract Havven is ExternStateToken {
         return safeMul_dec(hav_dec, price);
     }
 
+    /**
+     * @notice The value in HAV for a given amount of USD
+     */
     function USDtoHAV(uint usd_dec)
         public
         view
@@ -1692,9 +2760,15 @@ contract Havven is ExternStateToken {
         return safeDiv_dec(usd_dec, price);
     }
 
+    /**
+     * @notice Access point for the oracle to update the price of havvens.
+     */
     function updatePrice(uint newPrice, uint timeSent)
         external
+        onlyOracle  /* Should be callable only by the oracle. */
     {
+        /* Must be the most recently sent price, but not too far in the future.
+         * (so we can't lock ourselves out of updating the oracle for longer than this) */
         require(lastPriceUpdateTime < timeSent && timeSent < now + ORACLE_FUTURE_LIMIT,
             "Time sent must be bigger than the last update, and must be less than now + ORACLE_FUTURE_LIMIT");
 
@@ -1702,9 +2776,13 @@ contract Havven is ExternStateToken {
         lastPriceUpdateTime = timeSent;
         emitPriceUpdated(newPrice, timeSent);
 
+        /* Check the fee period rollover within this as the price should be pushed every 15min. */
         rolloverFeePeriodIfElapsed();
     }
 
+    /**
+     * @notice Check if the price of havvens hasn't been updated for longer than the stale period.
+     */
     function priceIsStale()
         public
         view
@@ -1713,6 +2791,7 @@ contract Havven is ExternStateToken {
         return safeAdd(lastPriceUpdateTime, priceStalePeriod) < now;
     }
 
+    /* ========== MODIFIERS ========== */
 
     modifier requireIssuer(address account)
     {
@@ -1732,6 +2811,7 @@ contract Havven is ExternStateToken {
         _;
     }
 
+    /* ========== EVENTS ========== */
 
     event PriceUpdated(uint newPrice, uint timestamp);
     bytes32 constant PRICEUPDATED_SIG = keccak256("PriceUpdated(uint256,uint256)");
@@ -1790,42 +2870,94 @@ contract Havven is ExternStateToken {
 }
 
 
+/*
+-----------------------------------------------------------------
+FILE INFORMATION -----------------------------------------------------------------
+
+file:       IssuanceController.sol
+version:    2.0
+author:     Kevin Brown
+
+date:       2018-07-18
+
+-----------------------------------------------------------------
+MODULE DESCRIPTION
+-----------------------------------------------------------------
+
+Issuance controller contract. The issuance controller provides
+a way for users to acquire nomins (Nomin.sol) and havvens
+(Havven.sol) by paying ETH and a way for users to acquire havvens
+(Havven.sol) by paying nomins. Users can also deposit their nomins
+and allow other users to purchase them with ETH. The ETH is sent
+to the user who offered their nomins for sale.
+
+This smart contract contains a balance of each currency, and
+allows the owner of the contract (the Havven Foundation) to
+manage the available balance of havven at their discretion, while
+users are allowed to deposit and withdraw their own nomin deposits
+if they have not yet been taken up by another user.
+
+-----------------------------------------------------------------
+*/
 
 
+/**
+ * @title Issuance Controller Contract.
+ */
 contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
 
+    /* ========== STATE VARIABLES ========== */
     Havven public havven;
     Nomin public nomin;
 
-    
+    // Address where the ether raised is transfered to
     address public fundsWallet;
 
+    /* The address of the oracle which pushes the USD price havvens and ether to this contract */
     address public oracle;
+    /* Do not allow the oracle to submit times any further forward into the future than
+       this constant. */
     uint constant ORACLE_FUTURE_LIMIT = 10 minutes;
 
+    /* How long will the contract assume the price of any asset is correct */
     uint public priceStalePeriod = 3 hours;
 
+    /* The time the prices were last updated */
     uint public lastPriceUpdateTime;
+    /* The USD price of havvens denominated in UNIT */
     uint public usdToHavPrice;
+    /* The USD price of ETH denominated in UNIT */
     uint public usdToEthPrice;
     
+    /* ========== CONSTRUCTOR ========== */
 
+    /**
+     * @dev Constructor
+     * @param _owner The owner of this contract.
+     * @param _fundsWallet The recipient of ETH and Nomins that are sent to this contract while exchanging.
+     * @param _havven The Havven contract we'll interact with for balances and sending.
+     * @param _nomin The Nomin contract we'll interact with for balances and sending.
+     * @param _oracle The address which is able to update price information.
+     * @param _usdToEthPrice The current price of ETH in USD, expressed in UNIT.
+     * @param _usdToHavPrice The current price of Havven in USD, expressed in UNIT.
+     */
     constructor(
-        
+        // Ownable
         address _owner,
 
-        
+        // Funds Wallet
         address _fundsWallet,
 
-        
+        // Other contracts needed
         Havven _havven,
         Nomin _nomin,
 
-        
+        // Oracle values - Allows for price updates
         address _oracle,
         uint _usdToEthPrice,
         uint _usdToHavPrice
     )
+        /* Owned is initialised in SelfDestructible */
         SelfDestructible(_owner)
         Pausable(_owner)
         public
@@ -1839,7 +2971,12 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         lastPriceUpdateTime = now;
     }
 
+    /* ========== SETTERS ========== */
 
+    /**
+     * @notice Set the funds wallet where ETH raised is held
+     * @param _fundsWallet The new address to forward ETH and Nomins to
+     */
     function setFundsWallet(address _fundsWallet)
         external
         onlyOwner
@@ -1848,6 +2985,10 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         emit FundsWalletUpdated(fundsWallet);
     }
     
+    /**
+     * @notice Set the Oracle that pushes the havven price to this contract
+     * @param _oracle The new oracle address
+     */
     function setOracle(address _oracle)
         external
         onlyOwner
@@ -1856,6 +2997,10 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         emit OracleUpdated(oracle);
     }
 
+    /**
+     * @notice Set the Nomin contract that the issuance controller uses to issue Nomins.
+     * @param _nomin The new nomin contract target
+     */
     function setNomin(Nomin _nomin)
         external
         onlyOwner
@@ -1864,6 +3009,10 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         emit NominUpdated(_nomin);
     }
 
+    /**
+     * @notice Set the Havven contract that the issuance controller uses to issue Havvens.
+     * @param _havven The new havven contract target
+     */
     function setHavven(Havven _havven)
         external
         onlyOwner
@@ -1872,6 +3021,10 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         emit HavvenUpdated(_havven);
     }
 
+    /**
+     * @notice Set the stale period on the updated price variables
+     * @param _time The new priceStalePeriod
+     */
     function setPriceStalePeriod(uint _time)
         external
         onlyOwner 
@@ -1880,10 +3033,19 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         emit PriceStalePeriodUpdated(priceStalePeriod);
     }
 
+    /* ========== MUTATIVE FUNCTIONS ========== */
+    /**
+     * @notice Access point for the oracle to update the prices of havvens / eth.
+     * @param newEthPrice The current price of ether in USD, specified to 18 decimal places.
+     * @param newHavvenPrice The current price of havvens in USD, specified to 18 decimal places.
+     * @param timeSent The timestamp from the oracle when the transaction was created. This ensures we don't consider stale prices as current in times of heavy network congestion.
+     */
     function updatePrices(uint newEthPrice, uint newHavvenPrice, uint timeSent)
         external
         onlyOracle
     {
+        /* Must be the most recently sent price, but not too far in the future.
+         * (so we can't lock ourselves out of updating the oracle for longer than this) */
         require(lastPriceUpdateTime < timeSent && timeSent < now + ORACLE_FUTURE_LIMIT, 
             "Time sent must be bigger than the last update, and must be less than now + ORACLE_FUTURE_LIMIT");
 
@@ -1894,6 +3056,9 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         emit PricesUpdated(usdToEthPrice, usdToHavPrice, lastPriceUpdateTime);
     }
 
+    /**
+     * @notice Fallback function (exchanges ETH to nUSD)
+     */
     function ()
         external
         payable
@@ -1901,24 +3066,27 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         exchangeEtherForNomins();
     } 
 
+    /**
+     * @notice Exchange ETH to nUSD.
+     */
     function exchangeEtherForNomins()
         public 
         payable
         pricesNotStale
         notPaused
-        returns (uint) 
+        returns (uint) // Returns the number of Nomins (nUSD) received
     {
-        
-        
+        // The multiplication works here because usdToEthPrice is specified in
+        // 18 decimal places, just like our currency base.
         uint requestedToPurchase = safeMul_dec(msg.value, usdToEthPrice);
 
-        
+        // Store the ETH in our funds wallet
         fundsWallet.transfer(msg.value);
 
-        
-        
-        
-        
+        // Send the nomins.
+        // Note: Fees are calculated by the Nomin contract, so when 
+        //       we request a specific transfer here, the fee is
+        //       automatically deducted and sent to the fee pool.
         nomin.transfer(msg.sender, requestedToPurchase);
 
         emit Exchange("ETH", msg.value, "nUSD", requestedToPurchase);
@@ -1926,12 +3094,17 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         return requestedToPurchase;
     }
 
+    /**
+     * @notice Exchange ETH to nUSD while insisting on a particular rate. This allows a user to
+     *         exchange while protecting against frontrunning by the contract owner on the exchange rate.
+     * @param guaranteedRate The exchange rate (ether price) which must be honored or the call will revert.
+     */
     function exchangeEtherForNominsAtRate(uint guaranteedRate)
         public
         payable
         pricesNotStale
         notPaused
-        returns (uint) 
+        returns (uint) // Returns the number of Nomins (nUSD) received
     {
         require(guaranteedRate == usdToEthPrice);
 
@@ -1939,20 +3112,23 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
     }
 
 
+    /**
+     * @notice Exchange ETH to HAV.
+     */
     function exchangeEtherForHavvens()
         public 
         payable
         pricesNotStale
         notPaused
-        returns (uint) 
+        returns (uint) // Returns the number of Havvens (HAV) received
     {
-        
+        // How many Havvens are they going to be receiving?
         uint havvensToSend = havvensReceivedForEther(msg.value);
 
-        
+        // Store the ETH in our funds wallet
         fundsWallet.transfer(msg.value);
 
-        
+        // And send them the Havvens.
         havven.transfer(msg.sender, havvensToSend);
 
         emit Exchange("ETH", msg.value, "HAV", havvensToSend);
@@ -1960,12 +3136,18 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         return havvensToSend;
     }
 
+    /**
+     * @notice Exchange ETH to HAV while insisting on a particular set of rates. This allows a user to
+     *         exchange while protecting against frontrunning by the contract owner on the exchange rates.
+     * @param guaranteedEtherRate The ether exchange rate which must be honored or the call will revert.
+     * @param guaranteedHavvenRate The havven exchange rate which must be honored or the call will revert.
+     */
     function exchangeEtherForHavvensAtRate(uint guaranteedEtherRate, uint guaranteedHavvenRate)
         public
         payable
         pricesNotStale
         notPaused
-        returns (uint) 
+        returns (uint) // Returns the number of Havvens (HAV) received
     {
         require(guaranteedEtherRate == usdToEthPrice);
         require(guaranteedHavvenRate == usdToHavPrice);
@@ -1974,19 +3156,23 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
     }
 
 
+    /**
+     * @notice Exchange nUSD for Havvens
+     * @param nominAmount The amount of nomins the user wishes to exchange.
+     */
     function exchangeNominsForHavvens(uint nominAmount)
         public 
         pricesNotStale
         notPaused
-        returns (uint) 
+        returns (uint) // Returns the number of Havvens (HAV) received
     {
-        
+        // How many Havvens are they going to be receiving?
         uint havvensToSend = havvensReceivedForNomins(nominAmount);
         
-        
+        // Ok, transfer the Nomins to our address.
         nomin.transferFrom(msg.sender, this, nominAmount);
 
-        
+        // And send them the Havvens.
         havven.transfer(msg.sender, havvensToSend);
 
         emit Exchange("nUSD", nominAmount, "HAV", havvensToSend);
@@ -1994,41 +3180,59 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         return havvensToSend; 
     }
 
+    /**
+     * @notice Exchange nUSD for Havvens while insisting on a particular rate. This allows a user to
+     *         exchange while protecting against frontrunning by the contract owner on the exchange rate.
+     * @param nominAmount The amount of nomins the user wishes to exchange.
+     * @param guaranteedRate A rate (havven price) the caller wishes to insist upon.
+     */
     function exchangeNominsForHavvensAtRate(uint nominAmount, uint guaranteedRate)
         public 
         pricesNotStale
         notPaused
-        returns (uint) 
+        returns (uint) // Returns the number of Havvens (HAV) received
     {
         require(guaranteedRate == usdToHavPrice);
 
         return exchangeNominsForHavvens(nominAmount);
     }
     
+    /**
+     * @notice Allows the owner to withdraw havvens from this contract if needed.
+     * @param amount The amount of havvens to attempt to withdraw (in 18 decimal places).
+     */
     function withdrawHavvens(uint amount)
         external
         onlyOwner
     {
         havven.transfer(owner, amount);
         
-        
-        
-        
-        
+        // We don't emit our own events here because we assume that anyone
+        // who wants to watch what the Issuance Controller is doing can
+        // just watch ERC20 events from the Nomin and/or Havven contracts
+        // filtered to our address.
     }
 
+    /**
+     * @notice Withdraw nomins: Allows the owner to withdraw nomins from this contract if needed.
+     * @param amount The amount of nomins to attempt to withdraw (in 18 decimal places).
+     */
     function withdrawNomins(uint amount)
         external
         onlyOwner
     {
         nomin.transfer(owner, amount);
         
-        
-        
-        
-        
+        // We don't emit our own events here because we assume that anyone
+        // who wants to watch what the Issuance Controller is doing can
+        // just watch ERC20 events from the Nomin and/or Havven contracts
+        // filtered to our address.
     }
 
+    /* ========== VIEWS ========== */
+    /**
+     * @notice Check if the prices haven't been updated for longer than the stale period.
+     */
     function pricesAreStale()
         public
         view
@@ -2037,42 +3241,58 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         return safeAdd(lastPriceUpdateTime, priceStalePeriod) < now;
     }
 
+    /**
+     * @notice Calculate how many havvens you will receive if you transfer
+     *         an amount of nomins.
+     * @param amount The amount of nomins (in 18 decimal places) you want to ask about
+     */
     function havvensReceivedForNomins(uint amount)
         public 
         view
         returns (uint)
     {
-        
+        // How many nomins would we receive after the transfer fee?
         uint nominsReceived = nomin.amountReceived(amount);
 
-        
+        // And what would that be worth in havvens based on the current price?
         return safeDiv_dec(nominsReceived, usdToHavPrice);
     }
 
+    /**
+     * @notice Calculate how many havvens you will receive if you transfer
+     *         an amount of ether.
+     * @param amount The amount of ether (in wei) you want to ask about
+     */
     function havvensReceivedForEther(uint amount)
         public 
         view
         returns (uint)
     {
-        
+        // How much is the ETH they sent us worth in nUSD (ignoring the transfer fee)?
         uint valueSentInNomins = safeMul_dec(amount, usdToEthPrice); 
 
-        
+        // Now, how many HAV will that USD amount buy?
         return havvensReceivedForNomins(valueSentInNomins);
     }
 
+    /**
+     * @notice Calculate how many nomins you will receive if you transfer
+     *         an amount of ether.
+     * @param amount The amount of ether (in wei) you want to ask about
+     */
     function nominsReceivedForEther(uint amount)
         public 
         view
         returns (uint)
     {
-        
+        // How many nomins would that amount of ether be worth?
         uint nominsTransferred = safeMul_dec(amount, usdToEthPrice);
 
-        
+        // And how many of those would you receive after a transfer (deducting the transfer fee)
         return nomin.amountReceived(nominsTransferred);
     }
     
+    /* ========== MODIFIERS ========== */
 
     modifier onlyOracle
     {
@@ -2086,6 +3306,7 @@ contract IssuanceController is SafeDecimalMath, SelfDestructible, Pausable {
         _;
     }
 
+    /* ========== EVENTS ========== */
 
     event FundsWalletUpdated(address newFundsWallet);
     event OracleUpdated(address newOracle);

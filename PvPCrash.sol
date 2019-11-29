@@ -1,5 +1,36 @@
 pragma solidity ^0.4.25;
  
+/**
+*
+*  https://fairdapp.com/crash/  https://fairdapp.com/crash/   https://fairdapp.com/crash/
+*
+*
+*        _______     _       ______  _______ ______ ______  
+*       (_______)   (_)     (______)(_______|_____ (_____ \ 
+*        _____ _____ _  ____ _     _ _______ _____) )____) )
+*       |  ___|____ | |/ ___) |   | |  ___  |  ____/  ____/ 
+*       | |   / ___ | | |   | |__/ /| |   | | |    | |      
+*       |_|   \_____|_|_|   |_____/ |_|   |_|_|    |_|
+*       
+*        ______       ______     _______                  _     
+*       (_____ \     (_____ \   (_______)                | |    
+*        _____) )   _ _____) )   _        ____ _____  ___| |__  
+*       |  ____/ | | |  ____/   | |      / ___|____ |/___)  _ \ 
+*       | |     \ V /| |        | |_____| |   / ___ |___ | | | |
+*       |_|      \_/ |_|         \______)_|   \_____(___/|_| |_|
+*                                                        
+*   
+*  Warning: 
+*
+*  This contract is intented for entertainment purpose only.
+*  All could be lost by sending anything to this contract address. 
+*  All users are prohibited to interact with this contract if this 
+*  contract is in conflict with user’s local regulations or laws.   
+*  
+*  -Just another unique concept by the FairDAPP community.
+*  -The FIRST PvP Crash game ever created!  
+*
+*/
 
 contract FairExchange{
     function balanceOf(address _customerAddress) public view returns(uint256);
@@ -11,6 +42,9 @@ contract PvPCrash {
  
     using SafeMath for uint256;
     
+    /**
+     * @dev Modifiers
+     */
  
     modifier onlyOwner() {
         require(msg.sender == owner);
@@ -65,6 +99,9 @@ contract PvPCrash {
     PvPCrashFormula constant private pvpCrashFormula = PvPCrashFormula(0xe3c518815fE5f1e970F8fC5F2eFFcF2871be5C4d);
     
 
+    /**
+     * @dev Сonstructor Sets the original roles of the contract
+     */
  
     constructor() 
         public 
@@ -163,8 +200,11 @@ contract PvPCrash {
         emit FairTokenFallback(_from, _amountOfTokens, _data);
     }
  
+    /**
+     * @dev Investments
+     */
     function ()
-        
+        // gameStarted
         isHuman
         payable
         public
@@ -214,6 +254,9 @@ contract PvPCrash {
         
     }
     
+    /**
+    * @dev Withdraw dividends from contract
+    */
     function withdraw() 
         gasMin
         isHuman 
@@ -288,6 +331,10 @@ contract PvPCrash {
         return true;
     }
     
+    /**
+    * @dev Evaluate current balance
+    * @param _address Address of player
+    */
     function getBalance(address _address) 
         view 
         public 
@@ -314,6 +361,10 @@ contract PvPCrash {
         );
     }
     
+    /**
+    * @dev Gets balance of the sender address.
+    * @return An uint256 representing the amount owned by the msg.sender.
+    */
     function checkBalance() 
         view
         public  
@@ -322,6 +373,11 @@ contract PvPCrash {
         return getBalance(msg.sender);
     }
 
+    /**
+    * @dev Gets investments of the specified address.
+    * @param _investor The address to query the the balance of.
+    * @return An uint256 representing the amount owned by the passed address.
+    */
     function checkInvestments(address _investor) 
         view
         public  
@@ -353,6 +409,10 @@ interface PvPCrashFormula {
     function getAdditionalRewardRatio(uint256 _totalAmount, uint256 _tokens) external view returns(uint256);
 }
  
+/**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
 library SafeMath {
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
         if (a == 0) {
@@ -364,9 +424,9 @@ library SafeMath {
     }
  
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        assert(b > 0); 
+        assert(b > 0); // Solidity automatically throws when dividing by 0
         uint256 c = a / b;
-        assert(a == b * c + a % b); 
+        assert(a == b * c + a % b); // There is no case in which this doesn't hold
         return c;
     }
  

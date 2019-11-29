@@ -3,6 +3,9 @@ pragma solidity 0.4.21;
 
 library SafeMath {
 
+    /**
+    * @dev Multiplies two numbers, throws on overflow.
+    */
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
         if (a == 0) {
             return 0;
@@ -12,18 +15,27 @@ library SafeMath {
         return c;
     }
 
+    /**
+    * @dev Integer division of two numbers, truncating the quotient.
+    */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        
+        // assert(b > 0); // Solidity automatically throws when dividing by 0
         uint256 c = a / b;
-        
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
         return c;
     }
 
+    /**
+    * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+    */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
         assert(b <= a);
         return a - b;
     }
 
+    /**
+    * @dev Adds two numbers, throws on overflow.
+    */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
         assert(c >= a);
@@ -49,7 +61,7 @@ interface LandManagementInterface {
     function communityAddress() external view returns (address);
     function dividendManagerAddress() external view returns (address);
     function walletAddress() external view returns (address);
-    
+    //    function unicornTokenAddress() external view returns (address);
     function candyToken() external view returns (address);
     function megaCandyToken() external view returns (address);
     function userRankAddress() external view returns (address);
@@ -192,7 +204,7 @@ contract UserRank is LandAccessControl, CanReceiveApproval {
 
         allowedFuncs[bytes4(keccak256("_receiveBuyNextRank(address)"))] = true;
         allowedFuncs[bytes4(keccak256("_receiveBuyRank(address,uint256)"))] = true;
-        
+        //3350000000000000 for candy
 
         addRank(1,   36000000000000000000,   120600000000000000,"Cryptolord");
         addRank(5,   144000000000000000000,  482400000000000000,"Forklord");
@@ -215,7 +227,7 @@ contract UserRank is LandAccessControl, CanReceiveApproval {
 
 
     function addRank(uint _landLimit, uint _priceCandy, uint _priceEth, string _title) onlyOwner public  {
-        
+        //стоимость добавляемого должна быть не ниже предыдущего
         require(ranks[ranksCount].priceCandy <= _priceCandy && ranks[ranksCount].priceEth <= _priceEth);
         ranksCount++;
         Rank storage r = ranks[ranksCount];
@@ -363,7 +375,7 @@ contract UserRank is LandAccessControl, CanReceiveApproval {
 
 
     function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public {
-        
+        //require(_token == landManagement.candyToken());
         require(msg.sender == address(candyToken));
         require(allowedFuncs[bytesToBytes4(_extraData)]);
         require(address(this).call(_extraData));

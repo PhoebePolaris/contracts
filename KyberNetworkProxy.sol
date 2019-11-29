@@ -1,8 +1,8 @@
 pragma solidity 0.4.18;
 
+// File: contracts/ERC20Interface.sol
 
-
-
+// https://github.com/ethereum/EIPs/issues/20
 interface ERC20 {
     function totalSupply() public view returns (uint supply);
     function balanceOf(address _owner) public view returns (uint balance);
@@ -14,9 +14,9 @@ interface ERC20 {
     event Approval(address indexed _owner, address indexed _spender, uint _value);
 }
 
+// File: contracts/KyberNetworkInterface.sol
 
-
-
+/// @title Kyber Network interface
 interface KyberNetworkInterface {
     function maxGasPrice() public view returns(uint);
     function getUserCapInWei(address user) public view returns(uint);
@@ -31,9 +31,9 @@ interface KyberNetworkInterface {
         uint maxDestAmount, uint minConversionRate, address walletId, bytes hint) public payable returns(uint);
 }
 
+// File: contracts/KyberNetworkProxyInterface.sol
 
-
-
+/// @title Kyber Network interface
 interface KyberNetworkProxyInterface {
     function maxGasPrice() public view returns(uint);
     function getUserCapInWei(address user) public view returns(uint);
@@ -48,24 +48,24 @@ interface KyberNetworkProxyInterface {
         uint minConversionRate, address walletId, bytes hint) public payable returns(uint);
 }
 
+// File: contracts/SimpleNetworkInterface.sol
 
-
-
+/// @title simple interface for Kyber Network 
 interface SimpleNetworkInterface {
     function swapTokenToToken(ERC20 src, uint srcAmount, ERC20 dest, uint minConversionRate) public returns(uint);
     function swapEtherToToken(ERC20 token, uint minConversionRate) public payable returns(uint);
     function swapTokenToEther(ERC20 token, uint srcAmount, uint minConversionRate) public returns(uint);
 }
 
+// File: contracts/Utils.sol
 
-
-
+/// @title Kyber constants contract
 contract Utils {
 
     ERC20 constant internal ETH_TOKEN_ADDRESS = ERC20(0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee);
     uint  constant internal PRECISION = (10**18);
-    uint  constant internal MAX_QTY   = (10**28); 
-    uint  constant internal MAX_RATE  = (PRECISION * 10**6); 
+    uint  constant internal MAX_QTY   = (10**28); // 10B tokens
+    uint  constant internal MAX_RATE  = (PRECISION * 10**6); // up to 1M tokens per ETH
     uint  constant internal MAX_DECIMALS = 18;
     uint  constant internal ETH_DECIMALS = 18;
     mapping(address=>uint) internal decimals;
@@ -76,11 +76,11 @@ contract Utils {
     }
 
     function getDecimals(ERC20 token) internal view returns(uint) {
-        if (token == ETH_TOKEN_ADDRESS) return ETH_DECIMALS; 
+        if (token == ETH_TOKEN_ADDRESS) return ETH_DECIMALS; // save storage access
         uint tokenDecimals = decimals[token];
-        
-        
-        
+        // technically, there might be token with decimals 0
+        // moreover, very possible that old tokens have decimals 0
+        // these tokens will just have higher gas fees.
         if(tokenDecimals == 0) return token.decimals();
 
         return tokenDecimals;
@@ -103,7 +103,7 @@ contract Utils {
         require(dstQty <= MAX_QTY);
         require(rate <= MAX_RATE);
         
-        
+        //source quantity is rounded up. to avoid dest quantity being too low.
         uint numerator;
         uint denominator;
         if (srcDecimals >= dstDecimals) {
@@ -115,17 +115,17 @@ contract Utils {
             numerator = (PRECISION * dstQty);
             denominator = (rate * (10**(dstDecimals - srcDecimals)));
         }
-        return (numerator + denominator - 1) / denominator; 
+        return (numerator + denominator - 1) / denominator; //avoid rounding down errors
     }
 }
 
-
+// File: contracts/Utils2.sol
 
 contract Utils2 is Utils {
 
-    
-    
-    
+    /// @dev get the balance of a user.
+    /// @param token The token type
+    /// @return The balance
     function getBalance(ERC20 token, address user) public view returns(uint) {
         if (token == ETH_TOKEN_ADDRESS)
             return user.balance;
@@ -142,15 +142,16 @@ contract Utils2 is Utils {
         return decimals[token];
     }
 
-    
+    /// @dev notice, overrides previous implementation.
     function setDecimals(ERC20 token) internal {
         uint decimal;
 
         if (token == ETH_TOKEN_ADDRESS) {
             decimal = ETH_DECIMALS;
         } else {
-                
-                
+            if (!address(token).call(bytes4(keccak256("decimals()")))) {/* solhint-disable-line avoid-low-level-calls */
+                //above code can only be performed with low level call. otherwise all operation will revert.
+                // call failed
                 decimal = 18;
             } else {
                 decimal = token.decimals();
@@ -184,7 +185,7 @@ contract Utils2 is Utils {
     }
 }
 
-
+// File: contracts/PermissionGroups.sol
 
 contract PermissionGroups {
 
@@ -225,12 +226,20 @@ contract PermissionGroups {
 
     event TransferAdminPending(address pendingAdmin);
 
+    /**
+     * @dev Allows the current admin to set the pendingAdmin address.
+     * @param newAdmin The address to transfer ownership to.
+     */
     function transferAdmin(address newAdmin) public onlyAdmin {
         require(newAdmin != address(0));
         TransferAdminPending(pendingAdmin);
         pendingAdmin = newAdmin;
     }
 
+    /**
+     * @dev Allows the current admin to set the admin in one tx. Useful initial deployment.
+     * @param newAdmin The address to transfer ownership to.
+     */
     function transferAdminQuickly(address newAdmin) public onlyAdmin {
         require(newAdmin != address(0));
         TransferAdminPending(newAdmin);
@@ -240,6 +249,9 @@ contract PermissionGroups {
 
     event AdminClaimed( address newAdmin, address previousAdmin);
 
+    /**
+     * @dev Allows the pendingAdmin address to finalize the change admin process.
+     */
     function claimAdmin() public {
         require(pendingAdmin == msg.sender);
         AdminClaimed(pendingAdmin, admin);
@@ -250,7 +262,7 @@ contract PermissionGroups {
     event AlerterAdded (address newAlerter, bool isAdd);
 
     function addAlerter(address newAlerter) public onlyAdmin {
-        require(!alerters[newAlerter]); 
+        require(!alerters[newAlerter]); // prevent duplicates.
         require(alertersGroup.length < MAX_GROUP_SIZE);
 
         AlerterAdded(newAlerter, true);
@@ -275,7 +287,7 @@ contract PermissionGroups {
     event OperatorAdded(address newOperator, bool isAdd);
 
     function addOperator(address newOperator) public onlyAdmin {
-        require(!operators[newOperator]); 
+        require(!operators[newOperator]); // prevent duplicates.
         require(operatorsGroup.length < MAX_GROUP_SIZE);
 
         OperatorAdded(newOperator, true);
@@ -298,12 +310,22 @@ contract PermissionGroups {
     }
 }
 
+// File: contracts/Withdrawable.sol
 
-
+/**
+ * @title Contracts that should be able to recover tokens or ethers
+ * @author Ilan Doron
+ * @dev This allows to recover any tokens or Ethers received in a contract.
+ * This will prevent any accidental loss of tokens.
+ */
 contract Withdrawable is PermissionGroups {
 
     event TokenWithdraw(ERC20 token, uint amount, address sendTo);
 
+    /**
+     * @dev Withdraw all ERC20 compatible tokens
+     * @param token ERC20 The address of the token contract
+     */
     function withdrawToken(ERC20 token, uint amount, address sendTo) external onlyAdmin {
         require(token.transfer(sendTo, amount));
         TokenWithdraw(token, amount, sendTo);
@@ -311,16 +333,19 @@ contract Withdrawable is PermissionGroups {
 
     event EtherWithdraw(uint amount, address sendTo);
 
+    /**
+     * @dev Withdraw Ethers
+     */
     function withdrawEther(uint amount, address sendTo) external onlyAdmin {
         sendTo.transfer(amount);
         EtherWithdraw(amount, sendTo);
     }
 }
 
+// File: contracts/KyberNetworkProxy.sol
 
-
-
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @title Kyber Network proxy for main contract
 contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface, Withdrawable, Utils2 {
 
     KyberNetworkInterface public kyberNetworkContract;
@@ -330,16 +355,16 @@ contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface
         admin = _admin;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /// @notice use token address ETH_TOKEN_ADDRESS for ether
+    /// @dev makes a trade between src and dest token and send dest token to destAddress
+    /// @param src Src token
+    /// @param srcAmount amount of src tokens
+    /// @param dest   Destination token
+    /// @param destAddress Address to send tokens to
+    /// @param maxDestAmount A limit on the amount of dest tokens
+    /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade is canceled.
+    /// @param walletId is the wallet ID to send part of the fees
+    /// @return amount of actual dest tokens
     function trade(
         ERC20 src,
         uint srcAmount,
@@ -367,12 +392,12 @@ contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface
         );
     }
 
-    
-    
-    
-    
-    
-    
+    /// @dev makes a trade between src and dest token and send dest tokens to msg sender
+    /// @param src Src token
+    /// @param srcAmount amount of src tokens
+    /// @param dest Destination token
+    /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade is canceled.
+    /// @return amount of actual dest tokens
     function swapTokenToToken(
         ERC20 src,
         uint srcAmount,
@@ -396,10 +421,10 @@ contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface
         );
     }
 
-    
-    
-    
-    
+    /// @dev makes a trade from Ether to token. Sends token to msg sender
+    /// @param token Destination token
+    /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade is canceled.
+    /// @return amount of actual dest tokens
     function swapEtherToToken(ERC20 token, uint minConversionRate) public payable returns(uint) {
         bytes memory hint;
 
@@ -415,11 +440,11 @@ contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface
         );
     }
 
-    
-    
-    
-    
-    
+    /// @dev makes a trade from token to Ether, sends Ether to msg sender
+    /// @param token Src token
+    /// @param srcAmount amount of src tokens
+    /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade is canceled.
+    /// @return amount of actual dest tokens
     function swapTokenToEther(ERC20 token, uint srcAmount, uint minConversionRate) public returns(uint) {
         bytes memory hint;
 
@@ -442,17 +467,17 @@ contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface
 
     event ExecuteTrade(address indexed trader, ERC20 src, ERC20 dest, uint actualSrcAmount, uint actualDestAmount);
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /// @notice use token address ETH_TOKEN_ADDRESS for ether
+    /// @dev makes a trade between src and dest token and send dest token to destAddress
+    /// @param src Src token
+    /// @param srcAmount amount of src tokens
+    /// @param dest Destination token
+    /// @param destAddress Address to send tokens to
+    /// @param maxDestAmount A limit on the amount of dest tokens
+    /// @param minConversionRate The minimal conversion rate. If actual rate is lower, trade is canceled.
+    /// @param walletId is the wallet ID to send part of the fees
+    /// @param hint will give hints for the trade.
+    /// @return amount of actual dest tokens
     function tradeWithHint(
         ERC20 src,
         uint srcAmount,
@@ -562,7 +587,7 @@ contract KyberNetworkProxy is KyberNetworkProxyInterface, SimpleNetworkInterface
         userSrcBalanceAfter = getBalance(src, msg.sender);
         userDestBalanceAfter = getBalance(dest, destAddress);
 
-        
+        //protect from underflow
         require(userDestBalanceAfter > destBalanceBefore);
         require(srcBalanceBefore > userSrcBalanceAfter);
 

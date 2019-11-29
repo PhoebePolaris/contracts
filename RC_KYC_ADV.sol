@@ -65,26 +65,26 @@ contract tokenInterface {
 
 contract AtomaxKycInterface {
 
-    
+    // false if the ico is not started, true if the ico is started and running, true if the ico is completed
     function started() public view returns(bool);
 
-    
+    // false if the ico is not started, false if the ico is started and running, true if the ico is completed
     function ended() public view returns(bool);
 
-    
+    // time stamp of the starting time of the ico, must return 0 if it depends on the block number
     function startTime() public view returns(uint256);
 
-    
+    // time stamp of the ending time of the ico, must retrun 0 if it depends on the block number
     function endTime() public view returns(uint256);
 
-    
+    // returns the total number of the tokens available for the sale, must not change when the ico is started
     function totalTokens() public view returns(uint256);
 
-    
-    
+    // returns the number of the tokens available for the ico. At the moment that the ico starts it must be equal to totalTokens(),
+    // then it will decrease. It is used to calculate the percentage of sold tokens as remainingTokens() / totalTokens()
     function remainingTokens() public view returns(uint256);
 
-    
+    // return the price as number of tokens released for each ether
     function price() public view returns(uint256);
 }
 
@@ -97,11 +97,11 @@ contract AtomaxKyc {
     event KycVerified(address indexed signer, address buyerAddress, bytes32 buyerId, uint maxAmount);
 
     constructor() internal {
-        isKycSigner[0x9787295cdAb28b6640bc7e7db52b447B56b1b1f0] = true; 
-        isKycSigner[0x3b3f379e49cD95937121567EE696dB6657861FB0] = true; 
+        isKycSigner[0x9787295cdAb28b6640bc7e7db52b447B56b1b1f0] = true; //ATOMAX KYC 1 SIGNER
+        isKycSigner[0x3b3f379e49cD95937121567EE696dB6657861FB0] = true; //ATOMAX KYC 2 SIGNER
     }
 
-    
+    // Must be implemented in descending contract to assign tokens to the buyers. Called after the KYC verification is passed
     function releaseTokensTo(address buyer) internal returns(bool);
 
     
@@ -118,7 +118,7 @@ contract AtomaxKyc {
     }
 
     function buyImplementation(address _buyerAddress, bytes32 _buyerId, uint256 _maxAmount, uint8 _v, bytes32 _r, bytes32 _s) private returns (bool) {
-        
+        // check the signature
         bytes32 hash = hasher ( _buyerAddress,  _buyerId,  _maxAmount );
         address signer = ecrecover(hash, _v, _r, _s);
 		
@@ -153,9 +153,9 @@ contract RC_KYC_ADV is AtomaxKycInterface, AtomaxKyc {
     
     address public dad;
 	
-	mapping(address => uint256) public etherUser; 
-	mapping(address => uint256) public pendingTokenUser; 
-	mapping(address => uint256) public tokenUser; 
+	mapping(address => uint256) public etherUser; // address => ether amount
+	mapping(address => uint256) public pendingTokenUser; // address => token amount that will be claimed after KYC
+	mapping(address => uint256) public tokenUser; // address => token amount owned
 	
     constructor(address _tokenSaleContract, uint256 _tokenPrice, uint256 _remainingTokens, uint256 _etherMinimum, uint256 _startTime , uint256 _endTime, address _dad) public {
         require ( _tokenSaleContract != address(0), "_tokenSaleContract != address(0)" );
@@ -253,10 +253,10 @@ contract RC_KYC_ADV is AtomaxKycInterface, AtomaxKyc {
         if ( remainingTokensApplied < tokenAmount ) {
             refund = (tokenAmount - remainingTokensApplied).mul(tokenPrice).div(oneToken);
             tokenAmount = remainingTokensApplied;
-			remainingTokens = 0; 
+			remainingTokens = 0; // set remaining token to 0
             _buyer.transfer(refund);
         } else {
-			remainingTokens = remainingTokens.sub(tokenAmount); 
+			remainingTokens = remainingTokens.sub(tokenAmount); // update remaining token without bonus
         }
         
         etherUser[_buyer] = etherUser[_buyer].add(msg.value.sub(refund));
@@ -312,7 +312,7 @@ contract TokedoDaico is Ownable {
     }
     
     modifier onlyRC() {
-        require( rc[msg.sender], "rc[msg.sender]" ); 
+        require( rc[msg.sender], "rc[msg.sender]" ); //check if is an authorized rcContract
         _;
     }
     
@@ -409,7 +409,7 @@ contract MilestoneSystem {
                 "( now > startTimeMilestone && now < endTimeMilestone ) || ( now > startTimeProjectDeath && unclaimedFunds )" 
             );
         } else {
-            require( locked && now < endTimeToReturnTokens ); 
+            require( locked && now < endTimeToReturnTokens ); //a timeframePost to deposit all tokens and then claim the refundMe method
         }
         
         balance[_from][step] = balance[_from][step].add(_value);
@@ -503,8 +503,8 @@ contract MilestoneSystem {
         msg.sender.transfer(value);
     }
     
-    function ownerWithdrawTokens(address _tokenContract, address to, uint256 value) public onlyTokenSaleOwner returns (bool) { 
-        require( _tokenContract != address(tokenContract), "_tokenContract != address(tokenContract)"); 
+    function ownerWithdrawTokens(address _tokenContract, address to, uint256 value) public onlyTokenSaleOwner returns (bool) { //for airdrop reason to distribute to Tokedo Token Holder
+        require( _tokenContract != address(tokenContract), "_tokenContract != address(tokenContract)"); // the owner can withdraw tokens except Tokedo Tokens
         return tokenInterface(_tokenContract).transfer(to, value);
     }
     

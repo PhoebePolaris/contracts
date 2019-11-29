@@ -1,6 +1,13 @@
 pragma solidity ^0.4.23;
 
+/******* USING Registry **************************
 
+Gives the inherting contract access to:
+    .addressOf(bytes32): returns current address mapped to the name.
+    [modifier] .fromOwner(): requires the sender is owner.
+
+*************************************************/
+// Returned by .getRegistry()
 interface IRegistry {
     function owner() external view returns (address _addr);
     function addressOf(bytes32 _name) external view returns (address _addr);
@@ -46,6 +53,13 @@ contract UsingRegistry {
     }
 }
 
+/******* USING ADMIN ***********************
+
+Gives the inherting contract access to:
+    .getAdmin(): returns the current address of the admin
+    [modifier] .fromAdmin: requires the sender is the admin
+
+*************************************************/
 contract UsingAdmin is
     UsingRegistry
 {
@@ -68,7 +82,14 @@ contract UsingAdmin is
     }
 }
 
+/******* USING MONARCHYFACTORY **************************
 
+Gives the inherting contract access to:
+    .getPaf(): returns current IPaf instance
+    [modifier] .fromPaf(): requires the sender is current Paf.
+
+*************************************************/
+// Returned by .getMonarchyFactory()
 interface IMonarchyFactory {
     function lastCreatedGame() external view returns (address _game);
     function getCollector() external view returns (address _collector);
@@ -97,7 +118,14 @@ contract UsingMonarchyFactory is
 }
 
 
+/******* USING TREASURY **************************
 
+Gives the inherting contract access to:
+    .getTreasury(): returns current ITreasury instance
+    [modifier] .fromTreasury(): requires the sender is current Treasury
+
+*************************************************/
+// Returned by .getTreasury()
 interface ITreasury {
     function issueDividend() external returns (uint _profits);
     function profitsSendable() external view returns (uint _profits);
@@ -126,12 +154,20 @@ contract UsingTreasury is
 }
 
 
+/*
+    Exposes the following internal methods:
+        - _useFromDailyLimit(uint)
+        - _setDailyLimit(uint)
+        - getDailyLimit()
+        - getDailyLimitUsed()
+        - getDailyLimitUnused()
+*/
 contract HasDailyLimit {
-    
+    // squeeze all vars into one storage slot.
     struct DailyLimitVars {
-        uint112 dailyLimit; 
-        uint112 usedToday;  
-        uint32 lastDay;     
+        uint112 dailyLimit; // Up to 5e15 * 1e18.
+        uint112 usedToday;  // Up to 5e15 * 1e18.
+        uint32 lastDay;     // Up to the year 11,000,000 AD
     }
     DailyLimitVars private vars;
     uint constant MAX_ALLOWED = 2**112 - 1;
@@ -140,22 +176,22 @@ contract HasDailyLimit {
         _setDailyLimit(_limit);
     }
 
-    
+    // Sets the daily limit.
     function _setDailyLimit(uint _limit) internal {
         require(_limit <= MAX_ALLOWED);
         vars.dailyLimit = uint112(_limit);
     }
 
-    
-    
+    // Uses the requested amount if its within limit. Or throws.
+    // You should use getDailyLimitRemaining() before calling this.
     function _useFromDailyLimit(uint _amount) internal {
         uint _remaining = updateAndGetRemaining();
         require(_amount <= _remaining);
         vars.usedToday += uint112(_amount);
     }
 
-    
-    
+    // If necessary, resets the day's usage.
+    // Then returns the amount remaining for today.
     function updateAndGetRemaining() private returns (uint _amtRemaining) {
         if (today() > vars.lastDay) {
             vars.usedToday = 0;
@@ -163,19 +199,19 @@ contract HasDailyLimit {
         }
         uint112 _usedToday = vars.usedToday;
         uint112 _dailyLimit = vars.dailyLimit;
-        
+        // This could be negative if _dailyLimit was reduced.
         return uint(_usedToday >= _dailyLimit ? 0 : _dailyLimit - _usedToday);
     }
 
-    
+    // Returns the current day.
     function today() private view returns (uint32) {
         return uint32(block.timestamp / 1 days);
     }
 
 
-    
-    
-    
+    /////////////////////////////////////////////////////////////////
+    ////////////// PUBLIC VIEWS /////////////////////////////////////
+    /////////////////////////////////////////////////////////////////
 
     function getDailyLimit() public view returns (uint) {
         return uint(vars.dailyLimit);
@@ -189,10 +225,30 @@ contract HasDailyLimit {
     }
 }
 
-contract Ledger {
-    uint public total;      
+/**
+    This is a simple class that maintains a doubly linked list of
+    address => uint amounts. Address balances can be added to 
+    or removed from via add() and subtract(). All balances can
+    be obtain by calling balances(). If an address has a 0 amount,
+    it is removed from the Ledger.
 
-    struct Entry {          
+    Note: THIS DOES NOT TEST FOR OVERFLOWS, but it's safe to
+          use to track Ether balances.
+
+    Public methods:
+      - [fromOwner] add()
+      - [fromOwner] subtract()
+    Public views:
+      - total()
+      - size()
+      - balanceOf()
+      - balances()
+      - entries() [to manually iterate]
+*/
+contract Ledger {
+    uint public total;      // Total amount in Ledger
+
+    struct Entry {          // Doubly linked list tracks amount per address
         uint balance;
         address next;
         address prev;
@@ -202,7 +258,7 @@ contract Ledger {
     address public owner;
     modifier fromOwner() { require(msg.sender==owner); _; }
 
-    
+    // Constructor sets the owner
     constructor(address _owner)
         public
     {
@@ -210,6 +266,9 @@ contract Ledger {
     }
 
 
+    /******************************************************/
+    /*************** OWNER METHODS ************************/
+    /******************************************************/
 
     function add(address _address, uint _amt)
         fromOwner
@@ -218,13 +277,13 @@ contract Ledger {
         if (_address == address(0) || _amt == 0) return;
         Entry storage entry = entries[_address];
 
-        
+        // If new entry, replace first entry with this one.
         if (entry.balance == 0) {
             entry.next = entries[0x0].next;
             entries[entries[0x0].next].prev = _address;
             entries[0x0].next = _address;
         }
-        
+        // Update stats.
         total += _amt;
         entry.balance += _amt;
     }
@@ -241,14 +300,14 @@ contract Ledger {
         if (_maxAmt == 0) return;
         
         if (_amt >= _maxAmt) {
-            
+            // Subtract the max amount, and delete entry.
             total -= _maxAmt;
             entries[entry.prev].next = entry.next;
             entries[entry.next].prev = entry.prev;
             delete entries[_address];
             return _maxAmt;
         } else {
-            
+            // Subtract the amount from entry.
             total -= _amt;
             entry.balance -= _amt;
             return _amt;
@@ -256,13 +315,16 @@ contract Ledger {
     }
 
 
+    /******************************************************/
+    /*************** PUBLIC VIEWS *************************/
+    /******************************************************/
 
     function size()
         public
         view
         returns (uint _size)
     {
-        
+        // Loop once to get the total count.
         Entry memory _curEntry = entries[0x0];
         while (_curEntry.next > 0) {
             _curEntry = entries[_curEntry.next];
@@ -284,7 +346,7 @@ contract Ledger {
         view
         returns (address[] _addresses, uint[] _balances)
     {
-        
+        // Populate names and addresses
         uint _size = size();
         _addresses = new address[](_size);
         _balances = new uint[](_size);
@@ -300,9 +362,22 @@ contract Ledger {
     }
 }
 
+/**
+    This is a simple class that maintains a doubly linked list of
+    addresses it has seen. Addresses can be added and removed
+    from the set, and a full list of addresses can be obtained.
+
+    Methods:
+     - [fromOwner] .add()
+     - [fromOwner] .remove()
+    Views:
+     - .size()
+     - .has()
+     - .addresses()
+*/
 contract AddressSet {
     
-    struct Entry {  
+    struct Entry {  // Doubly linked list
         bool exists;
         address next;
         address prev;
@@ -312,7 +387,7 @@ contract AddressSet {
     address public owner;
     modifier fromOwner() { require(msg.sender==owner); _; }
 
-    
+    // Constructor sets the owner.
     constructor(address _owner)
         public
     {
@@ -320,23 +395,26 @@ contract AddressSet {
     }
 
 
+    /******************************************************/
+    /*************** OWNER METHODS ************************/
+    /******************************************************/
 
     function add(address _address)
         fromOwner
         public
         returns (bool _didCreate)
     {
-        
+        // Do not allow the adding of HEAD.
         if (_address == address(0)) return;
         Entry storage entry = entries[_address];
-        
+        // If already exists, do nothing. Otherwise set it.
         if (entry.exists) return;
         else entry.exists = true;
 
-        
-        
-        
-        
+        // Replace first entry with this one.
+        // Before: HEAD <-> X <-> Y
+        // After: HEAD <-> THIS <-> X <-> Y
+        // do: THIS.NEXT = [0].next; [0].next.prev = THIS; [0].next = THIS; THIS.prev = 0;
         Entry storage HEAD = entries[0x0];
         entry.next = HEAD.next;
         entries[HEAD.next].prev = _address;
@@ -349,16 +427,16 @@ contract AddressSet {
         public
         returns (bool _didExist)
     {
-        
+        // Do not allow the removal of HEAD.
         if (_address == address(0)) return;
         Entry storage entry = entries[_address];
-        
+        // If it doesn't exist already, there is nothing to do.
         if (!entry.exists) return;
 
-        
-        
-        
-        
+        // Stitch together next and prev, delete entry.
+        // Before: X <-> THIS <-> Y
+        // After: X <-> Y
+        // do: THIS.next.prev = this.prev; THIS.prev.next = THIS.next;
         entries[entry.prev].next = entry.next;
         entries[entry.next].prev = entry.prev;
         delete entries[_address];
@@ -366,13 +444,16 @@ contract AddressSet {
     }
 
 
+    /******************************************************/
+    /*************** PUBLIC VIEWS *************************/
+    /******************************************************/
 
     function size()
         public
         view
         returns (uint _size)
     {
-        
+        // Loop once to get the total count.
         Entry memory _curEntry = entries[0x0];
         while (_curEntry.next > 0) {
             _curEntry = entries[_curEntry.next];
@@ -394,10 +475,10 @@ contract AddressSet {
         view
         returns (address[] _addresses)
     {
-        
+        // Populate names and addresses
         uint _size = size();
         _addresses = new address[](_size);
-        
+        // Iterate forward through all entries until the end.
         uint _i = 0;
         Entry memory _curEntry = entries[0x0];
         while (_curEntry.next > 0) {
@@ -410,16 +491,40 @@ contract AddressSet {
 }
 
 
+/**
+  A simple class that manages bankroll, and maintains collateral.
+  This class only ever sends profits the Treasury. No exceptions.
+
+  - Anybody can add funding (according to whitelist)
+  - Anybody can tell profits (balance - (funding + collateral)) to go to Treasury.
+  - Anyone can remove their funding, so long as balance >= collateral.
+  - Whitelist is managed by getWhitelistOwner() -- typically Admin.
+
+  Exposes the following:
+    Public Methods
+     - addBankroll
+     - removeBankroll
+     - sendProfits
+    Public Views
+     - getCollateral
+     - profits
+     - profitsSent
+     - profitsTotal
+     - bankroll
+     - bankrollAvailable
+     - bankrolledBy
+     - bankrollerTable
+*/
 contract Bankrollable is
     UsingTreasury
 {   
-    
+    // How much profits have been sent. 
     uint public profitsSent;
-    
+    // Ledger keeps track of who has bankrolled us, and for how much
     Ledger public ledger;
-    
+    // This is a copy of ledger.total(), to save gas in .bankrollAvailable()
     uint public bankroll;
-    
+    // This is the whitelist of who can call .addBankroll()
     AddressSet public whitelist;
 
     modifier fromWhitelistOwner(){
@@ -433,7 +538,7 @@ contract Bankrollable is
     event AddedToWhitelist(uint time, address indexed addr, address indexed wlOwner);
     event RemovedFromWhitelist(uint time, address indexed addr, address indexed wlOwner);
 
-    
+    // Constructor creates the ledger and whitelist, with self as owner.
     constructor(address _registry)
         UsingTreasury(_registry)
         public
@@ -443,6 +548,9 @@ contract Bankrollable is
     }
 
 
+    /*****************************************************/
+    /************** WHITELIST MGMT ***********************/
+    /*****************************************************/    
 
     function addToWhitelist(address _addr)
         fromWhitelistOwner
@@ -460,11 +568,14 @@ contract Bankrollable is
         if (_didRemove) emit RemovedFromWhitelist(now, _addr, msg.sender);
     }
 
+    /*****************************************************/
+    /************** PUBLIC FUNCTIONS *********************/
+    /*****************************************************/
 
-    
+    // Bankrollable contracts should be payable (to receive revenue)
     function () public payable {}
 
-    
+    // Increase funding by whatever value is sent
     function addBankroll()
         public
         payable 
@@ -475,19 +586,19 @@ contract Bankrollable is
         emit BankrollAdded(now, msg.sender, msg.value, bankroll);
     }
 
-    
+    // Removes up to _amount from Ledger, and sends it to msg.sender._callbackFn
     function removeBankroll(uint _amount, string _callbackFn)
         public
         returns (uint _recalled)
     {
-        
+        // cap amount at the balance minus collateral, or nothing at all.
         address _bankroller = msg.sender;
         uint _collateral = getCollateral();
         uint _balance = address(this).balance;
         uint _available = _balance > _collateral ? _balance - _collateral : 0;
         if (_amount > _available) _amount = _available;
 
-        
+        // Try to remove _amount from ledger, get actual _amount removed.
         _amount = ledger.subtract(_bankroller, _amount);
         bankroll = ledger.total();
         if (_amount == 0) return;
@@ -498,7 +609,7 @@ contract Bankrollable is
         return _amount;
     }
 
-    
+    // Send any excess profits to treasury.
     function sendProfits()
         public
         returns (uint _profits)
@@ -507,27 +618,30 @@ contract Bankrollable is
         if (_p <= 0) return;
         _profits = uint(_p);
         profitsSent += _profits;
-        
+        // Send profits to Treasury
         address _tr = getTreasury();
         require(_tr.call.value(_profits)());
         emit ProfitsSent(now, _tr, _profits);
     }
 
 
+    /*****************************************************/
+    /************** PUBLIC VIEWS *************************/
+    /*****************************************************/
 
-    
+    // Function must be overridden by inheritors to ensure collateral is kept.
     function getCollateral()
         public
         view
         returns (uint _amount);
 
-    
+    // Function must be overridden by inheritors to enable whitelist control.
     function getWhitelistOwner()
         public
         view
         returns (address _addr);
 
-    
+    // Profits are the difference between balance and threshold
     function profits()
         public
         view
@@ -538,7 +652,7 @@ contract Bankrollable is
         return _balance - _threshold;
     }
 
-    
+    // How profitable this contract is, overall
     function profitsTotal()
         public
         view
@@ -547,10 +661,10 @@ contract Bankrollable is
         return int(profitsSent) + profits();
     }
 
-    
-    
-    
-    
+    // Returns the amount that can currently be bankrolled.
+    //   - 0 if balance < collateral
+    //   - If profits: full bankroll
+    //   - If no profits: remaning bankroll: balance - collateral
     function bankrollAvailable()
         public
         view
@@ -559,11 +673,11 @@ contract Bankrollable is
         uint _balance = address(this).balance;
         uint _bankroll = bankroll;
         uint _collat = getCollateral();
-        
+        // Balance is below collateral!
         if (_balance <= _collat) return 0;
-        
+        // No profits, but we have a balance over collateral.
         else if (_balance < _collat + _bankroll) return _balance - _collat;
-        
+        // Profits. Return only _bankroll
         else return _bankroll;
     }
 
@@ -584,7 +698,7 @@ contract Bankrollable is
     }
 }
 
-
+// An interface to MonarchyGame instances.
 interface IMonarchyGame {
     function sendPrize(uint _gasLimit) external returns (bool _success, uint _prizeSent);
     function sendFees() external returns (uint _feesSent);
@@ -596,6 +710,22 @@ interface IMonarchyGame {
     function isPaid() external view returns (bool _bool);
 }
 
+/*
+
+  MonarchyController manages a list of PredefinedGames.
+  PredefinedGames' parameters are definable by the Admin.
+  These gamess can be started, ended, or refreshed by anyone.
+
+  Starting games uses the funds in this contract, unless called via
+  .startDefinedGameManually(), in which case it uses the funds sent.
+
+  All revenues of any started games will come back to this contract.
+
+  Since this contract inherits Bankrollable, it is able to be funded
+  via the Registry (or by anyone whitelisted). Profits will go to the
+  Treasury, and can be triggered by anyone.
+
+*/
 contract MonarchyController is
     HasDailyLimit,
     Bankrollable,
@@ -604,25 +734,25 @@ contract MonarchyController is
 {
     uint constant public version = 1;
 
-    
+    // just some accounting/stats stuff to keep track of
     uint public totalFees;
     uint public totalPrizes;
     uint public totalOverthrows;
     IMonarchyGame[] public endedGames;
 
-    
-    
+    // An admin-controlled index of available games.
+    // Note: Index starts at 1, and is limited to 20.
     uint public numDefinedGames;
     mapping (uint => DefinedGame) public definedGames;
     struct DefinedGame {
-        IMonarchyGame game;     
-        bool isEnabled;         
-        string summary;         
-        uint initialPrize;      
-        uint fee;               
-        int prizeIncr;          
-        uint reignBlocks;       
-        uint initialBlocks;     
+        IMonarchyGame game;     // address of ongoing game (or 0)
+        bool isEnabled;         // if true, can be started
+        string summary;         // definable via editDefinedGame
+        uint initialPrize;      // definable via editDefinedGame
+        uint fee;               // definable via editDefinedGame
+        int prizeIncr;          // definable via editDefinedGame
+        uint reignBlocks;       // definable via editDefinedGame
+        uint initialBlocks;     // definable via editDefinedGame
     }
 
     event Created(uint time);
@@ -646,6 +776,9 @@ contract MonarchyController is
         emit Created(now);
     }
 
+    /*************************************************************/
+    /******** OWNER FUNCTIONS ************************************/
+    /*************************************************************/
 
     function setDailyLimit(uint _amount)
         public
@@ -656,8 +789,11 @@ contract MonarchyController is
     }
 
 
+    /*************************************************************/
+    /******** ADMIN FUNCTIONS ************************************/
+    /*************************************************************/
 
-    
+    // allows admin to edit or add an available game
     function editDefinedGame(
         uint _index,
         string _summary,
@@ -702,20 +838,23 @@ contract MonarchyController is
     }
 
 
+    /*************************************************************/
+    /******* PUBLIC FUNCTIONS ************************************/
+    /*************************************************************/
 
     function () public payable {
          totalFees += msg.value;
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // This is called by anyone when a new MonarchyGame should be started.
+    // In reality will only be called by TaskManager.
+    //
+    // Errors if:
+    //      - isEnabled is false (or doesnt exist)
+    //      - game is already started
+    //      - not enough funds
+    //      - PAF.getCollector() points to another address
+    //      - unable to create game
     function startDefinedGame(uint _index)
         public
         returns (address _game)
@@ -742,14 +881,14 @@ contract MonarchyController is
             return;
         }
 
-        
+        // Ensure that if this game is started, revenue comes back to this contract.
         IMonarchyFactory _mf = getMonarchyFactory();
         if (_mf.getCollector() != address(this)){
             _error("MonarchyFactory.getCollector() points to a different contract.");
             return;
         }
 
-        
+        // Try to create game via factory.
         bool _success = address(_mf).call.value(dGame.initialPrize)(
             bytes4(keccak256("createGame(uint256,uint256,int256,uint256,uint256)")),
             dGame.initialPrize,
@@ -764,14 +903,14 @@ contract MonarchyController is
             return;
         }
 
-        
+        // Get the game, add it to definedGames, and return.
         _useFromDailyLimit(dGame.initialPrize);
         _game = _mf.lastCreatedGame();
         definedGames[_index].game = IMonarchyGame(_game);
         emit GameStarted(now, _index, _game, dGame.initialPrize);
         return _game;
     }
-        
+        // Emits an error with a given message
         function _error(string _msg)
             private
         {
@@ -783,7 +922,7 @@ contract MonarchyController is
         payable
         returns (address _game)
     {
-        
+        // refund if invalid value sent.
         DefinedGame memory dGame = definedGames[_index];
         if (msg.value != dGame.initialPrize) {
             _error("Value sent does not match initialPrize.");
@@ -791,16 +930,16 @@ contract MonarchyController is
             return;
         }
 
-        
+        // refund if .startDefinedGame fails
         _game = startDefinedGame(_index);
         if (_game == address(0)) {
             require(msg.sender.call.value(msg.value)());
         }
     }
 
-    
-    
-    
+    // Looks at all active defined games and:
+    //  - tells each game to send fees to collector (us)
+    //  - if ended: tries to pay winner, moves to endedGames
     function refreshGames()
         public
         returns (uint _numGamesEnded, uint _feesCollected)
@@ -809,21 +948,21 @@ contract MonarchyController is
             IMonarchyGame _game = definedGames[_i].game;
             if (_game == IMonarchyGame(0)) continue;
 
-            
+            // redeem the fees
             uint _fees = _game.sendFees();
             _feesCollected += _fees;
 
-            
+            // attempt to pay winner, update stats, and set game to empty.
             if (_game.isEnded()) {
-                
-                
+                // paying the winner can error if the winner uses too much gas
+                // in that case, they can call .sendPrize() themselves later.
                 if (!_game.isPaid()) _game.sendPrize(2300);
                 
-                
+                // update stats
                 totalPrizes += _game.prize();
                 totalOverthrows += _game.numOverthrows();
 
-                
+                // clear game, move to endedGames, update return
                 definedGames[_i].game = IMonarchyGame(0);
                 endedGames.push(_game);
                 _numGamesEnded++;
@@ -836,7 +975,10 @@ contract MonarchyController is
     }
 
 
-    
+    /*************************************************************/
+    /*********** PUBLIC VIEWS ************************************/
+    /*************************************************************/
+    // IMPLEMENTS: Bankrollable.getCollateral()
     function getCollateral() public view returns (uint) { return 0; }
     function getWhitelistOwner() public view returns (address){ return getAdmin(); }
 
@@ -881,7 +1023,7 @@ contract MonarchyController is
         }
     }
 
-    
+    // Gets total amount of fees that are redeemable if refreshGames() is called.
     function getAvailableFees()
         public
         view
@@ -899,12 +1041,12 @@ contract MonarchyController is
         view
         returns (address[] _addresses)
     {
-        
+        // set _num to Min(_num, _len), initialize the array
         uint _len = endedGames.length;
         if (_num > _len) _num = _len;
         _addresses = new address[](_num);
 
-        
+        // Loop _num times, adding from end of endedGames.
         uint _i = 1;
         while (_i <= _num) {
             _addresses[_i - 1] = endedGames[_len - _i];
@@ -912,6 +1054,7 @@ contract MonarchyController is
         }
     }
 
+    /******** Shorthand access to definedGames **************************/
     function getGame(uint _index)
         public
         view
@@ -949,4 +1092,5 @@ contract MonarchyController is
         if (dGame.initialPrize > getDailyLimitRemaining()) return;
         return true;
     }
+    /******** Shorthand access to definedGames **************************/
 }

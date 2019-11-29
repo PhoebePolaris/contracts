@@ -1,8 +1,8 @@
 pragma solidity ^0.4.21;
 
-
-
-
+// It makes multiple ERC20 (even ERC223) transaction in one.
+// Need to deposit before spread
+// Transfer to this contract is available as deposit
 contract Airdroper {
     mapping (address => mapping (address => uint)) balances;
 
@@ -28,7 +28,7 @@ contract Airdroper {
     }
 
     function deposit(address _token, uint _amount) public returns (bool) {
-        
+        // 0x23b872dd is function signature of `transferFrom(address,address,uint256)`
         require(_token.call(0x23b872dd, msg.sender, this, _amount));
         balances[_token][msg.sender] = addit(balances[_token][msg.sender], _amount);
         return true;
@@ -42,7 +42,7 @@ contract Airdroper {
         uint l = _addresses.length;
         for (uint i = 0; i < l; i++) {
             require(balances[_token][tx.origin] >= _amounts[i]);
-            
+            // 0xa9059cbb is function signature of `transfer(address,uint256)`
             require(_token.call(0xa9059cbb, _addresses[i], _amounts[i]));
             balances[_token][tx.origin] = subtr(balances[_token][tx.origin], _amounts[i]);
         }

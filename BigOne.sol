@@ -1,4 +1,40 @@
 pragma solidity ^0.4.24;
+/*
+*　　　　　　　　　　　　　　　　　　　　 　 　 ＿＿＿
+*　　　　　　　　　　　　　　　　　　　　　　　|三三三i
+*　　　　　　　　　　　　　　　　　　　　　　　|三三三|  
+*　　神さま　かなえて　happy-end　　　　　　ノ三三三.廴        
+*　　　　　　　　　　　　　　　　　　　　　　从ﾉ_八ﾑ_}ﾉ
+*　　　＿＿}ヽ__　　　　　　　　　　 　 　 　 ヽ‐个‐ｱ.     © Team EC Present. 
+*　　 　｀ﾋｙ　　ﾉ三ﾆ==ｪ- ＿＿＿ ｨｪ=ｧ='ﾌ)ヽ-''Lヽ         
+*　　　　 ｀‐⌒L三ﾆ=ﾆ三三三三三三三〈oi 人 ）o〉三ﾆ、　　　 
+*　　　　　　　　　　 　 ｀￣￣￣￣｀弌三三}. !　ｒ三三三iｊ　　　　　　
+*　　　　　　　　　　 　 　 　 　 　 　,': ::三三|. ! ,'三三三刈、
+*　　　　　　　　　 　 　 　 　 　 　 ,': : :::｀i三|人|三三ﾊ三j: ;　　　　　
+*　                  　　　　　　 ,': : : : : 比|　 |三三i |三|: ',
+*　　　　　　　　　　　　　　　　　,': : : : : : :Vi|　 |三三i |三|: : ',
+*　　　　　　　　　　　　　　　　, ': : : : : : : ﾉ }乂{三三| |三|: : :;
+*    BigOne Game v0.1　　  ,': : : : : : : : ::ｊ三三三三|: |三i: : ::,
+*　　　　　　　　　　　 　 　 ,': : : : : : : : :/三三三三〈: :!三!: : ::;
+*　　　　　　　　　 　 　 　 ,': : : : : : : : /三三三三三!, |三!: : : ,
+*　　　　　　　 　 　 　 　 ,': : : : : : : : ::ｊ三三八三三Y {⌒i: : : :,
+*　　　　　　　　 　 　 　 ,': : : : : : : : : /三//: }三三ｊ: : ー': : : : ,
+*　　　　　　 　 　 　 　 ,': : : : : : : : :.//三/: : |三三|: : : : : : : : :;
+*　　　　 　 　 　 　 　 ,': : : : : : : : ://三/: : : |三三|: : : : : : : : ;
+*　　 　 　 　 　 　 　 ,': : : : : : : : :/三ii/ : : : :|三三|: : : : : : : : :;
+*　　　 　 　 　 　 　 ,': : : : : : : : /三//: : : : ::!三三!: : : : : : : : ;
+*　　　　 　 　 　 　 ,': : : : : : : : :ｊ三// : : : : ::|三三!: : : : : : : : :;
+*　　 　 　 　 　 　 ,': : : : : : : : : |三ij: : : : : : ::ｌ三ﾆ:ｊ: : : : : : : : : ;
+*　　　 　 　 　 　 ,': : : : : : : : ::::|三ij: : : : : : : !三刈: : : : : : : : : ;
+*　 　 　 　 　 　 ,': : : : : : : : : : :|三ij: : : : : : ::ｊ三iiﾃ: : : : : : : : : :;
+*　　 　 　 　 　 ,': : : : : : : : : : : |三ij: : : : : : ::|三iiﾘ: : : : : : : : : : ;
+*　　　 　 　 　 ,':: : : : : : : : : : : :|三ij::: : :: :: :::|三リ: : : : : : : : : : :;
+*　　　　　　　 ,': : : : : : : : : : : : :|三ij : : : : : ::ｌ三iﾘ: : : : : : : : : : : ',
+*           　　　　　　　　　　　　　　   ｒ'三三jiY, : : : : : ::|三ij : : : : : : : : : : : ',
+*　 　 　 　 　 　      　　                |三 j´　　　　　　　　｀',    signature:
+*　　　　　　　　　　　　 　 　 　 　 　 　 　  |三三k、
+*                            　　　　　　　　｀ー≠='.  93511761c3aa73c0a197c55537328f7f797c4429 
+*/
 contract BigOneEvents {
     event onNewPlayer
     (
@@ -58,9 +94,9 @@ contract BigOne is BigOneEvents {
 
     UserDataManagerInterface constant private UserDataManager = UserDataManagerInterface(0x2E1c02A6Bc5fC77bfc740A505000846545193Beb);
 
-    
-    
-    
+    //****************
+    // constant
+    //****************
     address private admin = msg.sender;
     address private shareCom = 0x2F0839f736197117796967452310F025a330DA45;
     address private groupCut = 0x9ebfB7a9105124204E4E18BE73B2B1979aDbc713;
@@ -68,40 +104,40 @@ contract BigOne is BigOneEvents {
     string constant public name = "bigOne";
     string constant public symbol = "bigOne";   
 
-    
-    
-    
+    //****************
+    // var
+    //****************
     uint256 public rID_;    
     uint256 public rTypeID_;   
-    
-    
-    
-    mapping (address => uint256) public pIDxAddr_;          
-    mapping (bytes32 => uint256) public pIDxName_;          
-    mapping (uint256 => BigOneData.Player) public plyr_;   
-    mapping (uint256 => mapping (uint256 => BigOneData.PlayerRoundData)) public plyrRnds_;   
+    //****************
+    // PLAYER DATA
+    //****************
+    mapping (address => uint256) public pIDxAddr_;          // (addr => pID) returns player id by address
+    mapping (bytes32 => uint256) public pIDxName_;          // (name => pID) returns player id by name
+    mapping (uint256 => BigOneData.Player) public plyr_;   // (pID => data) player data
+    mapping (uint256 => mapping (uint256 => BigOneData.PlayerRoundData)) public plyrRnds_;   // (pID => rID => data) 
 
-    
-    
-    
-    mapping (uint256 => BigOneData.RoundSetting) public rSettingXTypeID_;   
-    mapping (uint256 => BigOneData.Round) public round_;   
+    //****************
+    // ROUND DATA
+    //****************
+    mapping (uint256 => BigOneData.RoundSetting) public rSettingXTypeID_;   //(rType => setting)
+    mapping (uint256 => BigOneData.Round) public round_;   // (rID => data) round data
     mapping (uint256 => uint256) public currentRoundxType_;
 
-    mapping (uint256 => address[]) private winners_; 
-    mapping (uint256 => uint256[]) private winNumbers_; 
+    mapping (uint256 => address[]) private winners_; //(rType => winners_)
+    mapping (uint256 => uint256[]) private winNumbers_; //(rType => winNumbers_)
 
-    
-    
-    
+    //==============================================================================
+    // init
+    //==============================================================================
     constructor() public {
         rID_ = 0;
         rTypeID_ = 0;
     }
 
-    
-    
-    
+    //==============================================================================
+    // checks
+    //==============================================================================
     modifier isActivated() {
         require(activated_ == true, "its not ready yet.  check ?eta in discord");
         _;
@@ -133,9 +169,9 @@ contract BigOne is BigOneEvents {
         _;
     }
 
-    
-    
-    
+    //==============================================================================
+    // admin
+    //==============================================================================
     bool public activated_ = false;
     function activate()
         onlyDevs()
@@ -169,9 +205,9 @@ contract BigOne is BigOneEvents {
         rSettingXTypeID_[rTypeID_].isValue = true;
     }
 
-    
-    
-    
+    //==============================================================================
+    // public
+    //==============================================================================
 
     function()
         isActivated()
@@ -336,23 +372,23 @@ contract BigOne is BigOneEvents {
         isHuman()
         public
     {
-        
+        // grab time
         uint256 _now = now;
 
-        
+        // fetch player ID
         uint256 _pID = pIDxAddr_[msg.sender];
 
-        
+        // setup temp var for player eth
         uint256 _eth;
         uint256 _withdrawFee;
     
-        
+        // get their earnings
         _eth = withdrawEarnings(_pID);
 
-        
+        // gib moni
         if (_eth > 0)
         {
-            
+            //10% trade tax
             _withdrawFee = _eth / 10;
             uint256 _p1 = _withdrawFee / 2;
             uint256 _p2 = _withdrawFee / 2;
@@ -362,7 +398,7 @@ contract BigOne is BigOneEvents {
             plyr_[_pID].addr.transfer(_eth.sub(_withdrawFee));
         }
 
-        
+        // fire withdraw event
         emit BigOneEvents.onWithdraw(_pID, msg.sender, plyr_[_pID].name, _eth, _now);
     }
 
@@ -411,9 +447,9 @@ contract BigOne is BigOneEvents {
         emit BigOneEvents.onNewPlayer(_pID, _addr, _name, _isNewPlayer, _affID, plyr_[_affID].addr, plyr_[_affID].name, _paid, now);
     }
 
-
-
-
+//==============================================================================
+// query
+//==============================================================================
 
     function iWantXKeys(uint256 _keys,uint256 _mode)
         modeCheck(_mode)
@@ -445,7 +481,7 @@ contract BigOne is BigOneEvents {
     function getPlayerVaults(uint256 _pID)
         public
         view
-        
+        //win,gen,aff
         returns(uint256,uint256,uint256)
     {
         return (plyr_[_pID].win,plyr_[_pID].gen,plyr_[_pID].aff);
@@ -461,18 +497,18 @@ contract BigOne is BigOneEvents {
 
         return 
         (
-            _rID,                           
-            round_[_rID].count,             
-            round_[_rID].keyCount,          
+            _rID,                           //0
+            round_[_rID].count,             //1            
+            round_[_rID].keyCount,          //2
 
-            round_[_rID].start,              
-            round_[_rID].end,               
+            round_[_rID].start,              //3
+            round_[_rID].end,               //4
 
-            round_[_rID].eth,               
-            round_[_rID].pot,               
+            round_[_rID].eth,               //5    
+            round_[_rID].pot,               //6
 
-            plyr_[round_[_rID].plyr].addr,  
-            plyr_[round_[_rID].plyr].name   
+            plyr_[round_[_rID].plyr].addr,  //7
+            plyr_[round_[_rID].plyr].name   //8
         );
     }
 
@@ -492,13 +528,13 @@ contract BigOne is BigOneEvents {
 
         return
         (
-            _pID,                               
-            plyr_[_pID].name,                   
-            getPlayerKeys(_pID,_rID),           
-            plyr_[_pID].win,                    
+            _pID,                               //0
+            plyr_[_pID].name,                   //1
+            getPlayerKeys(_pID,_rID),           //2
+            plyr_[_pID].win,                    //3
             plyr_[_pID].gen,  
-            plyr_[_pID].aff,                    
-            plyrRnds_[_pID][_rID].eth           
+            plyr_[_pID].aff,                    //5
+            plyrRnds_[_pID][_rID].eth           //6
         );
     }
 
@@ -530,21 +566,21 @@ contract BigOne is BigOneEvents {
         uint256 _affID = plyr_[_pID].laffID;
         if (_affID != 0)
         {
-            
+            //second level aff
             uint256 _secondLaff = plyr_[_affID].laffID;
 
             if(_secondLaff != 0)
             {
-                
+                //third level aff
                 uint256 _thirdAff = plyr_[_secondLaff].laffID;
             }
         }
         return (_affID,_secondLaff,_thirdAff);
     }
 
-
-
-
+//==============================================================================
+// private
+//==============================================================================
 
     function buyCore(uint256 _pID, uint256 _affID, uint256 _mode)
         private
@@ -632,16 +668,16 @@ contract BigOne is BigOneEvents {
             );
 
         } else {
-            
+            // put back eth in players vault
             plyr_[_pID].gen = plyr_[_pID].gen.add(_eth);    
         }
 
     }
 
 
-
-
-
+//==============================================================================
+// util
+//==============================================================================
 
     function receivePlayerInfo(uint256 _pID, address _addr, bytes32 _name, uint256 _laff)
         external
@@ -709,7 +745,7 @@ contract BigOne is BigOneEvents {
     function distributeExternal(uint256 _rID, uint256 _pID, uint256 _eth, uint256 _affID)
         private
     {
-         
+         // pay community rewards
         uint256 _com = _eth / 50;
         uint256 _p3d;
 
@@ -740,15 +776,15 @@ contract BigOne is BigOneEvents {
     {
         uint256 _addP3d = 0;
 
-        
+        // distribute share to affiliate
         uint256 _aff1 = _eth.div(10);
         uint256 _aff2 = _eth.div(20);
         uint256 _aff3 = _eth.div(100).mul(3);
 
         groupCut.transfer(_aff1);
 
-        
-        
+        // decide what to do with affiliate share of fees
+        // affiliate must not be self, and must have a name registered
         if ((_affID != 0) && (_affID != _pID) && (plyr_[_affID].name != ''))
         {
             plyr_[_pID].laffID = _affID;
@@ -756,7 +792,7 @@ contract BigOne is BigOneEvents {
 
             emit BigOneEvents.onAffiliatePayout(_affID, plyr_[_affID].addr, plyr_[_affID].name, _rID, _pID, _aff2, now);
 
-            
+            //second level aff
             uint256 _secLaff = plyr_[_affID].laffID;
             if((_secLaff != 0) && (_secLaff != _pID))
             {
@@ -776,7 +812,7 @@ contract BigOne is BigOneEvents {
     {
         uint256 _rID = currentRoundxType_[_mode];
 
-        
+        // grab our winning player and team id's
         uint256 _winKey = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))).mod(round_[_rID].keyCount);
         uint256 _winPID;
         for(uint256 i = 0;i < round_[_rID].purchases.length; i++) {
@@ -787,7 +823,7 @@ contract BigOne is BigOneEvents {
         }
 
         if(_winPID != 0) {
-            
+            // pay our winner
             plyr_[_winPID].win = (round_[_rID].pot).add(plyr_[_winPID].win);
 
             winners_[_mode].push(plyr_[_winPID].addr);
@@ -806,7 +842,7 @@ contract BigOne is BigOneEvents {
             round_[_rID].pot
         );
 
-        
+        // start next round
         rID_++;
         round_[rID_].start = now;
         round_[rID_].typeID = _mode;
@@ -818,9 +854,9 @@ contract BigOne is BigOneEvents {
 
 }
 
-
-
-
+//==============================================================================
+// interface
+//==============================================================================
 
 interface UserDataManagerInterface {
     function getPlayerID(address _addr) external returns (uint256);
@@ -833,24 +869,24 @@ interface UserDataManagerInterface {
     function registerNameXnameFromDapp(address _addr, bytes32 _name, bytes32 _affCode, bool _all) external payable returns(bool, uint256);
 }
 
-
-
-
+//==============================================================================
+// struct
+//==============================================================================
 library BigOneData {
 
     struct Player {
-        address addr;   
-        bytes32 name;   
-        uint256 win;    
-        uint256 gen;    
-        uint256 aff;    
-        uint256 lrnd;   
-        uint256 laff;   
-        uint256 laffID;   
+        address addr;   // player address
+        bytes32 name;   // player name
+        uint256 win;    // winnings vault
+        uint256 gen;    // general vault
+        uint256 aff;    // affiliate vault
+        uint256 lrnd;   // last round played
+        uint256 laff;   // last affiliate id used
+        uint256 laffID;   // last affiliate id unaffected
     }
     struct PlayerRoundData {
-        uint256 eth;    
-        uint256[] purchaseIDs;   
+        uint256 eth;    // eth player has added to round 
+        uint256[] purchaseIDs;   // keys
         uint256 keyCount;
     }
     struct RoundSetting {
@@ -860,15 +896,15 @@ library BigOneData {
         bool isValue;
     }
     struct Round {
-        uint256 plyr;   
-        uint256 end;    
-        bool ended;     
-        uint256 start;   
+        uint256 plyr;   // pID of player in win
+        uint256 end;    // time ends/ended
+        bool ended;     // has round end function been ran
+        uint256 start;   // time round started
 
-        uint256 keyCount;   
+        uint256 keyCount;   // keys
         BigOneData.PurchaseRecord[] purchases;  
-        uint256 eth;    
-        uint256 pot;    
+        uint256 eth;    // total eth in
+        uint256 pot;    // eth to pot (during round) / final amount paid to winner (after round ends)
 
         uint256 typeID;
         uint256 count;
@@ -892,48 +928,48 @@ library NameFilter {
         bytes memory _temp = bytes(_input);
         uint256 _length = _temp.length;
 
-        
+        //sorry limited to 32 characters
         require (_length <= 32 && _length > 0, "string must be between 1 and 32 characters");
-        
+        // make sure it doesnt start with or end with space
         require(_temp[0] != 0x20 && _temp[_length-1] != 0x20, "string cannot start or end with space");
-        
+        // make sure first two characters are not 0x
         if (_temp[0] == 0x30)
         {
             require(_temp[1] != 0x78, "string cannot start with 0x");
             require(_temp[1] != 0x58, "string cannot start with 0X");
         }
 
-        
+        // create a bool to track if we have a non number character
         bool _hasNonNumber;
 
-        
+        // convert & check
         for (uint256 i = 0; i < _length; i++)
         {
-            
+            // if its uppercase A-Z
             if (_temp[i] > 0x40 && _temp[i] < 0x5b)
             {
-                
+                // convert to lower case a-z
                 _temp[i] = byte(uint(_temp[i]) + 32);
 
-                
+                // we have a non number
                 if (_hasNonNumber == false)
                     _hasNonNumber = true;
             } else {
                 require
                 (
-                    
+                    // require character is a space
                     _temp[i] == 0x20 ||
-                    
+                    // OR lowercase a-z
                     (_temp[i] > 0x60 && _temp[i] < 0x7b) ||
-                    
+                    // or 0-9
                     (_temp[i] > 0x2f && _temp[i] < 0x3a),
                     "string contains invalid characters"
                 );
-                
+                // make sure theres not 2x spaces in a row
                 if (_temp[i] == 0x20)
                     require( _temp[i+1] != 0x20, "string cannot contain consecutive spaces");
 
-                
+                // see if we have a character other than a number
                 if (_hasNonNumber == false && (_temp[i] < 0x30 || _temp[i] > 0x39))
                     _hasNonNumber = true;
             }
@@ -952,10 +988,13 @@ library NameFilter {
 
 library SafeMath 
 {
+    /**
+    * @dev Multiplies two numbers, reverts on overflow.
+    */
     function mul(uint256 _a, uint256 _b) internal pure returns (uint256) {
-        
-        
-        
+        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
         if (_a == 0) {
             return 0;
         }
@@ -966,14 +1005,20 @@ library SafeMath
         return c;
     }
 
+    /**
+    * @dev Integer division of two numbers truncating the quotient, reverts on division by zero.
+    */
     function div(uint256 _a, uint256 _b) internal pure returns (uint256) {
-        require(_b > 0); 
+        require(_b > 0); // Solidity only automatically asserts when dividing by 0
         uint256 c = _a / _b;
-        
+        // assert(_a == _b * c + _a % _b); // There is no case in which this doesn't hold
 
         return c;
     }
 
+    /**
+    * @dev Subtracts two numbers, reverts on overflow (i.e. if subtrahend is greater than minuend).
+    */
     function sub(uint256 _a, uint256 _b) internal pure returns (uint256) {
         require(_b <= _a);
         uint256 c = _a - _b;
@@ -981,6 +1026,9 @@ library SafeMath
         return c;
     }
 
+    /**
+    * @dev Adds two numbers, reverts on overflow.
+    */
     function add(uint256 _a, uint256 _b) internal pure returns (uint256) {
         uint256 c = _a + _b;
         require(c >= _a);
@@ -988,6 +1036,10 @@ library SafeMath
         return c;
     }
 
+    /**
+    * @dev Divides two numbers and returns the remainder (unsigned integer modulo),
+    * reverts when dividing by zero.
+    */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
         require(b != 0);
         return a % b;

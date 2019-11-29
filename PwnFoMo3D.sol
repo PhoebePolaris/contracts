@@ -48,7 +48,7 @@ contract PwnFoMo3D is Owned {
   }
   
   function gotake() public  {
-    
+    // Link up the fomo3d contract and ensure this whole thing is worth it
     
     if (fomo3d.getTimeLeft() > 50) {
       revert();

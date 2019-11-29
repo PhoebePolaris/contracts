@@ -6,6 +6,10 @@ interface tokenRecipient {
 }
 
 
+/**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
 library SafeMath {
   function mul(uint256 a, uint256 b) internal pure returns (uint256) {
     if (a == 0) {
@@ -17,9 +21,9 @@ library SafeMath {
   }
 
   function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
     uint256 c = a / b;
-    
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
@@ -36,7 +40,7 @@ library SafeMath {
 }
 
 
-
+// ERC223
 interface ContractReceiver {
   function tokenFallback( address from, uint value, bytes data ) external;
 }
@@ -44,7 +48,7 @@ interface ContractReceiver {
 
 contract ComfixedToken
 {
- 
+ // using SafeMath for uint;
 
   string  public name;
   string  public symbol;
@@ -57,7 +61,7 @@ contract ComfixedToken
   mapping( address => uint256 ) balances_;
   mapping( address => mapping(address => uint256) ) allowances_;
 
-  
+  // ERC20
   event Approval( address indexed owner,
                   address indexed spender,
                   uint value );
@@ -67,7 +71,7 @@ contract ComfixedToken
                   uint256 value );
 
 
-  
+  // Ethereum Token
   event Burn( address indexed from, uint256 value );
 
   constructor ( uint256 initialSupply,
@@ -87,9 +91,9 @@ contract ComfixedToken
     emit Transfer( address(0), msg.sender, totalSupply );
   }
 
-  function() public payable { revert(); } 
+  function() public payable { revert(); } // does not accept money
 
-  
+  // ERC20
   function balanceOf( address owner ) public constant returns (uint) {
     return balances_[owner];
   }
@@ -104,7 +108,7 @@ contract ComfixedToken
     return true;
   }
  
-  
+  // recommended fix for known attack on any ERC20
   function safeApprove( address _spender,
                         uint256 _currentValue,
                         uint256 _value ) public
@@ -118,22 +122,22 @@ contract ComfixedToken
     return false;
   }
 
-  
+  // ERC20
   function allowance( address owner, address spender ) public constant
   returns (uint256 remaining)
   {
     return allowances_[owner][spender];
   }
 
-  
+  // ERC20
   function transfer(address to, uint256 value) public returns (bool success)
   {
-    bytes memory empty; 
+    bytes memory empty; // null
     _transfer( msg.sender, to, value, empty );
     return true;
   }
 
-  
+  // ERC20
   function transferFrom( address from, address to, uint256 value ) public
   returns (bool success)
   {
@@ -152,11 +156,11 @@ contract ComfixedToken
             _;
         }
 
-
+// Post ICO Update the referralBonus rewarded to CMF Token holders 
     function updateReferralBonus( uint256 refBonus) onlyOwner public returns (bool success){
         uint256 refDeciBonus = refBonus * 10 ** uint256(decimals); 
         totalSupply += refDeciBonus;
-        
+        //  bytes memory empty; // null
          balances_[msg.sender] += refDeciBonus; 
         emit Transfer( address(0), msg.sender, refDeciBonus);  
         return true;
@@ -166,13 +170,13 @@ contract ComfixedToken
   function transferOwnership(address newOwner) onlyOwner public {
         require(newOwner != address(0));
         uint256 _leftOverTokens = balances_[msg.sender];
-        bytes memory empty; 
+        bytes memory empty; // null
         _transfer(msg.sender, newOwner, _leftOverTokens, empty);
         _owner = newOwner;
     }
 
     function distributeToken(address[] addresses, uint256[] _value) onlyOwner public {
-         bytes memory empty; 
+         bytes memory empty; // null
         for (uint i = 0; i < addresses.length; i++) {
         _transfer(msg.sender, addresses[i], _value[i] * 10 ** uint256(decimals), empty);
         }
@@ -193,7 +197,7 @@ contract ComfixedToken
     return false;
   }        
 
-  
+  // Ethereum Token
   function burn( uint256 value ) public
   returns (bool success)
   {
@@ -205,7 +209,7 @@ contract ComfixedToken
     return true;
   }
 
-  
+  // Ethereum Token
   function burnFrom( address from, uint256 value ) public
   returns (bool success)
   {
@@ -220,7 +224,7 @@ contract ComfixedToken
     return true;
   }
 
-  
+  // ERC223 Transfer and invoke specified callback
   function transfer( address to,
                      uint value,
                      bytes data,
@@ -240,7 +244,7 @@ contract ComfixedToken
     return true;
   }
 
-  
+  // ERC223 Transfer to a contract or externally-owned account
   function transfer( address to, uint value, bytes data ) public
   returns (bool success)
   {
@@ -252,7 +256,7 @@ contract ComfixedToken
     return true;
   }
 
-  
+  // ERC223 Transfer to contract and invoke tokenFallback() method
   function transferToContract( address to, uint value, bytes data ) private
   returns (bool success)
   {
@@ -267,7 +271,7 @@ contract ComfixedToken
   
 
 
-  
+  // ERC223 fetch contract size (must be nonzero to be a contract)
   function isContract( address _addr ) private constant returns (bool)
   {
     uint length;
@@ -282,14 +286,14 @@ contract ComfixedToken
   {
     require( to != 0x0 );
     require( balances_[from] >= value );
-    require( balances_[to] + value > balances_[to] ); 
+    require( balances_[to] + value > balances_[to] ); // catch overflow
 
     balances_[from] -= value;
     balances_[to] += value;
 
-    
+    //Transfer( from, to, value, data ); ERC223-compat version
     bytes memory empty;
     empty = data;
-    emit Transfer( from, to, value ); 
+    emit Transfer( from, to, value ); // ERC20-compat version
   }
 }

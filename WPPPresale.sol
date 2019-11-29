@@ -1,5 +1,9 @@
 pragma solidity ^0.4.19;
 
+/**
+ * @title ERC20
+ * @dev ERC20 interface
+ */
 contract ERC20 {
     function balanceOf(address who) public constant returns (uint256);
     function transfer(address to, uint256 value) public returns (bool);
@@ -10,6 +14,11 @@ contract ERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
 contract Ownable {
   address public owner;
 
@@ -17,17 +26,28 @@ contract Ownable {
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
 
+  /**
+   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+   * account.
+   */
   constructor() public{
     owner = msg.sender;
   }
 
 
+  /**
+   * @dev Throws if called by any account other than the owner.
+   */
   modifier onlyOwner() {
     require(msg.sender == owner);
     _;
   }
 
 
+  /**
+   * @dev Allows the current owner to transfer control of the contract to a newOwner.
+   * @param newOwner The address to transfer ownership to.
+   */
   function transferOwnership(address newOwner) onlyOwner public {
     require(newOwner != address(0));
     emit OwnershipTransferred(owner, newOwner);
@@ -36,6 +56,10 @@ contract Ownable {
 
 }
 
+/**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
 library SafeMath {
   function mul(uint256 a, uint256 b) internal pure returns (uint256) {
     uint256 c = a * b;
@@ -44,9 +68,9 @@ library SafeMath {
   }
 
   function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
     uint256 c = a / b;
-    
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
@@ -62,6 +86,9 @@ library SafeMath {
   }
 }
 
+/**
+ * The WPPToken contract does this and that...
+ */
 contract WPPToken is ERC20, Ownable {
 
 	using SafeMath for uint256;
@@ -128,6 +155,9 @@ contract WPPToken is ERC20, Ownable {
 
 }
 
+/**
+ * The WPPPresale contract does this and that...
+ */
 
 
  
@@ -139,7 +169,7 @@ contract WPPPresale is Ownable{
 	using SafeMath for uint256;
 	WPPToken public wpp;
 	uint256 public tokencap = 250000000 * 1 ether;
-	
+	// softcap : 5M WPP
 	uint256 public  hardcap = 250000000 * 1 ether;
 	bool    public  reached = false;
 	uint    public  startTime ;
@@ -159,11 +189,11 @@ contract WPPPresale is Ownable{
 
 	constructor(address token, uint _startTime, uint _endTime, address _multi) public{
 		wpp = WPPToken(token);
-		
+		// wpp.transfer(address(this), tokencap);
 		require (wpp.owner() == msg.sender);
 		
-		startTime = _startTime; 
-		endTime = _endTime; 
+		startTime = _startTime; // 1531659600 2018-07-15 8:AM EST->1:PM UTC
+		endTime = _endTime; // 1537016400 2018-09-15 8:AM EST->1:PM UTC
 		remain = hardcap;
 		multisigwallet = _multi;
 	}
@@ -179,22 +209,22 @@ contract WPPPresale is Ownable{
 	}
 	
 
-	  
+	  // fallback function can be used to buy tokens
 	function () public payable onlyWhitelisted {
 		buyTokens(msg.sender);
 	}
 
-	
+	// low level token purchase function
 	function buyTokens(address beneficiary) public payable onlyWhitelisted {
 		buyTokens(beneficiary, msg.value);
 	}
 
-	
+	// implementation of low level token purchase function
 	function buyTokens(address beneficiary, uint256 weiAmount) internal {
 		require(beneficiary != 0x0);
 		require(validPurchase(weiAmount));
 
-		
+		// calculate token amount to be sent
 		uint256 tokens = calcBonus(weiAmount.mul(rate));
 		
 		if(remain.sub(tokens) <= 0){
@@ -232,20 +262,20 @@ contract WPPPresale is Ownable{
 		return token_amount;
 	}
 
-	
-	
+	// low level transfer token
+	// override to create custom token transfer mechanism, eg. pull pattern
 	function transferToken(address beneficiary, uint256 tokenamount) internal {
 		wpp.transfer(beneficiary, tokenamount);
-		
+		// address(wpp).call(bytes4(keccak256("transfer(address, uint256)")), beneficiary,tokenamount);
 	}
 
-	
-	
+	// send ether to the fund collection wallet
+	// override to create custom fund forwarding mechanisms
 	function forwardFunds(uint256 weiAmount) internal {
 		multisigwallet.transfer(weiAmount);
 	}
 
-	
+	// @return true if the transaction can buy tokens
 	function validPurchase(uint256 weiAmount) internal constant returns (bool) {
 		bool withinPeriod = now > startTime && now <= endTime;
 		bool nonZeroPurchase = weiAmount >= 0.5 ether;
@@ -264,19 +294,19 @@ contract WPPPresale is Ownable{
         emit WhitelistSet(_addr, true);
     }
 
-    
+    /// @notice Set whitelist state for multiple addresses
     function setManyWhitelist(address[] _addr) public onlyOwners {
         for (uint256 i = 0; i < _addr.length; i++) {
             setWhitelist(_addr[i]);
         }
     }
 
-	
+	// @return true if presale event has ended
 	function hasEnded() public constant returns (bool) {
 		return now > endTime;
 	}
 
-	
+	// @return true if presale has started
 	function hasStarted() public constant returns (bool) {
 		return now >= startTime;
 	}

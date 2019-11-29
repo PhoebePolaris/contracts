@@ -1,5 +1,10 @@
 pragma solidity ^0.4.24;
 
+/**
+ * @title ERC20Basic
+ * dev Simpler version of ERC20 interface
+ * See https://github.com/ethereum/EIPs/issues/179
+ */
 contract ERC20Basic {
     function totalSupply() public view returns (uint256);
     function balanceOf(address who) public view returns (uint256);
@@ -7,12 +12,19 @@ contract ERC20Basic {
     event Transfer(address indexed from, address indexed to, uint256 value);
 }
 
+/**
+ * @title SafeMath
+ * dev Math operations with safety checks that throw on error
+ */
 library SafeMath {
 
+    /**
+    * dev Multiplies two numbers, throws on overflow.
+    */
     function mul(uint256 a, uint256 b) internal pure returns (uint256 c) {
-        
-        
-        
+        // Gas optimization: this is cheaper than asserting 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
         if (a == 0) {
             return 0;
         }
@@ -22,18 +34,27 @@ library SafeMath {
         return c;
     }
 
+    /**
+    * dev Integer division of two numbers, truncating the quotient.
+    */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        
-        
-        
+        // assert(b > 0); // Solidity automatically throws when dividing by 0
+        // uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
         return a / b;
     }
 
+    /**
+    * dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+    */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
         assert(b <= a);
         return a - b;
     }
 
+    /**
+    * dev Adds two numbers, throws on overflow.
+    */
     function add(uint256 a, uint256 b) internal pure returns (uint256 c) {
         c = a + b;
         assert(c >= a);
@@ -41,6 +62,10 @@ library SafeMath {
     }
 }
 
+/**
+ * @title Basic token
+ * dev Basic version of StandardToken, with no allowances.
+ */
 contract BasicToken is ERC20Basic {
     using SafeMath for uint256;
 
@@ -48,10 +73,18 @@ contract BasicToken is ERC20Basic {
 
     uint256 totalSupply_;
 
+    /**
+    * dev Total number of tokens in existence
+    */
     function totalSupply() public view returns (uint256) {
         return totalSupply_;
     }
 
+    /**
+    * dev Transfer token for a specified address
+    * @param _to The address to transfer to.
+    * @param _value The amount to be transferred.
+    */
     function transfer(address _to, uint256 _value) public returns (bool) {
         require(_to != address(0), "Recipient address is zero address(0). Check the address again.");
         require(_value <= balances[msg.sender], "The balance of account is insufficient.");
@@ -62,12 +95,21 @@ contract BasicToken is ERC20Basic {
         return true;
     }
 
+    /**
+    * dev Gets the balance of the specified address.
+    * @param _owner The address to query the the balance of.
+    * @return An uint256 representing the amount owned by the passed address.
+    */
     function balanceOf(address _owner) public view returns (uint256) {
         return balances[_owner];
     }
 
 }
 
+/**
+ * @title ERC20 interface
+ * dev see https://github.com/ethereum/EIPs/issues/20
+ */
 contract ERC20 is ERC20Basic {
     function allowance(address owner, address spender)
     public view returns (uint256);
@@ -83,11 +125,24 @@ contract ERC20 is ERC20Basic {
     );
 }
 
+/**
+ * @title Standard ERC20 token
+ *
+ * dev Implementation of the basic standard token.
+ * https://github.com/ethereum/EIPs/issues/20
+ * Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
+ */
 contract StandardToken is ERC20, BasicToken {
 
     mapping (address => mapping (address => uint256)) internal allowed;
 
 
+    /**
+     * dev Transfer tokens from one address to another
+     * @param _from address The address which you want to send tokens from
+     * @param _to address The address which you want to transfer to
+     * @param _value uint256 the amount of tokens to be transferred
+     */
     function transferFrom(
         address _from,
         address _to,
@@ -107,12 +162,27 @@ contract StandardToken is ERC20, BasicToken {
         return true;
     }
 
+    /**
+     * dev Approve the passed address to spend the specified amount of tokens on behalf of msg.sender.
+     * Beware that changing an allowance with this method brings the risk that someone may use both the old
+     * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
+     * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
+     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+     * @param _spender The address which will spend the funds.
+     * @param _value The amount of tokens to be spent.
+     */
     function approve(address _spender, uint256 _value) public returns (bool) {
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
+    /**
+     * dev Function to check the amount of tokens that an owner allowed to a spender.
+     * @param _owner address The address which owns the funds.
+     * @param _spender address The address which will spend the funds.
+     * @return A uint256 specifying the amount of tokens still available for the spender.
+     */
     function allowance(
         address _owner,
         address _spender
@@ -124,6 +194,15 @@ contract StandardToken is ERC20, BasicToken {
         return allowed[_owner][_spender];
     }
 
+    /**
+     * dev Increase the amount of tokens that an owner allowed to a spender.
+     * approve should be called when allowed[_spender] == 0. To increment
+     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * the first transaction is mined)
+     * From MonolithDAO Token.sol
+     * @param _spender The address which will spend the funds.
+     * @param _addedValue The amount of tokens to increase the allowance by.
+     */
     function increaseApproval(
         address _spender,
         uint256 _addedValue
@@ -137,6 +216,15 @@ contract StandardToken is ERC20, BasicToken {
         return true;
     }
 
+    /**
+     * dev Decrease the amount of tokens that an owner allowed to a spender.
+     * approve should be called when allowed[_spender] == 0. To decrement
+     * allowed value is better to use this function to avoid 2 calls (and wait until
+     * the first transaction is mined)
+     * From MonolithDAO Token.sol
+     * @param _spender The address which will spend the funds.
+     * @param _subtractedValue The amount of tokens to decrease the allowance by.
+     */
     function decreaseApproval(
         address _spender,
         uint256 _subtractedValue
@@ -156,32 +244,46 @@ contract StandardToken is ERC20, BasicToken {
 
 }
 
+/**
+ * Utility library of inline functions on addresses
+ */
 library AddressUtils {
 
+    /**
+     * Returns whether the target address is a contract
+     * dev This function will return false if invoked during the constructor of a contract,
+     * as the code is not actually created until after the constructor finishes.
+     * @param addr address to check
+     * @return whether the target address is a contract
+     */
     function isContract(address addr) internal view returns (bool) {
         uint256 size;
-        
-        
-        
-        
-        
-        
-        
+        // XXX Currently there is no better way to check if there is a contract in an address
+        // than to check the size of the code at that address.
+        // See https://ethereum.stackexchange.com/a/14016/36603
+        // for more details about how this works.
+        // TODO Check this again before the Serenity release, because all addresses will be
+        // contracts then.
+        // solium-disable-next-line security/no-inline-assembly
         assembly { size := extcodesize(addr) }
         return size > 0;
     }
 
 }
 
+/**
+ * @title MultiOwnable
+ * dev
+ */
 contract MultiOwnable {
     using SafeMath for uint256;
 
-    address public root; 
+    address public root; // 혹시 몰라 준비해둔 superOwner 의 백업. 하드웨어 월렛 주소로 세팅할 예정.
     address public superOwner;
     mapping (address => bool) public owners;
     address[] public ownerList;
 
-    
+    // for changeRootByDAO
     mapping(address => address) public candidateRootMap;
 
 
@@ -214,6 +316,10 @@ contract MultiOwnable {
         _;
     }
 
+    /**
+     * dev root 교체 (root 는 root 와 superOwner 를 교체할 수 있는 권리가 있다.)
+     * dev 기존 루트가 관리자에서 지워지지 않고, 새 루트가 자동으로 관리자에 등록되지 않음을 유의!
+     */
     function changeRoot(address newRoot) onlyRoot public returns (bool) {
         require(newRoot != address(0), "This address to be set is zero address(0). Check the input address.");
 
@@ -223,6 +329,10 @@ contract MultiOwnable {
         return true;
     }
 
+    /**
+     * dev superOwner 교체 (root 는 root 와 superOwner 를 교체할 수 있는 권리가 있다.)
+     * dev 기존 superOwner 가 관리자에서 지워지지 않고, 새 superOwner 가 자동으로 관리자에 등록되지 않음을 유의!
+     */
     function changeSuperOwner(address newSuperOwner) onlyRoot public returns (bool) {
         require(newSuperOwner != address(0), "This address to be set is zero address(0). Check the input address.");
 
@@ -232,6 +342,9 @@ contract MultiOwnable {
         return true;
     }
 
+    /**
+     * dev owner 들의 1/2 초과가 합의하면 root 를 교체할 수 있다.
+     */
     function changeRootByDAO(address newRoot) onlyOwner public returns (bool) {
         require(newRoot != address(0), "This address to be set is zero address(0). Check the input address.");
         require(newRoot != candidateRootMap[msg.sender], "You have already voted for this account.");
@@ -246,10 +359,10 @@ contract MultiOwnable {
                 votingNumForRoot++;
         }
 
-        if (votingNumForRoot > ownerList.length / 2) { 
+        if (votingNumForRoot > ownerList.length / 2) { // 과반수 이상이면 DAO 성립 => root 교체
             root = newRoot;
 
-            
+            // 초기화
             for (i = 0; i < ownerList.length; i++) {
                 delete candidateRootMap[ownerList[i]];
             }
@@ -288,12 +401,23 @@ contract MultiOwnable {
     }
 }
 
+/**
+ * @title Lockable token
+ */
 contract LockableToken is StandardToken, MultiOwnable {
     bool public locked = true;
     uint256 public constant LOCK_MAX = uint256(-1);
 
+    /**
+     * dev 락 상태에서도 거래 가능한 언락 계정
+     */
     mapping(address => bool) public unlockAddrs;
 
+    /**
+     * dev 계정 별로 lock value 만큼 잔고가 잠김
+     * dev - 값이 0 일 때 : 잔고가 0 이어도 되므로 제한이 없는 것임.
+     * dev - 값이 LOCK_MAX 일 때 : 잔고가 uint256 의 최대값이므로 아예 잠긴 것임.
+     */
     mapping(address => uint256) public lockValues;
 
     event Locked(bool locked, string note);
@@ -340,6 +464,9 @@ contract LockableToken is StandardToken, MultiOwnable {
         emit SetLockValue(addr, value, note);
     }
 
+    /**
+     * dev 이체 가능 금액을 조회한다.
+     */
     function getMyUnlockValue() public view returns (uint256) {
         address addr = msg.sender;
         if ((!locked || unlockAddrs[addr]) && balances[addr] > lockValues[addr])
@@ -357,6 +484,10 @@ contract LockableToken is StandardToken, MultiOwnable {
     }
 }
 
+/**
+ * @title DelayLockableToken
+ * dev 보안 차원에서 본인 계좌 잔고에 lock 을 걸 수 있다. 잔고 제한 기준을 낮추면 적용되기까지 12시간을 기다려야 한다.
+ */
 contract DelayLockableToken is LockableToken {
     mapping(address => uint256) public delayLockValues;
     mapping(address => uint256) public delayLockBeforeValues;
@@ -373,6 +504,9 @@ contract DelayLockableToken is LockableToken {
         _;
     }
 
+    /**
+     * dev 자신의 계좌에 잔고 제한을 건다. 더 크게 걸 땐 바로 적용되고, 더 작게 걸 땐 12시간 이후에 변경된다.
+     */
     function delayLock(uint256 value) public returns (bool) {
         require (value <= balances[msg.sender], "Your balance is insufficient.");
 
@@ -390,10 +524,16 @@ contract DelayLockableToken is LockableToken {
         return true;
     }
 
+    /**
+     * dev 자신의 계좌의 잔고 제한을 푼다.
+     */
     function delayUnlock() public returns (bool) {
         return delayLock(0);
     }
 
+    /**
+     * dev 이체 가능 금액을 조회한다.
+     */
     function getMyUnlockValue() public view returns (uint256) {
         uint256 myUnlockValue;
         address addr = msg.sender;
@@ -420,6 +560,10 @@ contract DelayLockableToken is LockableToken {
     }
 }
 
+/**
+ * @title LBKBaseToken
+ * dev 트랜잭션 실행 시 메모를 남길 수 있도록 하였음.
+ */
 contract LBKBaseToken is DelayLockableToken {
     event LBKTransfer(address indexed from, address indexed to, uint256 value, string note);
     event LBKTransferFrom(address indexed owner, address indexed spender, address indexed to, uint256 value, string note);
@@ -439,7 +583,7 @@ contract LBKBaseToken is DelayLockableToken {
     event LBKTransferToEcosystem(address indexed owner, address indexed spender, address indexed to, uint256 value, uint256 processIdHash, uint256 userIdHash, string note);
     event LBKTransferToBounty(address indexed owner, address indexed spender, address indexed to, uint256 value, uint256 processIdHash, uint256 userIdHash, string note);
 
-    
+    // ERC20 함수들을 오버라이딩하여 super 로 올라가지 않고 무조건 lbk~ 함수로 지나가게 한다.
     function transfer(address to, uint256 value) public returns (bool ret) {
         return lbkTransfer(to, value, "");
     }
@@ -489,6 +633,9 @@ contract LBKBaseToken is DelayLockableToken {
         emit LBKApproval(msg.sender, spender, allowed[msg.sender][spender], note);
     }
 
+    /**
+     * dev 신규 화폐 발행. 반드시 이유를 메모로 남겨라.
+     */
     function mintTo(address to, uint256 amount) internal returns (bool) {
         require(to != address(0x0), "This address to be set is zero address(0). Check the input address.");
 
@@ -504,6 +651,9 @@ contract LBKBaseToken is DelayLockableToken {
         emit LBKMintTo(msg.sender, to, amount, note);
     }
 
+    /**
+     * dev 화폐 소각. 반드시 이유를 메모로 남겨라.
+     */
     function burnFrom(address from, uint256 value) internal returns (bool) {
         require(value <= balances[from], "Your balance is insufficient.");
 
@@ -519,6 +669,9 @@ contract LBKBaseToken is DelayLockableToken {
         emit LBKBurnFrom(msg.sender, from, value, note);
     }
 
+    /**
+     * dev 메인넷으로 이동하며 화폐 소각.
+     */
     function lbkBurnWhenMoveToMainnet(address burner, uint256 value, string note) onlyOwner public returns (bool ret) {
         ret = burnFrom(burner, value);
         emit LBKBurnWhenMoveToMainnet(msg.sender, burner, value, note);
@@ -534,6 +687,9 @@ contract LBKBaseToken is DelayLockableToken {
         }
     }
 
+    /**
+     * dev 이더로 LBK 를 구입하는 경우
+     */
     function lbkSell(
         address from,
         address to,
@@ -546,6 +702,10 @@ contract LBKBaseToken is DelayLockableToken {
         emit LBKSell(from, msg.sender, to, value, note);
     }
 
+    /**
+     * dev 비트코인 등의 다른 코인으로 LBK 를 구입하는 경우
+     * dev EOA 가 트랜잭션을 일으켜서 처리해야 하기 때문에 다계좌를 기준으로 한다. (가스비 아끼기 위함)
+     */
     function lbkBatchSellByOtherCoin(
         address from,
         address[] to,
@@ -567,6 +727,9 @@ contract LBKBaseToken is DelayLockableToken {
         }
     }
 
+    /**
+     * dev 팀에게 전송하는 경우
+     */
     function lbkTransferToTeam(
         address from,
         address to,
@@ -579,6 +742,9 @@ contract LBKBaseToken is DelayLockableToken {
         emit LBKTransferToTeam(from, msg.sender, to, value, note);
     }
 
+    /**
+     * dev 파트너 및 어드바이저에게 전송하는 경우
+     */
     function lbkTransferToPartner(
         address from,
         address to,
@@ -591,6 +757,10 @@ contract LBKBaseToken is DelayLockableToken {
         emit LBKTransferToPartner(from, msg.sender, to, value, note);
     }
 
+    /**
+     * dev 에코시스템(커뮤니티 활동을 통한 보상 등)으로 LBK 지급
+     * dev EOA 가 트랜잭션을 일으켜서 처리해야 하기 때문에 다계좌를 기준으로 한다. (가스비 아끼기 위함)
+     */
     function lbkBatchTransferToEcosystem(
         address from, address[] to,
         uint256[] values,
@@ -611,6 +781,10 @@ contract LBKBaseToken is DelayLockableToken {
         }
     }
 
+    /**
+     * dev 바운티 참여자에게 LBK 지급
+     * dev EOA 가 트랜잭션을 일으켜서 처리해야 하기 때문에 다계좌를 기준으로 한다. (가스비 아끼기 위함)
+     */
     function lbkBatchTransferToBounty(
         address from,
         address[] to,
@@ -636,6 +810,9 @@ contract LBKBaseToken is DelayLockableToken {
     }
 }
 
+/**
+ * @title LEGALBLOCK
+ */
 contract LEGALBLOCK is LBKBaseToken {
     using AddressUtils for address;
 
@@ -689,11 +866,17 @@ contract LEGALBLOCK is LBKBaseToken {
 }
 
 
+/**
+ * @title LEGALBLOCK Receiver
+ */
 contract LBKReceiver {
     enum LBKReceiveType { LBK_TRANSFER, LBK_MINT, LBK_BURN }
     function onLBKReceived(address owner, address spender, uint256 value, LBKReceiveType receiveType) public returns (bool);
 }
 
+/**
+ * @title LBKDappSample
+ */
 contract LBKDappSample is LBKReceiver {
     event LogOnReceiveLBK(string message, address indexed owner, address indexed spender, uint256 value, LBKReceiveType receiveType);
 

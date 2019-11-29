@@ -121,48 +121,48 @@ library NameFilter {
         bytes memory _temp = bytes(_input);
         uint256 _length = _temp.length;
         
-        
+        //sorry limited to 32 characters
         require (_length <= 32 && _length > 0, "string must be between 1 and 32 characters");
-        
+        // make sure it doesnt start with or end with space
         require(_temp[0] != 0x20 && _temp[_length-1] != 0x20, "string cannot start or end with space");
-        
+        // make sure first two characters are not 0x
         if (_temp[0] == 0x30)
         {
             require(_temp[1] != 0x78, "string cannot start with 0x");
             require(_temp[1] != 0x58, "string cannot start with 0X");
         }
         
-        
+        // create a bool to track if we have a non number character
         bool _hasNonNumber;
         
-        
+        // convert & check
         for (uint256 i = 0; i < _length; i++)
         {
-            
+            // if its uppercase A-Z
             if (_temp[i] > 0x40 && _temp[i] < 0x5b)
             {
-                
+                // convert to lower case a-z
                 _temp[i] = byte(uint(_temp[i]) + 32);
                 
-                
+                // we have a non number
                 if (_hasNonNumber == false)
                     _hasNonNumber = true;
             } else {
                 require
                 (
-                    
+                    // require character is a space
                     _temp[i] == 0x20 || 
-                    
+                    // OR lowercase a-z
                     (_temp[i] > 0x60 && _temp[i] < 0x7b) ||
-                    
+                    // or 0-9
                     (_temp[i] > 0x2f && _temp[i] < 0x3a),
                     "string contains invalid characters"
                 );
-                
+                // make sure theres not 2x spaces in a row
                 if (_temp[i] == 0x20)
                     require( _temp[i+1] != 0x20, "string cannot contain consecutive spaces");
                 
-                
+                // see if we have a character other than a number
                 if (_hasNonNumber == false && (_temp[i] < 0x30 || _temp[i] > 0x39))
                     _hasNonNumber = true;    
             }
@@ -179,72 +179,72 @@ library NameFilter {
 }
 
 library F3Ddatasets {
-    
-    
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    
-    
-        
-        
-        
+    //compressedData key
+    // [76-33][32][31][30][29][28-18][17][16-6][5-3][2][1][0]
+        // 0 - new player (bool)
+        // 1 - joined round (bool)
+        // 2 - new  leader (bool)
+        // 3-5 - air drop tracker (uint 0-999)
+        // 6-16 - round end time
+        // 17 - winnerTeam
+        // 18 - 28 timestamp 
+        // 29 - team
+        // 30 - 0 = reinvest (round), 1 = buy (round), 2 = buy (ico), 3 = reinvest (ico)
+        // 31 - airdrop happened bool
+        // 32 - airdrop tier 
+        // 33 - airdrop amount won
+    //compressedIDs key
+    // [77-52][51-26][25-0]
+        // 0-25 - pID 
+        // 26-51 - winPID
+        // 52-77 - rID
     struct EventReturns {
         uint256 compressedData;
         uint256 compressedIDs;
-        address winnerAddr;         
-        bytes32 winnerName;         
-        uint256 amountWon;          
-        uint256 newPot;             
-        uint256 P3DAmount;          
-        uint256 genAmount;          
-        uint256 potAmount;          
+        address winnerAddr;         // winner address
+        bytes32 winnerName;         // winner name
+        uint256 amountWon;          // amount won
+        uint256 newPot;             // amount in new pot
+        uint256 P3DAmount;          // amount distributed to p3d
+        uint256 genAmount;          // amount distributed to gen
+        uint256 potAmount;          // amount added to pot
     }
     struct Player {
-        address addr;   
-        bytes32 name;   
-        uint256 win;    
-        uint256 gen;    
-        uint256 aff;    
-        uint256 lrnd;   
-        uint256 laff;   
+        address addr;   // player address
+        bytes32 name;   // player name
+        uint256 win;    // winnings vault
+        uint256 gen;    // general vault
+        uint256 aff;    // affiliate vault
+        uint256 lrnd;   // last round played
+        uint256 laff;   // last affiliate id used
     }
     struct PlayerRounds {
-        uint256 eth;    
-        uint256 keys;   
-        uint256 mask;   
-        uint256 ico;    
+        uint256 eth;    // eth player has added to round (used for eth limiter)
+        uint256 keys;   // keys
+        uint256 mask;   // player mask 
+        uint256 ico;    // ICO phase investment
     }
     struct Round {
-        uint256 plyr;   
-        uint256 team;   
-        uint256 end;    
-        bool ended;     
-        uint256 strt;   
-        uint256 keys;   
-        uint256 eth;    
-        uint256 pot;    
-        uint256 mask;   
-        uint256 ico;    
-        uint256 icoGen; 
-        uint256 icoAvg; 
+        uint256 plyr;   // pID of player in lead
+        uint256 team;   // tID of team in lead
+        uint256 end;    // time ends/ended
+        bool ended;     // has round end function been ran
+        uint256 strt;   // time round started
+        uint256 keys;   // keys
+        uint256 eth;    // total eth in
+        uint256 pot;    // eth to pot (during round) / final amount paid to winner (after round ends)
+        uint256 mask;   // global mask
+        uint256 ico;    // total eth sent in during ICO phase
+        uint256 icoGen; // total eth for gen during ICO phase
+        uint256 icoAvg; // average key price for ICO phase
     }
     struct TeamFee {
-        uint256 gen;    
-        uint256 p3d;    
+        uint256 gen;    // % of buy in thats paid to key holders of current round
+        uint256 p3d;    // % of buy in thats paid to p3d holders
     }
     struct PotSplit {
-        uint256 gen;    
-        uint256 p3d;    
+        uint256 gen;    // % of pot thats paid to key holders of current round
+        uint256 p3d;    // % of pot thats paid to p3d holders
     }
 }
 
@@ -360,32 +360,32 @@ contract SuperFoMo3D is F3Devents {
     string constant public name = "SuperFoMo3D";
     string constant public symbol = "SuperF3D";
     uint256 public airDropPot_;             
-    uint256 public airDropTracker_ = 0;     
-    uint256 public rID_;    
+    uint256 public airDropTracker_ = 0;     // incremented each time a "qualified" tx occurs.
+    uint256 public rID_;    // round id number / total rounds that have happened
     address actor = 0x0;
     bool public activated = false;
     
-    mapping (address => uint256) public pIDxAddr_;          
-    mapping (bytes32 => uint256) public pIDxName_;          
-    mapping (uint256 => F3Ddatasets.Player) public plyr_;   
-    mapping (uint256 => mapping (uint256 => F3Ddatasets.PlayerRounds)) public plyrRnds_;    
-    mapping (uint256 => mapping (bytes32 => bool)) public plyrNames_; 
-    mapping (address => uint256) customerBalance;           
+    mapping (address => uint256) public pIDxAddr_;          // (addr => pID) returns player id by address
+    mapping (bytes32 => uint256) public pIDxName_;          // (name => pID) returns player id by name
+    mapping (uint256 => F3Ddatasets.Player) public plyr_;   // (pID => data) player data
+    mapping (uint256 => mapping (uint256 => F3Ddatasets.PlayerRounds)) public plyrRnds_;    // player round data by player id & round id
+    mapping (uint256 => mapping (bytes32 => bool)) public plyrNames_; // (pID => name => bool) list of names a player owns.
+    mapping (address => uint256) customerBalance;           // customer balance data
     
-    mapping (uint256 => F3Ddatasets.Round) public round_;   
-    mapping (uint256 => mapping(uint256 => uint256)) public rndTmEth_;      
+    mapping (uint256 => F3Ddatasets.Round) public round_;   // (rID => data) round data
+    mapping (uint256 => mapping(uint256 => uint256)) public rndTmEth_;      // eth in per team, by round id and team id
     
-    mapping (uint256 => F3Ddatasets.TeamFee) public fees_;          
-    mapping (uint256 => F3Ddatasets.PotSplit) public potSplit_;     
+    mapping (uint256 => F3Ddatasets.TeamFee) public fees_;          // (team => fees) fee distribution by team
+    mapping (uint256 => F3Ddatasets.PotSplit) public potSplit_;     // (team => fees) pot split distribution by team
     
     DiviesInterface constant private Divies = DiviesInterface(0xc7029Ed9EBa97A096e72607f4340c34049C7AF48);
     JIincForwarderInterface constant private Jekyll_Island_Inc = JIincForwarderInterface(0xdd4950F977EE28D2C132f1353D1595035Db444EE);
 	PlayerBookInterface constant private PlayerBook = PlayerBookInterface(0xD60d353610D9a5Ca478769D371b53CEfAA7B6E4c);
     F3DexternalSettingsInterface constant private extSettings = F3DexternalSettingsInterface(0x32967D6c142c2F38AB39235994e2DDF11c37d590);
     
-    
-    
-    
+    //==========================================================================
+    //  Modifier
+    //==========================================================================
     modifier isActor
     {
         require(msg.sender == actor,'do not have permission');
@@ -413,9 +413,9 @@ contract SuperFoMo3D is F3Devents {
         require(_codeLength == 0, "ether only");
         _;
     }
-    
-    
-    
+    //==========================================================================
+    //  Methods
+    //==========================================================================
     
     constructor()
         public
@@ -468,10 +468,10 @@ contract SuperFoMo3D is F3Devents {
         private
         returns(uint256)
     {
-        
+        // update gen vault
         updateGenVault(_pID, plyr_[_pID].lrnd);
         
-        
+        // from vaults 
         uint256 _earnings = (plyr_[_pID].win).add(plyr_[_pID].gen).add(plyr_[_pID].aff);
         if (_earnings > 0)
         {
@@ -483,7 +483,7 @@ contract SuperFoMo3D is F3Devents {
         return(_earnings);
     }
     
-    
+    //get the total balance of this contract
     function getTotalBalance()
         public
         constant returns (uint)
@@ -491,7 +491,7 @@ contract SuperFoMo3D is F3Devents {
         return address(this).balance;
     }
         
-    
+    //get the balance of customer
     function getCustomerBalance(address _addr)
         public
         constant returns (uint)
@@ -504,7 +504,7 @@ contract SuperFoMo3D is F3Devents {
         isActivated
         payable
     {
-        
+        // setup local rID
         uint256 _rID = rID_ + 1;
         
         round_[_rID].pot = round_[_rID].pot.add(msg.value);
@@ -524,7 +524,7 @@ contract SuperFoMo3D is F3Devents {
         
         uint256 _pID = pIDxAddr_[_addr];
         
-        
+        // fire event
         emit F3Devents.onNewName(_pID, _addr, _name, _isNewPlayer, _affID, plyr_[_affID].addr, plyr_[_affID].name, _paid, now);
     }
     
@@ -551,7 +551,7 @@ contract SuperFoMo3D is F3Devents {
         _p3d = _p3d.add((_eth.mul(fees_[_team].p3d)) / (100));
         if (_p3d > 0)
         {
-            
+            // set up event data
             _eventData_.P3DAmount = _p3d.add(_eventData_.P3DAmount);
         }
         
@@ -568,7 +568,7 @@ contract SuperFoMo3D is F3Devents {
         uint256 _air = (_eth / 100);
         airDropPot_ = airDropPot_.add(_air);
         
-        
+        // update eth balance (eth = eth - (com share + pot swap share + aff share + p3d share + airdrop pot share))
         _eth = _eth.sub(((_eth.mul(14)) / 100).add((_eth.mul(fees_[_team].p3d)) / 100));
 
         uint256 _pot = _eth.sub(_gen);
@@ -605,25 +605,25 @@ contract SuperFoMo3D is F3Devents {
         isActivated
         returns (F3Ddatasets.EventReturns)
     {
-        
+        // setup local rID
         uint256 _rID = rID_;
         
-        
+        // grab our winning player and team id's
         uint256 _winPID = round_[_rID].plyr;
         uint256 _winTID = round_[_rID].team;
         
-        
+        // grab our pot amount
         uint256 _pot = round_[_rID].pot;
         
-        
-        
+        // calculate our winner share, community rewards, gen share, 
+        // p3d share, and amount reserved for next pot 
         uint256 _win = (_pot.mul(48)) / 100;
         uint256 _com = (_pot / 50);
         uint256 _gen = (_pot.mul(potSplit_[_winTID].gen)) / 100;
         uint256 _p3d = (_pot.mul(potSplit_[_winTID].p3d)) / 100;
         uint256 _res = (((_pot.sub(_win)).sub(_com)).sub(_gen)).sub(_p3d);
         
-        
+        // calculate ppt for round mask
         uint256 _ppt = (_gen.mul(1000000000000000000)) / (round_[_rID].keys);
         uint256 _dust = _gen.sub((_ppt.mul(round_[_rID].keys)) / 1000000000000000000);
         if (_dust > 0)
@@ -634,17 +634,17 @@ contract SuperFoMo3D is F3Devents {
         
         plyr_[_winPID].win = _win.add(plyr_[_winPID].win);
         
-        
+        // community rewards
         if (!address(Jekyll_Island_Inc).call.value(_com)(bytes4(keccak256("deposit()"))))
         {
             _p3d = _p3d.add(_com);
             _com = 0;
         }
         
-        
+        // distribute gen portion to key holders
         round_[_rID].mask = _ppt.add(round_[_rID].mask);
             
-        
+        // prepare event data
         _eventData_.compressedData = _eventData_.compressedData + (round_[_rID].end * 1000000);
         _eventData_.compressedIDs = _eventData_.compressedIDs + (_winPID * 100000000000000000000000000) + (_winTID * 100000000000000000);
         _eventData_.winnerAddr = plyr_[_winPID].addr;
@@ -654,7 +654,7 @@ contract SuperFoMo3D is F3Devents {
         _eventData_.P3DAmount = _p3d;
         _eventData_.newPot = _res;
         
-        
+        // start next round
         rID_++;
         _rID++;
         round_[_rID].strt = now;
@@ -668,15 +668,15 @@ contract SuperFoMo3D is F3Devents {
         returns (F3Ddatasets.EventReturns)
     {
         uint256 _pID = pIDxAddr_[msg.sender];
-        
+        // if player is new to this version of fomo3d
         if (_pID == 0)
         {
-            
+            // grab their player ID, name and last aff ID, from player names contract 
             _pID = PlayerBook.getPlayerID(msg.sender);
             bytes32 _name = PlayerBook.getPlayerName(_pID);
             uint256 _laff = PlayerBook.getPlayerLAff(_pID);
             
-            
+            // set up player account 
             pIDxAddr_[msg.sender] = _pID;
             plyr_[_pID].addr = msg.sender;
             
@@ -690,7 +690,7 @@ contract SuperFoMo3D is F3Devents {
             if (_laff != 0 && _laff != _pID)
                 plyr_[_pID].laff = _laff;
             
-            
+            // set the new player bool to true
             _eventData_.compressedData = _eventData_.compressedData + 1;
         } 
         return (_eventData_);
@@ -703,7 +703,7 @@ contract SuperFoMo3D is F3Devents {
         isInLimits(_bonus)
         returns (bool)
     {
-        
+        //must have enough balance 
         require(address(this).balance >= _bonus,'out of balance');
         _addr.transfer(_bonus);
         
@@ -720,7 +720,7 @@ contract SuperFoMo3D is F3Devents {
         
         if (_now > round_[_rID].strt && (_now <= round_[_rID].end || (_now > round_[_rID].end && round_[_rID].plyr == 0)))
             return ( (round_[_rID].keys.add(_keys)).ethRec(_keys) );
-        else 
+        else // rounds over.  need price for new round
             return ( (_keys).eth() );
     }
     
@@ -749,9 +749,9 @@ contract SuperFoMo3D is F3Devents {
         uint256 _earnings = calcUnMaskedEarnings(_pID, _rIDlast);
         if (_earnings > 0)
         {
-            
+            // put in gen vault
             plyr_[_pID].gen = _earnings.add(plyr_[_pID].gen);
-            
+            // zero out their earnings by updating mask
             plyrRnds_[_pID][_rIDlast].mask = _earnings.add(plyrRnds_[_pID][_rIDlast].mask);
         }
     }
@@ -761,15 +761,15 @@ contract SuperFoMo3D is F3Devents {
         isActor
         returns (F3Ddatasets.EventReturns)
     {
-        
-        
+        // if player has played a previous round, move their unmasked earnings
+        // from that round to gen vault.
         if (plyr_[_pID].lrnd != 0)
             updateGenVault(_pID, plyr_[_pID].lrnd);
             
-        
+        // update player's last round played
         plyr_[_pID].lrnd = rID_;
             
-        
+        // set the joined round bool to true
         _eventData_.compressedData = _eventData_.compressedData + 10;
         
         return(_eventData_);

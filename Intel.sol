@@ -2,6 +2,9 @@ pragma solidity 0.4.25;
 
 library SafeMath {
 
+  /**
+  * @dev Multiplies two numbers, throws on overflow.
+  */
   function mul(uint256 a, uint256 b) internal pure returns (uint256) {
     if (a == 0) {
       return 0;
@@ -11,18 +14,27 @@ library SafeMath {
     return c;
   }
 
+  /**
+  * @dev Integer division of two numbers, truncating the quotient.
+  */
   function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
     uint256 c = a / b;
-    
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
+  /**
+  * @dev Substracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+  */
   function sub(uint256 a, uint256 b) internal pure returns (uint256) {
     assert(b <= a);
     return a - b;
   }
 
+  /**
+  * @dev Adds two numbers, throws on overflow.
+  */
   function add(uint256 a, uint256 b) internal pure returns (uint256) {
     uint256 c = a + b;
     assert(c >= a);
@@ -47,9 +59,9 @@ contract ERC20 is ERC20Basic {
 }
 
 
-
-
-
+/// @title Intel contract
+/// @author Pareto Admin
+/// @notice Intel, A contract for creating, rewarding and distributing Intels
 contract Intel{
     
     using SafeMath for uint256;
@@ -58,16 +70,16 @@ contract Intel{
         address intelProvider;
         uint depositAmount;
         uint desiredReward;
-        
-        
+        // total balance of Pareto tokens given for this intel
+        // including the intel provider’s deposit
         uint balance;
         uint intelID;
-        
+        // timestamp for when rewards can be collected
         uint rewardAfter;
-        
+        // flag indicating whether the rewards have been collected
         bool rewarded;
-                
-        
+                // stores how many Pareto tokens were given for this intel
+        // in case you want to enforce a max amount per contributor
         address[] contributionsList;
         mapping(address => uint) contributions;
 
@@ -81,20 +93,20 @@ contract Intel{
     uint public intelCount;
     
 
-    address public owner;    
+    address public owner;    // Storage variable to hold the address of owner
     
-    ERC20 public token;   
+    ERC20 public token;   // Storage variable of type ERC20 to hold Pareto token's address
     address public ParetoAddress;
 
     
     constructor(address _owner, address _token) public {
-        owner = _owner;  
+        owner = _owner;  // owner is a Pareto wallet which should be able to perform admin functions
         token = ERC20(_token);
         ParetoAddress = _token;
     }
     
 
-    
+    // modifier to check of the sender of transaction is the owner
     modifier onlyOwner(){
         require(msg.sender == owner);
         _;
@@ -107,15 +119,15 @@ contract Intel{
     event LogProxy(address destination, address account, uint amount, uint gasLimit);
     
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /// @author Pareto Admin
+    /// @notice this function creates an Intel
+    /// @dev Uses 'now' for timestamps.
+    /// @param intelProvider is the address of the Intel's provider
+    /// @param depositAmount is the amount of Pareto tokens deposited by provider
+    /// @param desiredReward is the amount of Pareto tokens desired by provider as reward
+    /// @param intelID is the ID of Intel which is mapped against an Intel in IntelDB as well as the database external to Ethereum
+    /// @param ttl is the time in EPOCH format until the Intel remains active and accepts rewards
+    /// requires 210769 gas in Rinkeby Network
     function create(address intelProvider, uint depositAmount, uint desiredReward, uint intelID, uint ttl) public {
 
         require(address(intelProvider) != address(0x0));
@@ -123,7 +135,7 @@ contract Intel{
         require(desiredReward > 0);
         require(ttl > now);
         
-        token.transferFrom(intelProvider, address(this), depositAmount);  
+        token.transferFrom(intelProvider, address(this), depositAmount);  // transfer token from caller to Intel contract
         
         address[] memory contributionsList;
         IntelState memory newIntel = IntelState(intelProvider, depositAmount, desiredReward, depositAmount, intelID, ttl, false, contributionsList);
@@ -139,23 +151,23 @@ contract Intel{
     }
     
 
-    
-    
-    
-    
-    
-    
-    
+    /// @author Pareto Admin
+    /// @notice this function sends rewards to the Intel
+    /// @dev Uses 'now' for timestamps.
+    /// @param intelIndex is the ID of the Intel to send the rewards to
+    /// @param rewardAmount is the amount of Pareto tokens the rewarder wants to reward to the Intel
+    /// @return returns true in case of successfull completion
+    /// requires 72283 gas on Rinkeby Network
     function sendReward(uint intelIndex, uint rewardAmount) public returns(bool success){
 
         IntelState storage intel = intelDB[intelIndex];
-        require(intel.intelProvider != address(0x0));  
-        require(msg.sender != intel.intelProvider); 
-        require(intel.rewardAfter > now);       
-        require(!intel.rewarded);  
+        require(intel.intelProvider != address(0x0));  // make sure that Intel exists
+        require(msg.sender != intel.intelProvider); // rewarding address should not be an intel address
+        require(intel.rewardAfter > now);       //You cannot reward intel if the timestamp of the transaction is greater than rewardAfter
+        require(!intel.rewarded);  // You cannot reward intel if the intel’s rewards have already been distributed
         
 
-        token.transferFrom(msg.sender, address(this), rewardAmount);  
+        token.transferFrom(msg.sender, address(this), rewardAmount);  // transfer token from caller to Intel contract
         intel.balance = intel.balance.add(rewardAmount);
 
         if(intel.contributions[msg.sender] == 0){
@@ -173,12 +185,12 @@ contract Intel{
     }
     
 
-    
-    
-    
-    
-    
-    
+    /// @author Pareto Admin
+    /// @notice this function distributes rewards to the Intel provider
+    /// @dev Uses 'now' for timestamps.
+    /// @param intelIndex is the ID of the Intel to distribute tokens to
+    /// @return returns true in case of successfull completion
+    /// requires 91837 gas on Rinkeby Network
     function distributeReward(uint intelIndex) public returns(bool success){
 
         require(intelIndex > 0);
@@ -196,18 +208,18 @@ contract Intel{
        
 
 
-        if (intel.balance > intel.desiredReward){         
-            distributed_amount = intel.desiredReward;    
+        if (intel.balance > intel.desiredReward){         // check if the Intel's balance is greater than the reward desired by Provider
+            distributed_amount = intel.desiredReward;    // tarnsfer tokens to the provider's address equal to the desired reward
 
         } else {
-            distributed_amount = intel.balance;  
+            distributed_amount = intel.balance;  // transfer token to the provider's address equal to Intel's balance
         }
 
-        uint fee = distributed_amount.div(10);    
-        distributed_amount = distributed_amount.sub(fee);   
+        uint fee = distributed_amount.div(10);    // calculate 10% as the fee for distribution
+        distributed_amount = distributed_amount.sub(fee);   // calculate final distribution amount
 
-        token.transfer(intel.intelProvider, distributed_amount); 
-        token.transfer(msg.sender, fee);                     
+        token.transfer(intel.intelProvider, distributed_amount); // send Intel tokens to providers
+        token.transfer(msg.sender, fee);                     // send Intel tokens to the caller of distribute reward function
         emit RewardDistributed(intelIndex, distributed_amount, intel.intelProvider, msg.sender, fee);
 
 
@@ -215,11 +227,11 @@ contract Intel{
 
     }
     
-    
-    
-    
-    
-    
+    /// @author Pareto Admin
+    /// @notice this function sets the address of Pareto Token
+    /// @dev only owner can call it
+    /// @param _token is the Pareto token address
+    /// requires 63767 gas on Rinkeby Network
     function setParetoToken(address _token) public onlyOwner{
 
         token = ERC20(_token);
@@ -228,61 +240,61 @@ contract Intel{
     }
     
 
-    
-    
-    
-    
-    
-    
-    
-    
+    /// @author Pareto Admin
+    /// @notice this function sends back the mistankenly sent non-Pareto ERC20 tokens
+    /// @dev only owner can call it
+    /// @param destination is the contract address where the tokens were received from mistakenly
+    /// @param account is the external account's address which sent the wrong tokens
+    /// @param amount is the amount of tokens sent
+    /// @param gasLimit is the amount of gas to be sent along with external contract's transfer call
+    /// requires 27431 gas on Rinkeby Network
     function proxy(address destination, address account, uint amount, uint gasLimit) public onlyOwner{
 
-        require(destination != ParetoAddress);    
+        require(destination != ParetoAddress);    // check that the destination is not the Pareto token contract
 
-        
-        
-        
-        
+        // make the call to transfer function of the 'destination' contract
+        // if(!address(destination).call.gas(gasLimit)(bytes4(keccak256("transfer(address,uint256)")),account, amount)){
+        //     revert();
+        // }
 
 
-        
+        // ERC20(destination).transfer(account,amount);
 
 
         bytes4  sig = bytes4(keccak256("transfer(address,uint256)"));
 
         assembly {
-            let x := mload(0x40) 
-        mstore(x,sig) 
+            let x := mload(0x40) //Find empty storage location using "free memory pointer"
+        mstore(x,sig) //Place signature at begining of empty storage 
         mstore(add(x,0x04),account)
         mstore(add(x,0x24),amount)
 
-        let success := call(      
-                            gasLimit, 
-                            destination, 
-                            0,    
-                            x,    
-                            0x44, 
-                            x,    
-                            0x0) 
+        let success := call(      //This is the critical change (Pop the top stack value)
+                            gasLimit, //5k gas
+                            destination, //To addr
+                            0,    //No value
+                            x,    //Inputs are stored at location x
+                            0x44, //Inputs are 68 bytes long
+                            x,    //Store output over input (saves space)
+                            0x0) //Outputs are 32 bytes long
 
-        
+        // Check return value and jump to bad destination if zero
 		jumpi(0x02,iszero(success))
 
         }
         emit LogProxy(destination, account, amount, gasLimit);
     }
 
-    
-    
+    /// @author Pareto Admin
+    /// @notice It's a fallback function supposed to return sent Ethers by reverting the transaction
     function() external{
         revert();
     }
 
-    
-    
-    
-    
+    /// @author Pareto Admin
+    /// @notice this function provide the Intel based on its index
+    /// @dev it's a constant function which can be called
+    /// @param intelIndex is the ID of Intel that is to be returned from intelDB
     function getIntel(uint intelIndex) public view returns(address intelProvider, uint depositAmount, uint desiredReward, uint balance, uint intelID, uint rewardAfter, bool rewarded) {
         
         IntelState storage intel = intelDB[intelIndex];

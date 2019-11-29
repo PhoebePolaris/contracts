@@ -1,7 +1,12 @@
 pragma solidity 0.4.24;
 
+// File: openzeppelin-solidity/contracts/ownership/Ownable.sol
 
-
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
 contract Ownable {
   address public owner;
 
@@ -13,24 +18,45 @@ contract Ownable {
   );
 
 
+  /**
+   * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+   * account.
+   */
   constructor() public {
     owner = msg.sender;
   }
 
+  /**
+   * @dev Throws if called by any account other than the owner.
+   */
   modifier onlyOwner() {
     require(msg.sender == owner);
     _;
   }
 
+  /**
+   * @dev Allows the current owner to relinquish control of the contract.
+   * @notice Renouncing to ownership will leave the contract without an owner.
+   * It will not be possible to call the functions with the `onlyOwner`
+   * modifier anymore.
+   */
   function renounceOwnership() public onlyOwner {
     emit OwnershipRenounced(owner);
     owner = address(0);
   }
 
+  /**
+   * @dev Allows the current owner to transfer control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
   function transferOwnership(address _newOwner) public onlyOwner {
     _transferOwnership(_newOwner);
   }
 
+  /**
+   * @dev Transfers control of the contract to a newOwner.
+   * @param _newOwner The address to transfer ownership to.
+   */
   function _transferOwnership(address _newOwner) internal {
     require(_newOwner != address(0));
     emit OwnershipTransferred(owner, _newOwner);
@@ -38,14 +64,21 @@ contract Ownable {
   }
 }
 
+// File: openzeppelin-solidity/contracts/math/SafeMath.sol
 
-
+/**
+ * @title SafeMath
+ * @dev Math operations with safety checks that throw on error
+ */
 library SafeMath {
 
+  /**
+  * @dev Multiplies two numbers, throws on overflow.
+  */
   function mul(uint256 a, uint256 b) internal pure returns (uint256 c) {
-    
-    
-    
+    // Gas optimization: this is cheaper than asserting 'a' not being zero, but the
+    // benefit is lost if 'b' is also tested.
+    // See: https://github.com/OpenZeppelin/openzeppelin-solidity/pull/522
     if (a == 0) {
       return 0;
     }
@@ -55,18 +88,27 @@ library SafeMath {
     return c;
   }
 
+  /**
+  * @dev Integer division of two numbers, truncating the quotient.
+  */
   function div(uint256 a, uint256 b) internal pure returns (uint256) {
-    
-    
-    
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    // uint256 c = a / b;
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return a / b;
   }
 
+  /**
+  * @dev Subtracts two numbers, throws on overflow (i.e. if subtrahend is greater than minuend).
+  */
   function sub(uint256 a, uint256 b) internal pure returns (uint256) {
     assert(b <= a);
     return a - b;
   }
 
+  /**
+  * @dev Adds two numbers, throws on overflow.
+  */
   function add(uint256 a, uint256 b) internal pure returns (uint256 c) {
     c = a + b;
     assert(c >= a);
@@ -74,9 +116,9 @@ library SafeMath {
   }
 }
 
+// File: contracts/interfaces/IRegistry.sol
 
-
-
+// limited ContractRegistry definition
 interface IRegistry {
   function owner()
     external
@@ -97,17 +139,17 @@ interface IRegistry {
     returns (address);
 }
 
-
+// File: contracts/interfaces/IPoaToken.sol
 
 interface IPoaToken {
   function initializeToken
   (
-    bytes32 _name32, 
-    bytes32 _symbol32, 
+    bytes32 _name32, // bytes32 of name string
+    bytes32 _symbol32, // bytes32 of symbol string
     address _broker,
     address _custodian,
     address _registry,
-    uint256 _totalSupply 
+    uint256 _totalSupply // token total supply
   )
     external
     returns (bool);
@@ -132,38 +174,54 @@ interface IPoaToken {
     returns (string);
 }
 
-
+// File: contracts/interfaces/IPoaCrowdsale.sol
 
 interface IPoaCrowdsale {
   function initializeCrowdsale(
-    bytes32 _fiatCurrency32,                
-    uint256 _startTimeForFundingPeriod,     
-    uint256 _durationForFiatFundingPeriod,  
-    uint256 _durationForEthFundingPeriod,   
-    uint256 _durationForActivationPeriod,   
-    uint256 _fundingGoalInCents             
+    bytes32 _fiatCurrency32,                // fiat currency string, e.g. 'EUR'
+    uint256 _startTimeForFundingPeriod,     // future UNIX timestamp
+    uint256 _durationForFiatFundingPeriod,  // duration of fiat funding period in seconds
+    uint256 _durationForEthFundingPeriod,   // duration of ETH funding period in seconds
+    uint256 _durationForActivationPeriod,   // duration of activation period in seconds
+    uint256 _fundingGoalInCents             // funding goal in fiat cents
   )
     external
     returns (bool);
 }
 
+// File: contracts/PoaProxyCommon.sol
 
+/**
+  @title PoaProxyCommon acts as a convention between:
+  - PoaCommon (and its inheritants: PoaToken & PoaCrowdsale)
+  - PoaProxy
 
+  It dictates where to read and write storage
+*/
 contract PoaProxyCommon {
+  /*****************************
+  * Start Proxy Common Storage *
+  *****************************/
 
-  
+  // PoaTokenMaster logic contract used by proxies
   address public poaTokenMaster;
 
-  
+  // PoaCrowdsaleMaster logic contract used by proxies
   address public poaCrowdsaleMaster;
 
-  
+  // Registry used for getting other contract addresses
   address public registry;
 
+  /***************************
+  * End Proxy Common Storage *
+  ***************************/
 
 
+  /*********************************
+  * Start Common Utility Functions *
+  *********************************/
 
-  
+  /// @notice Gets a given contract address by bytes32 in order to save gas
   function getContractAddress
   (
     string _name
@@ -176,45 +234,68 @@ contract PoaProxyCommon {
     bytes32 _name32 = keccak256(abi.encodePacked(_name));
 
     assembly {
-      let _registry := sload(registry_slot) 
-      let _pointer := mload(0x40)          
-      mstore(_pointer, _signature)         
-      mstore(add(_pointer, 0x04), _name32) 
+      let _registry := sload(registry_slot) // load registry address from storage
+      let _pointer := mload(0x40)          // Set _pointer to free memory pointer
+      mstore(_pointer, _signature)         // Store _signature at _pointer
+      mstore(add(_pointer, 0x04), _name32) // Store _name32 at _pointer offset by 4 bytes for pre-existing _signature
 
-      
+      // staticcall(g, a, in, insize, out, outsize) => returns 0 on error, 1 on success
       let result := staticcall(
-        gas,       
-        _registry, 
-        _pointer,  
-        0x24,      
-        _pointer,  
-        0x20       
+        gas,       // g = gas: whatever was passed already
+        _registry, // a = address: address in storage
+        _pointer,  // in = mem in  mem[in..(in+insize): set to free memory pointer
+        0x24,      // insize = mem insize  mem[in..(in+insize): size of signature (bytes4) + bytes32 = 0x24
+        _pointer,  // out = mem out  mem[out..(out+outsize): output assigned to this storage address
+        0x20       // outsize = mem outsize  mem[out..(out+outsize): output should be 32byte slot (address size = 0x14 <  slot size 0x20)
       )
 
-      
+      // revert if not successful
       if iszero(result) {
         revert(0, 0)
       }
 
-      _contractAddress := mload(_pointer) 
-      mstore(0x40, add(_pointer, 0x24))   
+      _contractAddress := mload(_pointer) // Assign result to return value
+      mstore(0x40, add(_pointer, 0x24))   // Advance free memory pointer by largest _pointer size
     }
   }
 
+  /*******************************
+  * End Common Utility Functions *
+  *******************************/
 }
 
+// File: contracts/PoaProxy.sol
 
-
+/* solium-disable security/no-low-level-calls */
 
 pragma solidity 0.4.24;
 
 
 
+/**
+  @title This contract manages the storage of:
+  - PoaProxy
+  - PoaToken
+  - PoaCrowdsale
+
+  @notice PoaProxy uses chained "delegatecall()"s to call functions on
+  PoaToken and PoaCrowdsale and sets the resulting storage
+  here on PoaProxy.
+
+  @dev `getContractAddress("PoaLogger").call()` does not use the return value
+  because we would rather contract functions to continue even if the event
+  did not successfully trigger on the logger contract.
+*/
 contract PoaProxy is PoaProxyCommon {
   uint8 public constant version = 1;
 
   event ProxyUpgraded(address upgradedFrom, address upgradedTo);
 
+  /**
+    @notice Stores addresses of our contract registry
+    as well as the PoaToken and PoaCrowdsale master
+    contracts to forward calls to.
+  */
   constructor(
     address _poaTokenMaster,
     address _poaCrowdsaleMaster,
@@ -222,18 +303,26 @@ contract PoaProxy is PoaProxyCommon {
   )
     public
   {
-    
+    // Ensure that none of the given addresses are empty
     require(_poaTokenMaster != address(0));
     require(_poaCrowdsaleMaster != address(0));
     require(_registry != address(0));
 
-    
+    // Set addresses in common storage using deterministic storage slots
     poaTokenMaster = _poaTokenMaster;
     poaCrowdsaleMaster = _poaCrowdsaleMaster;
     registry = _registry;
   }
 
+  /*****************************
+   * Start Proxy State Helpers *
+   *****************************/
 
+  /**
+    @notice Ensures that a given address is a contract by
+    making sure it has code. Used during upgrading to make
+    sure the new addresses to upgrade to are smart contracts.
+   */
   function isContract(address _address)
     private
     view
@@ -244,10 +333,16 @@ contract PoaProxy is PoaProxyCommon {
     return _size > 0;
   }
 
+  /***************************
+   * End Proxy State Helpers *
+   ***************************/
 
 
+  /*****************************
+   * Start Proxy State Setters *
+   *****************************/
 
-  
+  /// @notice Update the stored "poaTokenMaster" address to upgrade the PoaToken master contract
   function proxyChangeTokenMaster(address _newMaster)
     public
     returns (bool)
@@ -268,7 +363,7 @@ contract PoaProxy is PoaProxyCommon {
     return true;
   }
 
-  
+  /// @notice Update the stored `poaCrowdsaleMaster` address to upgrade the PoaCrowdsale master contract
   function proxyChangeCrowdsaleMaster(address _newMaster)
     public
     returns (bool)
@@ -289,45 +384,55 @@ contract PoaProxy is PoaProxyCommon {
     return true;
   }
 
+  /***************************
+   * End Proxy State Setters *
+   ***************************/
 
+  /**
+    @notice Fallback function for all proxied functions using "delegatecall()".
+    It will first forward all functions to the "poaTokenMaster" address. If the
+    called function isn't found there, then "poaTokenMaster"'s fallback function
+    will forward the call to "poaCrowdsale". If the called function also isn't
+    found there, it will fail at last.
+  */
   function()
     external
     payable
   {
     assembly {
-      
+      // Load PoaToken master address from first storage pointer
       let _poaTokenMaster := sload(poaTokenMaster_slot)
 
-      
+      // calldatacopy(t, f, s)
       calldatacopy(
-        0x0, 
-        0x0, 
-        calldatasize 
+        0x0, // t = mem position to
+        0x0, // f = mem position from
+        calldatasize // s = size bytes
       )
 
-      
+      // delegatecall(g, a, in, insize, out, outsize) => returns "0" on error, or "1" on success
       let result := delegatecall(
-        gas, 
-        _poaTokenMaster, 
-        0x0, 
-        calldatasize, 
-        0x0, 
-        0 
+        gas, // g = gas
+        _poaTokenMaster, // a = address
+        0x0, // in = mem in  mem[in..(in+insize)
+        calldatasize, // insize = mem insize  mem[in..(in+insize)
+        0x0, // out = mem out  mem[out..(out+outsize)
+        0 // outsize = mem outsize  mem[out..(out+outsize)
       )
 
-      
+      // Check if the call was successful
       if iszero(result) {
-        
+        // Revert if call failed
         revert(0, 0)
       }
 
-      
+      // returndatacopy(t, f, s)
       returndatacopy(
-        0x0, 
-        0x0,  
-        returndatasize 
+        0x0, // t = mem position to
+        0x0,  // f = mem position from
+        returndatasize // s = size bytes
       )
-      
+      // Return if call succeeded
       return(
         0x0,
         returndatasize
@@ -336,7 +441,7 @@ contract PoaProxy is PoaProxyCommon {
   }
 }
 
-
+// File: contracts/PoaManager.sol
 
 contract PoaManager is Ownable {
   using SafeMath for uint256;
@@ -350,11 +455,11 @@ contract PoaManager is Ownable {
     bool active;
   }
 
-  
+  // Keeping a list for addresses we track for easy access
   address[] private brokerAddressList;
   address[] private tokenAddressList;
 
-  
+  // A mapping for each address we track
   mapping (address => EntityState) private tokenMap;
   mapping (address => EntityState) private brokerMap;
 
@@ -387,9 +492,9 @@ contract PoaManager is Ownable {
     registry = IRegistry(_registryAddress);
   }
 
-  
-  
-  
+  //
+  // Entity functions
+  //
 
   function doesEntityExist(address _entityAddress, EntityState entity)
     private
@@ -408,8 +513,8 @@ contract PoaManager is Ownable {
     returns (EntityState)
   {
     entityList.push(_entityAddress);
-    
-    
+    // we do not offset by `-1` so that we never have `entity.index = 0` as this is what is
+    // used to check for existence in modifier [doesEntityExist]
     uint256 index = entityList.length;
     EntityState memory entity = EntityState(index, _active);
     return entity;
@@ -422,18 +527,18 @@ contract PoaManager is Ownable {
     private
     returns (address, uint256)
   {
-    
+    // we offset by -1 here to account for how `addEntity` marks the `entity.index` value
     uint256 index = _entityToRemove.index.sub(1);
 
-    
+    // swap the entity to be removed with the last element in the list
     _entityList[index] = _entityList[_entityList.length - 1];
 
-    
-    
-    
+    // because we wanted seperate mappings for token and broker, and we cannot pass a storage mapping
+    // as a function argument, this abstraction is leaky; we return the address and index so the
+    // caller can update the mapping
     address entityToSwapAddress = _entityList[index];
 
-    
+    // we do not need to delete the element, the compiler should clean up for us
     _entityList.length--;
 
     return (entityToSwapAddress, _entityToRemove.index);
@@ -449,11 +554,11 @@ contract PoaManager is Ownable {
     entity.active = _active;
   }
 
-  
-  
-  
+  //
+  // Broker functions
+  //
 
-  
+  // Return all tracked broker addresses
   function getBrokerAddressList()
     public
     view
@@ -462,7 +567,7 @@ contract PoaManager is Ownable {
     return brokerAddressList;
   }
 
-  
+  // Add a broker and set active value to true
   function addBroker(address _brokerAddress)
     public
     onlyOwner
@@ -477,7 +582,7 @@ contract PoaManager is Ownable {
     emit BrokerAdded(_brokerAddress);
   }
 
-  
+  // Remove a broker
   function removeBroker(address _brokerAddress)
     public
     onlyOwner
@@ -493,7 +598,7 @@ contract PoaManager is Ownable {
     emit BrokerRemoved(_brokerAddress);
   }
 
-  
+  // Set previously delisted broker to listed
   function listBroker(address _brokerAddress)
     public
     onlyOwner
@@ -504,7 +609,7 @@ contract PoaManager is Ownable {
     emit BrokerStatusChanged(_brokerAddress, true);
   }
 
-  
+  // Set previously listed broker to delisted
   function delistBroker(address _brokerAddress)
     public
     onlyOwner
@@ -533,11 +638,11 @@ contract PoaManager is Ownable {
     return doesEntityExist(_brokerAddress, brokerMap[_brokerAddress]);
   }
 
-  
-  
-  
+  //
+  // Token functions
+  //
 
-  
+  // Return all tracked token addresses
   function getTokenAddressList()
     public
     view
@@ -555,6 +660,15 @@ contract PoaManager is Ownable {
     _proxyContract = new PoaProxy(_poaTokenMaster, _poaCrowdsaleMaster, address(registry));
   }
 
+  /**
+    @notice Creates a PoaToken contract with given parameters, and set active value to false
+    @param _fiatCurrency32 Fiat symbol used in ExchangeRates
+    @param _startTimeForFundingPeriod Given as unix time in seconds since 01.01.1970
+    @param _durationForFiatFundingPeriod How long fiat funding can last, given in seconds
+    @param _durationForEthFundingPeriod How long eth funding can last, given in seconds
+    @param _durationForActivationPeriod How long a custodian has to activate token, given in seconds
+    @param _fundingGoalInCents Given as fiat cents
+   */
   function addToken
   (
     bytes32 _name32,
@@ -603,7 +717,7 @@ contract PoaManager is Ownable {
     return _tokenAddress;
   }
 
-  
+  // Remove a token
   function removeToken(address _tokenAddress)
     public
     onlyOwner
@@ -619,7 +733,7 @@ contract PoaManager is Ownable {
     emit TokenRemoved(_tokenAddress);
   }
 
-  
+  // Set previously delisted token to listed
   function listToken(address _tokenAddress)
     public
     onlyOwner
@@ -630,7 +744,7 @@ contract PoaManager is Ownable {
     emit TokenStatusChanged(_tokenAddress, true);
   }
 
-  
+  // Set previously listed token to delisted
   function delistToken(address _tokenAddress)
     public
     onlyOwner
@@ -651,11 +765,11 @@ contract PoaManager is Ownable {
     return tokenMap[_tokenAddress].active;
   }
 
-  
-  
-  
+  //
+  // Token onlyOwner functions as PoaManger is `owner` of all PoaToken
+  //
 
-  
+  // Allow unpausing a listed PoaToken
   function pauseToken(address _tokenAddress)
     public
     onlyOwner
@@ -663,7 +777,7 @@ contract PoaManager is Ownable {
     IPoaToken(_tokenAddress).pause();
   }
 
-  
+  // Allow unpausing a listed PoaToken
   function unpauseToken(IPoaToken _tokenAddress)
     public
     onlyOwner
@@ -671,7 +785,7 @@ contract PoaManager is Ownable {
     _tokenAddress.unpause();
   }
 
-  
+  // Allow terminating a listed PoaToken
   function terminateToken(IPoaToken _tokenAddress)
     public
     onlyOwner
@@ -679,7 +793,7 @@ contract PoaManager is Ownable {
     _tokenAddress.terminate();
   }
 
-  
+  // upgrade an existing PoaToken proxy to what is stored in ContractRegistry
   function upgradeToken(
     PoaProxy _proxyToken
   )
@@ -692,7 +806,7 @@ contract PoaManager is Ownable {
     );
   }
 
-  
+  // upgrade an existing PoaCrowdsale proxy to what is stored in ContractRegistry
   function upgradeCrowdsale(
     PoaProxy _proxyToken
   )

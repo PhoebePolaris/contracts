@@ -1,6 +1,10 @@
 pragma solidity ^0.4.18;
 
 contract DateTime {
+        /*
+         *  Date and Time utilities for ethereum contracts
+         *
+         */
         struct _DateTime {
                 uint16 year;
                 uint8 month;
@@ -58,14 +62,14 @@ contract DateTime {
                 uint buf;
                 uint8 i;
 
-                
+                // Year
                 dt.year = getYear(timestamp);
                 buf = leapYearsBefore(dt.year) - leapYearsBefore(ORIGIN_YEAR);
 
                 secondsAccountedFor += LEAP_YEAR_IN_SECONDS * buf;
                 secondsAccountedFor += YEAR_IN_SECONDS * (dt.year - ORIGIN_YEAR - buf);
 
-                
+                // Month
                 uint secondsInMonth;
                 for (i = 1; i <= 12; i++) {
                         secondsInMonth = DAY_IN_SECONDS * getDaysInMonth(i, dt.year);
@@ -76,7 +80,7 @@ contract DateTime {
                         secondsAccountedFor += secondsInMonth;
                 }
 
-                
+                // Day
                 for (i = 1; i <= getDaysInMonth(dt.month, dt.year); i++) {
                         if (DAY_IN_SECONDS + secondsAccountedFor > timestamp) {
                                 dt.day = i;
@@ -85,16 +89,16 @@ contract DateTime {
                         secondsAccountedFor += DAY_IN_SECONDS;
                 }
 
-                
+                // Hour
                 dt.hour = getHour(timestamp);
 
-                
+                // Minute
                 dt.minute = getMinute(timestamp);
 
-                
+                // Second
                 dt.second = getSecond(timestamp);
 
-                
+                // Day of week.
                 dt.weekday = getWeekday(timestamp);
         }
 
@@ -103,7 +107,7 @@ contract DateTime {
                 uint16 year;
                 uint numLeapYears;
 
-                
+                // Year
                 year = uint16(ORIGIN_YEAR + timestamp / YEAR_IN_SECONDS);
                 numLeapYears = leapYearsBefore(year) - leapYearsBefore(ORIGIN_YEAR);
 
@@ -161,7 +165,7 @@ contract DateTime {
         function toTimestamp(uint16 year, uint8 month, uint8 day, uint8 hour, uint8 minute, uint8 second) public pure returns (uint timestamp) {
                 uint16 i;
 
-                
+                // Year
                 for (i = ORIGIN_YEAR; i < year; i++) {
                         if (isLeapYear(i)) {
                                 timestamp += LEAP_YEAR_IN_SECONDS;
@@ -171,7 +175,7 @@ contract DateTime {
                         }
                 }
 
-                
+                // Month
                 uint8[12] memory monthDayCounts;
                 monthDayCounts[0] = 31;
                 if (isLeapYear(year)) {
@@ -195,16 +199,16 @@ contract DateTime {
                         timestamp += DAY_IN_SECONDS * monthDayCounts[i - 1];
                 }
 
-                
+                // Day
                 timestamp += DAY_IN_SECONDS * (day - 1);
 
-                
+                // Hour
                 timestamp += HOUR_IN_SECONDS * (hour);
 
-                
+                // Minute
                 timestamp += MINUTE_IN_SECONDS * (minute);
 
-                
+                // Second
                 timestamp += second;
 
                 return timestamp;
@@ -310,14 +314,14 @@ contract OptionToken is ERC20xVariables {
     }
 }
 
-
+// we don't store much state here either
 contract Token is VariableSupplyToken {
     constructor() public {
         creator = msg.sender;
         name = "Decentralized Settlement Facility Token";
         symbol = "DSF";
 
-        
+        // this needs to be here to avoid zero initialization of token rights.
         totalSupply = 1;
         balances[0x0] = 1;
     }
@@ -329,7 +333,7 @@ contract Protocol is DateTime {
     ERC20x public usdERC20;
     Token public protocolToken;
 
-    
+    // We use "flavor" because type is a reserved word in many programming languages
     enum Flavor {
         Call,
         Put
@@ -365,18 +369,18 @@ contract Protocol is DateTime {
 
     uint public constant ONE_MILLION = 1000000;
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // maximum token holder rights capped at 3.7% of total supply?
+    // Why 3.7%?
+    // I could make up some fancy explanation
+    // and use the phrase "byzantine fault tolerance" somehow
+    // Or I could just say that 3.7% allows for a total of 27 independent actors
+    // that are all receiving the maximum benefit, and it solves all the other
+    // issues of disincentivizing centralization and "rich get richer" mechanics, so I chose 27 'cause it just has a nice "decentralized" feel to it.
+    // 21 would have been fine, as few as ten probably would have been ok 'cause people can just pool anyways
+    // up to a thousand or so probably wouldn't have hurt either.
+    // In the end it really doesn't matter as long as the game ends up being played fairly.
 
-    
+    // I'm sure someone will take my system and parameterize it differently at some point and bill it as a totally new product.
     uint public constant PREFERENCE_MAX = 0.037 ether;
 
     constructor(address _usd) public {
@@ -397,15 +401,15 @@ contract Protocol is DateTime {
         require(strike % 20 ether == 0);
         require(strike <= 10000 ether);
 
-        
+        // require expiration to be at noon UTC
         require(expiration % 86400 == 43200);
 
-        
+        // valid expirations: 7n + 1 where n = (unix timestamp / 86400)
         require(((expiration / 86400) + 2) % 7 == 0);
         require(expiration > now + 12 hours);
         require(expiration < now + 365 days);
 
-        
+        // compute the symbol based on datetime library
         _DateTime memory exp = parseTimestamp(expiration);
 
         uint strikeCode = strike / 1 ether;
@@ -694,7 +698,7 @@ contract Protocol is DateTime {
     function _unsLn(uint x) pure public returns (uint log) {
         log = 0;
         
-        
+        // not a true ln function, we can't represent the negatives
         if (x < 1 ether)
             return 0;
 

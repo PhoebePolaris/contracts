@@ -3,8 +3,8 @@ pragma solidity 0.4.24;
 contract safeSend {
     bool private txMutex3847834;
 
-    
-    
+    // we want to be able to call outside contracts (e.g. the admin proxy contract)
+    // but reentrency is bad, so here's a mutex.
     function doSafeSend(address toAddr, uint amount) internal {
         doSafeSendWData(toAddr, "", amount);
     }
@@ -12,9 +12,9 @@ contract safeSend {
     function doSafeSendWData(address toAddr, bytes data, uint amount) internal {
         require(txMutex3847834 == false, "ss-guard");
         txMutex3847834 = true;
-        
-        
-        
+        // we need to use address.call.value(v)() because we want
+        // to be able to send to other contracts, even with no data,
+        // which might use more than 2300 gas in their fallback function.
         require(toAddr.call.value(amount)(data), "ss-failed");
         txMutex3847834 = false;
     }
@@ -26,7 +26,7 @@ contract payoutAllC is safeSend {
     event PayoutAll(address payTo, uint value);
 
     constructor(address initPayTo) public {
-        
+        // DEV NOTE: you can overwrite _getPayTo if you want to reuse other storage vars
         assert(initPayTo != address(0));
         _payTo = initPayTo;
     }
@@ -120,7 +120,7 @@ contract hasAdmins is owned {
     }
 
     function upgradeMeAdmin(address newAdmin) only_admin() external {
-        
+        // note: already checked msg.sender has admin with `only_admin` modifier
         require(msg.sender != owner, "owner cannot upgrade self");
         _setAdmin(msg.sender, false);
         _setAdmin(newAdmin, true);
@@ -141,15 +141,15 @@ contract hasAdmins is owned {
         }
     }
 
-    
+    // safety feature if admins go bad or something
     function incAdminEpoch() only_owner() external {
         currAdminEpoch++;
         admins[currAdminEpoch][msg.sender] = true;
         emit AdminEpochInc();
     }
 
-    
-    
+    // this is internal so contracts can all it, but not exposed anywhere in this
+    // contract.
     function disableAdminForever() internal {
         currAdminEpoch++;
         adminsDisabledForever = true;
@@ -162,6 +162,11 @@ contract EnsOwnerProxy is hasAdmins {
     ENSIface public ens;
     PublicResolver public resolver;
 
+    /**
+     * @param _ensNode The node to administer
+     * @param _ens The ENS Registrar
+     * @param _resolver The ENS Resolver
+     */
     constructor(bytes32 _ensNode, ENSIface _ens, PublicResolver _resolver) public {
         ensNode = _ensNode;
         ens = _ens;
@@ -229,7 +234,7 @@ contract permissioned is owned, hasAdmins {
         emit PermissionsUpgraded(oldSC, newSC);
     }
 
-    
+    // always allow SCs to upgrade themselves, even after lockdown
     function upgradeMe(address newSC) only_editors() external {
         editAllowed[msg.sender] = false;
         editAllowed[newSC] = true;
@@ -265,44 +270,44 @@ contract upgradePtr {
 }
 
 interface ERC20Interface {
-    
+    // Get the total token supply
     function totalSupply() constant external returns (uint256 _totalSupply);
 
-    
+    // Get the account balance of another account with address _owner
     function balanceOf(address _owner) constant external returns (uint256 balance);
 
-    
+    // Send _value amount of tokens to address _to
     function transfer(address _to, uint256 _value) external returns (bool success);
 
-    
+    // Send _value amount of tokens from address _from to address _to
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
 
-    
-    
-    
+    // Allow _spender to withdraw from your account, multiple times, up to the _value amount.
+    // If this function is called again it overwrites the current allowance with _value.
+    // this function is required for some DEX functionality
     function approve(address _spender, uint256 _value) external returns (bool success);
 
-    
+    // Returns the amount which _spender is still allowed to withdraw from _owner
     function allowance(address _owner, address _spender) constant external returns (uint256 remaining);
 
-    
+    // Triggered when tokens are transferred.
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-    
+    // Triggered whenever approve(address _spender, uint256 _value) is called.
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 }
 
 interface SvEnsIface {
-    
+    // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
 
-    
+    // Logged when the owner of a node transfers ownership to a new account.
     event Transfer(bytes32 indexed node, address owner);
 
-    
+    // Logged when the resolver for a node changes.
     event NewResolver(bytes32 indexed node, address resolver);
 
-    
+    // Logged when the TTL of a node changes
     event NewTTL(bytes32 indexed node, uint64 ttl);
 
 
@@ -316,16 +321,16 @@ interface SvEnsIface {
 }
 
 interface ENSIface {
-    
+    // Logged when the owner of a node assigns a new owner to a subnode.
     event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);
 
-    
+    // Logged when the owner of a node transfers ownership to a new account.
     event Transfer(bytes32 indexed node, address owner);
 
-    
+    // Logged when the resolver for a node changes.
     event NewResolver(bytes32 indexed node, address resolver);
 
-    
+    // Logged when the TTL of a node changes
     event NewTTL(bytes32 indexed node, uint64 ttl);
 
 
@@ -378,51 +383,116 @@ contract PublicResolver {
         _;
     }
 
+    /**
+     * Constructor.
+     * @param ensAddr The ENS registrar contract.
+     */
     constructor(ENSIface ensAddr) public {
         ens = ensAddr;
     }
 
+    /**
+     * Sets the address associated with an ENS node.
+     * May only be called by the owner of that node in the ENS registry.
+     * @param node The node to update.
+     * @param addr The address to set.
+     */
     function setAddr(bytes32 node, address addr) public only_owner(node) {
         records[node].addr = addr;
         emit AddrChanged(node, addr);
     }
 
+    /**
+     * Sets the content hash associated with an ENS node.
+     * May only be called by the owner of that node in the ENS registry.
+     * Note that this resource type is not standardized, and will likely change
+     * in future to a resource type based on multihash.
+     * @param node The node to update.
+     * @param hash The content hash to set
+     */
     function setContent(bytes32 node, bytes32 hash) public only_owner(node) {
         records[node].content = hash;
         emit ContentChanged(node, hash);
     }
 
+    /**
+     * Sets the name associated with an ENS node, for reverse records.
+     * May only be called by the owner of that node in the ENS registry.
+     * @param node The node to update.
+     * @param name The name to set.
+     */
     function setName(bytes32 node, string name) public only_owner(node) {
         records[node].name = name;
         emit NameChanged(node, name);
     }
 
+    /**
+     * Sets the ABI associated with an ENS node.
+     * Nodes may have one ABI of each content type. To remove an ABI, set it to
+     * the empty string.
+     * @param node The node to update.
+     * @param contentType The content type of the ABI
+     * @param data The ABI data.
+     */
     function setABI(bytes32 node, uint256 contentType, bytes data) public only_owner(node) {
-        
+        // Content types must be powers of 2
         require(((contentType - 1) & contentType) == 0);
 
         records[node].abis[contentType] = data;
         emit ABIChanged(node, contentType);
     }
 
+    /**
+     * Sets the SECP256k1 public key associated with an ENS node.
+     * @param node The ENS node to query
+     * @param x the X coordinate of the curve point for the public key.
+     * @param y the Y coordinate of the curve point for the public key.
+     */
     function setPubkey(bytes32 node, bytes32 x, bytes32 y) public only_owner(node) {
         records[node].pubkey = PublicKey(x, y);
         emit PubkeyChanged(node, x, y);
     }
 
+    /**
+     * Sets the text data associated with an ENS node and key.
+     * May only be called by the owner of that node in the ENS registry.
+     * @param node The node to update.
+     * @param key The key to set.
+     * @param value The text data value to set.
+     */
     function setText(bytes32 node, string key, string value) public only_owner(node) {
         records[node].text[key] = value;
         emit TextChanged(node, key, key);
     }
 
+    /**
+     * Returns the text data associated with an ENS node and key.
+     * @param node The ENS node to query.
+     * @param key The text data key to query.
+     * @return The associated text data.
+     */
     function text(bytes32 node, string key) public view returns (string) {
         return records[node].text[key];
     }
 
+    /**
+     * Returns the SECP256k1 public key associated with an ENS node.
+     * Defined in EIP 619.
+     * @param node The ENS node to query
+     * @return x, y the X and Y coordinates of the curve point for the public key.
+     */
     function pubkey(bytes32 node) public view returns (bytes32 x, bytes32 y) {
         return (records[node].pubkey.x, records[node].pubkey.y);
     }
 
+    /**
+     * Returns the ABI associated with an ENS node.
+     * Defined in EIP205.
+     * @param node The ENS node to query
+     * @param contentTypes A bitwise OR of the ABI formats accepted by the caller.
+     * @return contentType The content type of the return value
+     * @return data The ABI data
+     */
     function ABI(bytes32 node, uint256 contentTypes) public view returns (uint256 contentType, bytes data) {
         Record storage record = records[node];
         for (contentType = 1; contentType <= contentTypes; contentType <<= 1) {
@@ -434,18 +504,41 @@ contract PublicResolver {
         contentType = 0;
     }
 
+    /**
+     * Returns the name associated with an ENS node, for reverse records.
+     * Defined in EIP181.
+     * @param node The ENS node to query.
+     * @return The associated name.
+     */
     function name(bytes32 node) public view returns (string) {
         return records[node].name;
     }
 
+    /**
+     * Returns the content hash associated with an ENS node.
+     * Note that this resource type is not standardized, and will likely change
+     * in future to a resource type based on multihash.
+     * @param node The ENS node to query.
+     * @return The associated content hash.
+     */
     function content(bytes32 node) public view returns (bytes32) {
         return records[node].content;
     }
 
+    /**
+     * Returns the address associated with an ENS node.
+     * @param node The ENS node to query.
+     * @return The associated address.
+     */
     function addr(bytes32 node) public view returns (address) {
         return records[node].addr;
     }
 
+    /**
+     * Returns true if the resolver implements the interface specified by the provided hash.
+     * @param interfaceID The ID of the interface to check for.
+     * @return True if the contract implements the requested interface.
+     */
     function supportsInterface(bytes4 interfaceID) public pure returns (bool) {
         return interfaceID == ADDR_INTERFACE_ID ||
         interfaceID == CONTENT_INTERFACE_ID ||
