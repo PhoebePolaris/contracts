@@ -1,5 +1,3 @@
-echo [FILENAME] AstraBasicMultiTokenDeployer.sol 
-java -jar ~/git/securify/build/libs/securify.jar -fs AstraBasicMultiTokenDeployer.sol >> sec.log 2>&1 
 echo [FILENAME] AstraMultiTokenDeployer.sol 
 java -jar ~/git/securify/build/libs/securify.jar -fs AstraMultiTokenDeployer.sol >> sec.log 2>&1 
 echo [FILENAME] IssuanceController.sol 
