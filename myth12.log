@@ -1,0 +1,933 @@
+[FILE] IssuanceController.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Exception ignored in: <bound method AstRef.__del__ of True>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 314, in __del__
+    Z3_dec_ref(self.ctx.ref(), self.as_ast())
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 883, in as_ast
+    def as_ast(self):
+KeyboardInterrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 723, in execute_command
+    transaction_count=args.transaction_count,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 204, in fire_lasers
+    report.append_issue(issue)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 215, in append_issue
+    issue.resolve_function_names()
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 170, in resolve_function_names
+    sig = signatures.get(_hash)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/support/signatures.py", line 205, in get
+    cur.execute("SELECT text_sig FROM signatures WHERE byte_sig=?", (byte_sig,))
+KeyboardInterrupt
+[FILE] AWinner.sol
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: Child
+Function name: win(address)
+PC address: 161
+Estimated Gas Usage: 2156 - 70623
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: AWinner.sol:14
+
+alue(msg.value)());
+        ms
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x56bc75e2d630fffff, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: win(address), txdata: 0xa34cc845efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: Child
+Function name: win(address)
+PC address: 161
+Estimated Gas Usage: 2156 - 70623
+Anyone can withdraw ETH from the contract account.
+Arbitrary senders other than the contract creator can withdraw ETH from the contract account without previously having sent an equivalent amount of ETH to it. This is likely to be a vulnerability.
+--------------------
+In file: AWinner.sol:14
+
+alue(msg.value)());
+        ms
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2686602d0ab404301, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x7000000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x2d804000000000000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: win(address), txdata: 0xa34cc845, value: 0x0
+Caller: [ATTACKER], function: win(address), txdata: 0xa34cc845efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: Child
+Function name: win(address)
+PC address: 247
+Estimated Gas Usage: 2156 - 70623
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: AWinner.sol:15
+
+nsfer(address(this).balance);
+    }
+}
+
+
+co
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x5c0000000000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: win(address), txdata: 0xa34cc845, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: Child
+Function name: win(address)
+PC address: 247
+Estimated Gas Usage: 2156 - 70623
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: AWinner.sol:15
+
+nsfer(address(this).balance);
+    }
+}
+
+
+co
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x401, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x1, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: win(address), txdata: 0xa34cc845efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+[FILE] AddressDeployer.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] AddressToken.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] AdminUpgradeabilityProxy.sol
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: UpgradeabilityProxy
+Function name: constructor
+PC address: 195
+Estimated Gas Usage: 294 - 3350
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: AdminUpgradeabilityProxy.sol:130
+
+
+
+  /**
+   * @dev Returns the current implementation.
+   * @return Address of t
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: AdminUpgradeabilityProxy
+Function name: constructor
+PC address: 196
+Estimated Gas Usage: 297 - 3353
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: AdminUpgradeabilityProxy.sol:130
+
+
+
+  /**
+   * @dev Returns the current implementation.
+   * @return Address of t
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+
+[FILE] AstraBasicMultiTokenDeployer.sol
+==== Unchecked Call Return Value ====
+SWC ID: 104
+Severity: Low
+Contract: ERC1003Caller
+Function name: makeCall(address,bytes)
+PC address: 533
+Estimated Gas Usage: 1630 - 38826
+The return value of a message call is not checked.
+External calls return a boolean value. If the callee contract halts with an exception, 'false' is returned and execution continues in the caller. It is usually recommended to wrap external calls into a require statement to prevent unexpected states.
+--------------------
+In file: AstraBasicMultiTokenDeployer.sol:561
+
+n true;
+    }
+
+    function transf
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0xf9c800427a000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x6002801, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: makeCall(address,bytes), txdata: 0x1cb9ce63, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: StandardToken
+Function name: increaseApproval(address,uint256)
+PC address: 4100
+Estimated Gas Usage: 1011 - 1486
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: AstraBasicMultiTokenDeployer.sol:177
+
+dr) internal vi
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x210, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x800000c01200, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: approve(address,uint256), txdata: 0x095ea7b3000000000000000000000000000000000000000000000000000000100000408001, value: 0x0
+Caller: [ATTACKER], function: increaseApproval(address,uint256), txdata: 0xd73dd6230000000000000000000000000000000000000000000000000000001000004080ff, value: 0x0
+
+
+[FILE] AstraMultiTokenDeployer.sol
+==== Unchecked Call Return Value ====
+SWC ID: 104
+Severity: Low
+Contract: ERC1003Caller
+Function name: makeCall(address,bytes)
+PC address: 533
+Estimated Gas Usage: 1630 - 38826
+The return value of a message call is not checked.
+External calls return a boolean value. If the callee contract halts with an exception, 'false' is returned and execution continues in the caller. It is usually recommended to wrap external calls into a require statement to prevent unexpected states.
+--------------------
+In file: AstraMultiTokenDeployer.sol:561
+
+n true;
+    }
+
+    function transf
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x40000000000000000, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x5, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x111d18e5580000f9, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: transferOwnership(address), txdata: 0xf2fde38baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, value: 0x0
+Caller: [SOMEGUY], function: makeCall(address,bytes), txdata: 0x1cb9ce63, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: StandardToken
+Function name: increaseApproval(address,uint256)
+PC address: 4100
+Estimated Gas Usage: 1011 - 1486
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: AstraMultiTokenDeployer.sol:177
+
+dr) internal vi
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8d84282401803843, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x2862207282138000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: approve(address,uint256), txdata: 0x095ea7b3000000000000000000000000000000000000000000000001000000020840800244, value: 0x0
+Caller: [SOMEGUY], function: increaseApproval(address,uint256), txdata: 0xd73dd6230000000000000000000000000000000000000000000000010000000208408002f0, value: 0x0
+
+
+[FILE] BATMO.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] BBFarm.sol
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: payoutAllC
+Function name: constructor
+PC address: 107
+Estimated Gas Usage: 171 - 2851
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:538
+
+itPayTo) public {
+    }
+
+    fu
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: BBFarm
+Function name: constructor
+PC address: 468
+Estimated Gas Usage: 51871 - 269330
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:1018
+
+address bbAdmin
+               
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: SVPayments
+Function name: constructor
+PC address: 508
+Estimated Gas Usage: 76321 - 362558
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:2065
+
+eeExtension[democHash], "!free");
+   
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: payoutAllC
+Function name: payoutAll()
+PC address: 621
+Estimated Gas Usage: 14305 - 90914
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: BBFarm.sol:525
+
+nction _setPayTo(address newPay
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x421410c05420fffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x16000000000000000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: payoutAll(), txdata: 0x4da2317f, value: 0x0
+Caller: [ATTACKER], function: payoutAll(), txdata: 0x4da2317f, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: payoutAllC
+Function name: payoutAll()
+PC address: 621
+Estimated Gas Usage: 14305 - 90914
+Anyone can withdraw ETH from the contract account.
+Arbitrary senders other than the contract creator can withdraw ETH from the contract account without previously having sent an equivalent amount of ETH to it. This is likely to be a vulnerability.
+--------------------
+In file: BBFarm.sol:525
+
+nction _setPayTo(address newPay
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x421400405420a7504, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x1294752242309020b, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: payoutAll(), txdata: 0x4da2317f, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: payoutAllC
+Function name: payoutAll()
+PC address: 752
+Estimated Gas Usage: 14305 - 90914
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: BBFarm.sol:526
+
+ayTo = newPayTo;
+    }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: payoutAll(), txdata: 0x4da2317f, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: payoutAllC
+Function name: payoutAll()
+PC address: 766
+Estimated Gas Usage: 14305 - 90914
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: BBFarm.sol:526
+
+ayTo = newPayTo;
+    }
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: payoutAll(), txdata: 0x4da2317f, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1122
+Estimated Gas Usage: 4500 - 74474
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: BBFarm.sol:603
+
+.push
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: hasAdmins
+Function name: getAdminLog(uint256)
+PC address: 1203
+Estimated Gas Usage: 639 - 734
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:671
+
+(_givePerms
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: getAdminLog(uint256), txdata: 0x21fb986980, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: CommunityAuctionSimple
+Function name: ballotLog(address,uint256)
+PC address: 1269
+Estimated Gas Usage: 732 - 1017
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:612
+
+    return ballotLog[a].length;
+    }
+
+    fun
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: ballotLog(address,uint256), txdata: 0x0d5be2df, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1288
+Estimated Gas Usage: 4500 - 74474
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: BBFarm.sol:603
+
+og[msg.sender].push(Record(d,
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1288
+Estimated Gas Usage: 4500 - 74474
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: BBFarm.sol:603
+
+og[msg.sender].push(Record(d,
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: EnsOwnerProxy
+Function name: getAdminLog(uint256)
+PC address: 1751
+Estimated Gas Usage: 661 - 756
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:671
+
+(_givePerms
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: getAdminLog(uint256), txdata: 0x21fb986940, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: BBLib
+Function name: getSponsor(BBLib.DB storage,uint256)
+PC address: 3052
+Estimated Gas Usage: 747 - 842
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: BBFarm.sol:209
+
+allot (then th
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: getSponsor(BBLib.DB storage,uint256), txdata: 0xd3b28163, value: 0x0
+
+
+[FILE] BBLibV7.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Exception ignored in: <bound method AstRef.__del__ of BitVec(256)>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 312, in __del__
+    def __del__(self):
+KeyboardInterrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 172, in fire_lasers
+    custom_modules_directory=self.custom_modules_directory,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/symbolic.py", line 164, in __init__
+    world_state=world_state,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/svm.py", line 166, in sym_exec
+    self, creation_code, contract_name, world_state=world_state
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/transaction/symbolic.py", line 150, in execute_contract_creation
+    laser_evm.exec(True)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/svm.py", line 253, in exec
+    for state in new_states
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/svm.py", line 254, in <listcomp>
+    if state.world_state.constraints.is_possible
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/state/constraints.py", line 49, in is_possible
+    solver.add(constraint)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/smt/solver/solver.py", line 37, in add
+    self.raw.add(z3_constraints)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 6572, in add
+    self.assert_exprs(*args)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 6561, in assert_exprs
+    Z3_solver_assert(self.ctx.ref(), self.solver, arg.as_ast())
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3core.py", line 3694, in Z3_solver_assert
+    _elems.f(a0, a1, a2)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 723, in execute_command
+    transaction_count=args.transaction_count,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 180, in fire_lasers
+    modules, self.custom_modules_directory
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/security.py", line 129, in retrieve_callback_issues
+    module_names=module_names, custom_modules_directory=custom_modules_directory
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/security.py", line 19, in reset_callback_modules
+    modules = get_detection_modules("callback", module_names, custom_modules_directory)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/security.py", line 68, in get_detection_modules
+    for loader, module_name, _ in pkgutil.walk_packages(modules.__path__):
+  File "/usr/lib/python3.6/pkgutil.py", line 87, in walk_packages
+    for info in iter_modules(path, prefix):
+  File "/usr/lib/python3.6/pkgutil.py", line 130, in iter_modules
+    yield ModuleInfo(i, name, ispkg)
+KeyboardInterrupt
+[FILE] BancorBuyer.sol
+Exception ignored in: <bound method AstRef.__del__ of BitVec(256)>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 312, in __del__
+KeyboardInterrupt: 
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Exception ignored in: <object repr() failed>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 312, in __del__
+    def __del__(self):
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 723, in execute_command
+    transaction_count=args.transaction_count,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 194, in fire_lasers
+    issue.add_code_info(contract)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 144, in add_code_info
+    self.address, constructor=(self.function == "constructor")
+  File "/usr/local/lib/python3.6/dist-packages/mythril/solidity/soliditycontract.py", line 163, in get_source_info
+    index = helper.get_instruction_index(disassembly.instruction_list, address)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/util.py", line 48, in get_instruction_index
+    if instr["address"] >= address:
+KeyboardInterrupt
+[FILE] PvPCrash.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] Intel.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FomoSport.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FFEIF.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FastGameMultiplier.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] ComfixedToken.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 728, in execute_command
+    "text": report.as_text(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 224, in as_text
+    template = Report.environment.get_template("report_as_text.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 579, in compile
+    source = self._parse(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 497, in _parse
+    return Parser(self, source, name, encode_filename(filename)).parse()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 901, in parse
+    result = nodes.Template(self.subparse(), lineno=1)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 213, in parse_if
+    'name:endif'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 199, in parse_for
+    body = self.parse_statements(('name:endfor', 'name:else'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 213, in parse_if
+    'name:endif'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 199, in parse_for
+    body = self.parse_statements(('name:endfor', 'name:else'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 211, in parse_if
+    node.test = self.parse_tuple(with_condexpr=False)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 620, in parse_tuple
+    args.append(parse())
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 612, in <lambda>
+    parse = lambda: self.parse_expression(with_condexpr=False)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 433, in parse_expression
+    return self.parse_or()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 450, in parse_or
+    left = self.parse_and()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 459, in parse_and
+    left = self.parse_not()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 470, in parse_not
+    return self.parse_compare()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 480, in parse_compare
+    ops.append(nodes.Operand(token_type, self.parse_math1()))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 496, in parse_math1
+    left = self.parse_concat()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 507, in parse_concat
+    args = [self.parse_math2()]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 517, in parse_math2
+    left = self.parse_pow()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 528, in parse_pow
+    left = self.parse_unary()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 547, in parse_unary
+    node = self.parse_postfix(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 672, in parse_postfix
+    node = self.parse_subscript(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 714, in parse_subscript
+    self.stream.expect('rbracket')
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 388, in expect
+    next(self)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 359, in __next__
+    self.current = next(self._iter)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 562, in wrap
+    for lineno, token, value in stream:
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 694, in tokeniter
+    lineno += data.count('\n')
+KeyboardInterrupt
+Error in atexit._run_exitfuncs:
+Traceback (most recent call last):
+  File "/usr/lib/python3.6/multiprocessing/util.py", line 296, in _exit_function
+    _run_finalizers(0)
+  File "/usr/lib/python3.6/multiprocessing/util.py", line 253, in _run_finalizers
+    keys = [key for key in list(_finalizer_registry) if f(key)]
+KeyboardInterrupt
+[FILE] WPPPresale.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] BalanceCheckerN.sol

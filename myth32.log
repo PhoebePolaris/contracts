@@ -1,0 +1,812 @@
+[FILE] PoHMO4D.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] PoaCrowdsale.sol
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaCommon
+Function name: isWhitelisted(address)
+PC address: 2776
+Estimated Gas Usage: 3185 - 75413
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaCrowdsale.sol:462
+
+tput assigned to this storage address
+        0x20                // outsize = mem outsize  mem[out..(out+outsize): output should be 32byte slot (bool size = 0x01 < slot size 0x20)
+      )
+
+      // Revert if not successful
+      if iszero(result) {
+        revert(0, 0)
+      }
+
+      _isWhitelisted := mload(_pointer) // Assign result to returned value
+      mstore(0x40, add(_pointer, 0x24)) // Advance free memory pointer by largest _pointer size
+    }
+  }
+
+  /// @notice Takes a single bytes32 and returns a max 32 char long string
+  /// @param _data single bytes32 representation of a string
+  function to32LengthString(
+    bytes32 _data
+  )
+  
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: isWhitelisted(address), txdata: 0x3af32abf, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: PoaCrowdsale
+Function name: activate()
+PC address: 4834
+Estimated Gas Usage: 10289 - 68801
+A control flow decision is made based on a predictable variable.
+The block.timestamp environment variable is used in to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables for random number generation or to make critical control flow decisions.
+--------------------
+In file: PoaCrowdsale.sol:606
+
+am _fiatCurrency32 bytes32 of fiat currency string
+    @param _startTimeForFundingPeriod beginning of the sale as UNIX timestamp
+    @param _durationForF
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: activate(), txdata: 0x0f15f4c0, value: 0x0
+
+==== Dependence on predictable environment variable ====
+SWC ID: 116
+Severity: Low
+Contract: PoaCrowdsale
+Function name: activate()
+PC address: 4894
+Estimated Gas Usage: 10289 - 68801
+A control flow decision is made based on a predictable variable.
+The block.timestamp environment variable is used in to determine a control flow decision. Note that the values of variables like coinbase, gaslimit, block number and timestamp are predictable and can be manipulated by a malicious miner. Also keep in mind that attackers know hashes of earlier blocks. Don't use any of those environment variables for random number generation or to make critical control flow decisions.
+--------------------
+In file: PoaCrowdsale.sol:604
+
+e.
+
+    @param _fiatCurrency32 bytes32 of fiat currency string
+    @param _startTimeForFundingPeriod beginning of the sale as UNIX timestamp
+    @param _durationForFiatFundingPeriod duration of the fiat sale
+    @para
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: activate(), txdata: 0x0f15f4c0, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaCrowdsale
+Function name: isWhitelisted(address)
+PC address: 5877
+Estimated Gas Usage: 3317 - 75545
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaCrowdsale.sol:462
+
+tput assigned to this storage address
+        0x20                // outsize = mem outsize  mem[out..(out+outsize): output should be 32byte slot (bool size = 0x01 < slot size 0x20)
+      )
+
+      // Revert if not successful
+      if iszero(result) {
+        revert(0, 0)
+      }
+
+      _isWhitelisted := mload(_pointer) // Assign result to returned value
+      mstore(0x40, add(_pointer, 0x24)) // Advance free memory pointer by largest _pointer size
+    }
+  }
+
+  /// @notice Takes a single bytes32 and returns a max 32 char long string
+  /// @param _data single bytes32 representation of a string
+  function to32LengthString(
+    bytes32 _data
+  )
+  
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: isWhitelisted(address), txdata: 0x3af32abf, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaCrowdsale
+Function name: weiToFiatCents(uint256)
+PC address: 11468
+Estimated Gas Usage: 4809 - 80890
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaCrowdsale.sol:1404
+
+undedEthAmountInCents()
+    external
+    view
+    returns (uint256)
+  {
+    return weiToFiatCents(fundedEthAmountInWei);
+  }
+
+  /// @notice Get fundingGoal in wei
+  function fundingGoalInWei()
+    external
+    view
+    returns (uint256)
+  {
+    return fiatCentsToWei(fundingGoalInCents);
+  }
+
+  /************************
+  * end utility functions *
+  ************************/
+
+  /************************
+  * start regular getters *
+  ************************/
+
+  /// @notice Return converted string from bytes32 fiatCurrency32
+  function fiatCurrency()
+    public
+    view
+    returns (string)
+  {
+    return 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x6, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x4000080400000200, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: weiToFiatCents(uint256), txdata: 0x4d7a59640000000000000000000000000000000000000000000000000000000000000001, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: PoaCrowdsale
+Function name: percent(uint256,uint256,uint256)
+PC address: 11517
+Estimated Gas Usage: 333 - 428
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: PoaCrowdsale.sol:55
+
+tracts/PoaProx
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0xc2000163000014, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: percent(uint256,uint256,uint256), txdata: 0x002c1a9effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: PoaCrowdsale
+Function name: percent(uint256,uint256,uint256)
+PC address: 11715
+Estimated Gas Usage: 682 - 777
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: PoaCrowdsale.sol:24
+
+  return c;
+  }
+
+ 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: percent(uint256,uint256,uint256), txdata: 0x002c1a9e7f, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: PoaCrowdsale
+Function name: percent(uint256,uint256,uint256)
+PC address: 11738
+Estimated Gas Usage: 729 - 824
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: PoaCrowdsale.sol:38
+
+cts t
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: percent(uint256,uint256,uint256), txdata: 0x002c1a9e, value: 0x0
+
+
+[FILE] PoaManager.sol
+==== Delegatecall Proxy To User-Supplied Address ====
+SWC ID: 112
+Severity: Medium
+Contract: PoaProxy
+Function name: fallback
+PC address: 148
+Estimated Gas Usage: 1229 - 37628
+The contract delegates execution to another contract with a user-supplied address.
+The smart contract delegates execution to a user-supplied address. Note that callers can execute arbitrary contracts and that the callee contract can access the storage of the calling contract. 
+--------------------
+In file: PoaManager.sol:425
+
+ed
+        revert(0, 0)
+      }
+
+      // returndatacopy(t, f, s)
+      returndatacopy(
+        0x0, // t = mem position to
+        0x0,  // f = mem position from
+        returndatasize // s = size bytes
+      )
+      // Return if call succeeded
+      return(
+        0x0,
+        returndatasize
+      )
+    }
+  }
+}
+
+// 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x1, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaManager
+Function name: upgradeToken(address)
+PC address: 4355
+Estimated Gas Usage: 4640 - 74990
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaManager.sol:821
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: upgradeToken(address), txdata: 0x6ee31a18, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaManager
+Function name: upgradeCrowdsale(address)
+PC address: 9183
+Estimated Gas Usage: 4970 - 75320
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaManager.sol:821
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: upgradeCrowdsale(address), txdata: 0xeee7e11f, value: 0x0
+
+
+[FILE] PoaToken.sol
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaCommon
+Function name: isWhitelisted(address)
+PC address: 2776
+Estimated Gas Usage: 3185 - 75413
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaToken.sol:734
+
+, 0)
+      }
+
+      _isWhitelisted := mload(_pointer) // Assign result to returned value
+      mstore(0x40, add(_pointer, 0x24)) // Advance free memory pointer by largest _pointer size
+    }
+  }
+
+  /// @notice Takes a single bytes32 and returns a max 32 char long string
+  /// @param _data single bytes32 representation of a string
+  function to32LengthString(
+    bytes32 _data
+  )
+    internal
+    pure
+    returns (string)
+  {
+    // create a new empty bytes array with same max length as input
+    bytes memory _bytesString = new bytes(32);
+
+    // an assembly block is necessary to directly change memory layout
+    assembly {
+      mstore(add(_b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: isWhitelisted(address), txdata: 0x3af32abf, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: StandardToken
+Function name: increaseApproval(address,uint256)
+PC address: 4097
+Estimated Gas Usage: 1011 - 1486
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: PoaToken.sol:69
+
+dity/contracts
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000100000080, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x205000020009880, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: increaseApproval(address,uint256), txdata: 0xd73dd623000000000000000000000000000000000000000000000000000000200480400011, value: 0x0
+Caller: [ATTACKER], function: increaseApproval(address,uint256), txdata: 0xd73dd6230000000000000000000000000000000000000000000000000000002004804000ef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: PoaToken
+Function name: isWhitelisted(address)
+PC address: 8302
+Estimated Gas Usage: 3427 - 75655
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: PoaToken.sol:734
+
+, 0)
+      }
+
+      _isWhitelisted := mload(_pointer) // Assign result to returned value
+      mstore(0x40, add(_pointer, 0x24)) // Advance free memory pointer by largest _pointer size
+    }
+  }
+
+  /// @notice Takes a single bytes32 and returns a max 32 char long string
+  /// @param _data single bytes32 representation of a string
+  function to32LengthString(
+    bytes32 _data
+  )
+    internal
+    pure
+    returns (string)
+  {
+    // create a new empty bytes array with same max length as input
+    bytes memory _bytesString = new bytes(32);
+
+    // an assembly block is necessary to directly change memory layout
+    assembly {
+      mstore(add(_b
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: isWhitelisted(address), txdata: 0x3af32abf, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: PoaToken
+Function name: calculateFee(uint256)
+PC address: 16324
+Estimated Gas Usage: 1121 - 1216
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: PoaToken.sol:39
+
+}
+
+  /**
+  * @dev 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000100a8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x2000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x4000000004000080c, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: decreaseApproval(address,uint256), txdata: 0x66188463000000000000000000000000000000000001000000000000000000000201020001, value: 0x0
+Caller: [ATTACKER], function: calculateFee(uint256), txdata: 0x99a5d74780, value: 0x0
+
+
+[FILE] PonziPwn.sol
+==== State change after external call ====
+SWC ID: 107
+Severity: Low
+Contract: AirDropWinner
+Function name: constructor
+PC address: 197
+Estimated Gas Usage: 6738 - 63983
+Persistent state read after call
+The contract account state is changed after an external call to a fixed address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: PonziPwn.sol:31
+
+ selfd
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Unprotected Selfdestruct ====
+SWC ID: 106
+Severity: High
+Contract: AirDropWinner
+Function name: constructor
+PC address: 373
+Estimated Gas Usage: 8705 - 98257
+The contract can be killed by anyone.
+Arbitrary senders can kill this contract.
+--------------------
+In file: PonziPwn.sol:32
+
+    }
+
+    }
+}
+
+contract
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: PonziPwn
+Function name: beginPwn()
+PC address: 1270
+Estimated Gas Usage: 3587 - 41816
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: PonziPwn.sol:81
+
+  (block.number)
+            )));
+
+            //Tally num
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: beginPwn(), txdata: 0xc2381296, value: 0x0
+
+
+[FILE] PwnFoMo3D.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] POHMO.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] POOHMO.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] POOHMOX.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] PercentageTransferManagerFactory.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Exception ignored in: <bound method AstRef.__del__ of 2>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 312, in __del__
+    def __del__(self):
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 723, in execute_command
+    transaction_count=args.transaction_count,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 194, in fire_lasers
+    issue.add_code_info(contract)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 144, in add_code_info
+    self.address, constructor=(self.function == "constructor")
+  File "/usr/local/lib/python3.6/dist-packages/mythril/solidity/soliditycontract.py", line 163, in get_source_info
+    index = helper.get_instruction_index(disassembly.instruction_list, address)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/util.py", line 50, in get_instruction_index
+    index += 1
+KeyboardInterrupt
+[FILE] PlayCoinKey.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] buyable.sol
+Exception ignored in: <bound method AstRef.__del__ of False>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 314, in __del__
+    Z3_dec_ref(self.ctx.ref(), self.as_ast())
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 669, in as_ast
+    return Z3_func_decl_to_ast(self.ctx_ref(), self.ast)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3core.py", line 2618, in Z3_func_decl_to_ast
+    r = _elems.f(a0, a1)
+KeyboardInterrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Exception ignored in: <bound method AstRef.__del__ of 41_code(buyable)>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 312, in __del__
+    def __del__(self):
+KeyboardInterrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 728, in execute_command
+    "text": report.as_text(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 224, in as_text
+    template = Report.environment.get_template("report_as_text.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 579, in compile
+    source = self._parse(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 497, in _parse
+    return Parser(self, source, name, encode_filename(filename)).parse()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 40, in __init__
+    self.stream = environment._tokenize(source, name, filename, state)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 529, in _tokenize
+    stream = self.lexer.tokenize(source, name, filename, state)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 407, in get_lexer
+    lexer = Lexer(environment)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 516, in __init__
+    block_suffix_re
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 422, in <lambda>
+    c = lambda x: re.compile(x, re.M | re.S)
+  File "/usr/lib/python3.6/re.py", line 233, in compile
+    return _compile(pattern, flags)
+  File "/usr/lib/python3.6/re.py", line 301, in _compile
+    p = sre_compile.compile(pattern, flags)
+  File "/usr/lib/python3.6/sre_compile.py", line 562, in compile
+    p = sre_parse.parse(p, flags)
+  File "/usr/lib/python3.6/sre_parse.py", line 855, in parse
+    p = _parse_sub(source, pattern, flags & SRE_FLAG_VERBOSE, 0)
+  File "/usr/lib/python3.6/sre_parse.py", line 416, in _parse_sub
+    not nested and not items))
+  File "/usr/lib/python3.6/sre_parse.py", line 765, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+  File "/usr/lib/python3.6/sre_parse.py", line 416, in _parse_sub
+    not nested and not items))
+  File "/usr/lib/python3.6/sre_parse.py", line 610, in _parse
+    if subpattern:
+  File "/usr/lib/python3.6/sre_parse.py", line 159, in __len__
+    def __len__(self):
+KeyboardInterrupt
+[FILE] eSportsToken.sol
+Fatal Python error: Py_Initialize: can't initialize sys standard streams
+Traceback (most recent call last):
+  File "<frozen importlib._bootstrap>", line 966, in _find_and_load
+KeyboardInterrupt
+[FILE] EtherTransferTo.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] MarriageRegistry.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 728, in execute_command
+    "text": report.as_text(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 224, in as_text
+    template = Report.environment.get_template("report_as_text.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 579, in compile
+    source = self._parse(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 497, in _parse
+    return Parser(self, source, name, encode_filename(filename)).parse()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 901, in parse
+    result = nodes.Template(self.subparse(), lineno=1)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 213, in parse_if
+    'name:endif'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 199, in parse_for
+    body = self.parse_statements(('name:endfor', 'name:else'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 875, in subparse
+    add_data(self.parse_tuple(with_condexpr=True))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 620, in parse_tuple
+    args.append(parse())
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 432, in parse_expression
+    return self.parse_condexpr()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 437, in parse_condexpr
+    expr1 = self.parse_or()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 450, in parse_or
+    left = self.parse_and()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 459, in parse_and
+    left = self.parse_not()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 470, in parse_not
+    return self.parse_compare()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 474, in parse_compare
+    expr = self.parse_math1()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 496, in parse_math1
+    left = self.parse_concat()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 507, in parse_concat
+    args = [self.parse_math2()]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 517, in parse_math2
+    left = self.parse_pow()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 528, in parse_pow
+    left = self.parse_unary()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 547, in parse_unary
+    node = self.parse_postfix(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 672, in parse_postfix
+    node = self.parse_subscript(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 698, in parse_subscript
+    if token.type == 'dot':
+KeyboardInterrupt

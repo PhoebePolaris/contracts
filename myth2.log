@@ -1,0 +1,251 @@
+[FILE] Duang8.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] EnsOwnerProxy.sol
+[FILE] ExitFraud.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DClick.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DGame.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DGo.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DGoQuick.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DKeysCalcShort.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DLink.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DNEW.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DPLUS.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DSHORT.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DSOON.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DShop.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3DShopQuick.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F3Dultra.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F4Kings.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] F5D.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FJ3DLong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FJFoMo3DLong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FOMO3.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FOMO3TEST.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FOMO3TEST1.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FOMOO.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FOMOQuick.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FengJinFoMo3D.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo100.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DFast.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DLight.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DLightning.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DPlus.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DUnlimited.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DlongUnlimited.sol
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: FundForwarder
+Function name: fallback
+PC address: 380
+Estimated Gas Usage: 3164 - 38481
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: FoMo3DlongUnlimited.sol:858
+
+ddress, address, bool)
+    {
+        return(address(currentCorpBank_), address(n
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x421400000020fffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: setup(address), txdata: 0x66d38203efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x01010101, value: 0x0
+
+==== Unprotected Ether Withdrawal ====
+SWC ID: 105
+Severity: High
+Contract: FundForwarder
+Function name: fallback
+PC address: 380
+Estimated Gas Usage: 2987 - 38304
+Anyone can withdraw ETH from the contract account.
+Arbitrary senders other than the contract creator can withdraw ETH from the contract account without previously having sent an equivalent amount of ETH to it. This is likely to be a vulnerability.
+--------------------
+In file: FoMo3DlongUnlimited.sol:858
+
+ddress, address, bool)
+    {
+        return(address(currentCorpBank_), address(n
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x20000c0100086103, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x4fffffc00ffddc03e, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x3fffffc00ffffc03f, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: setup(address), txdata: 0x66d38203efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: FundForwarder
+Function name: startMigration(address)
+PC address: 2728
+Estimated Gas Usage: 7994 - 63497
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: FoMo3DlongUnlimited.sol:900
+
+ require(msg.sender == newCorpBank_, "Forwarder finishMigration f
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x421c10c05420ffff7, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: setup(address), txdata: 0x66d38203adadadadadadadadadadadaddeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: startMigration(address), txdata: 0xa0f52da0efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: FundForwarder
+Function name: startMigration(address)
+PC address: 2856
+Estimated Gas Usage: 7994 - 63497
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: FoMo3DlongUnlimited.sol:902
+
+       
+        currentCorp
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x800, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x22e48c00020000400, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: setup(address), txdata: 0x66d38203fefefefefefefefefefefefeaffeaffeaffeaffeaffeaffeaffeaffeaffeaffe, value: 0x0
+Caller: [CREATOR], function: startMigration(address), txdata: 0xa0f52da0efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: FundForwarder
+Function name: deposit()
+PC address: 3408
+Estimated Gas Usage: 2969 - 38567
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: FoMo3DlongUnlimited.sol:870
+
+        // communicate with the new corp bank and mak
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x421c10c05420fffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x56bc75e2d630dffff, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: setup(address), txdata: 0x66d38203efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+Caller: [ATTACKER], function: deposit(), txdata: 0xd0e30db0, value: 0x1
+
+
+[FILE] FoMo3Dshort.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3DshortAgain.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3Dsmall.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMo3Dthunder.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FoMoGame.sol
+The analysis was completed successfully. No issues were detected.
+

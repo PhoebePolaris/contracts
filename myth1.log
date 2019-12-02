@@ -1,0 +1,808 @@
+[FILE] WyvernAtomicizer.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+Cannot import url ("WyvernAtomicizer.sol"): File outside of allowed directories. 
+[FILE] casinoProxy.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+Cannot import url ("casinoProxy.sol"): File outside of allowed directories. 
+[FILE] KyberNetworkProxy.sol
+[FILE] UserRank.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+UserRank.sol:1:1: ParserError: Source file requires different compiler version (current compiler is 0.5.13+commit.5b0b510c.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.21;
+^---------------------^
+
+SolidityVersionMismatch: Try adding the option "--solv 0.4.21"
+ 
+[FILE] ICOStartReservation.sol
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 796, in parse_args_and_execute
+    address = load_code(disassembler, args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 602, in load_code
+    args.solidity_files
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_disassembler.py", line 186, in load_from_solidity
+    solc_settings_json=self.solc_settings_json,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/support/signatures.py", line 245, in import_solidity_file
+    solc_json = get_solc_json(file_path, solc_binary, solc_settings_json)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/ethereum/util.py", line 67, in get_solc_json
+    stdout, stderr = p.communicate(bytes(input_json, "utf8"))
+  File "/usr/lib/python3.6/subprocess.py", line 863, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/usr/lib/python3.6/subprocess.py", line 1534, in _communicate
+    ready = selector.select(timeout)
+  File "/usr/lib/python3.6/selectors.py", line 376, in select
+    fd_event_list = self._poll.poll(timeout)
+KeyboardInterrupt
+[FILE] MineableToken.sol
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 7, in <module>
+    from mythril.interfaces.cli import main
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 17, in <module>
+    import mythril.support.signatures as sigs
+  File "/usr/local/lib/python3.6/dist-packages/mythril/support/signatures.py", line 13, in <module>
+    from mythril.ethereum.util import get_solc_json
+  File "/usr/local/lib/python3.6/dist-packages/mythril/ethereum/util.py", line 10, in <module>
+    from ethereum.abi import encode_abi, encode_int, method_id
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/ethereum/__init__.py", line 11, in <module>
+    from . import slogging  # noqa
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/ethereum/slogging.py", line 6, in <module>
+    from ethereum.utils import bcolors, is_numeric
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/ethereum/utils.py", line 9, in <module>
+    from py_ecc.secp256k1 import privtopub, ecdsa_raw_sign, ecdsa_raw_recover
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/__init__.py", line 8, in <module>
+    from py_ecc import bn128  # noqa: F401
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/__init__.py", line 29, in <module>
+    from .bn128_pairing import (  # noqa: F401
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_pairing.py", line 66, in <module>
+    multiply(G1, curve_order - 1),
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 25 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  [Previous line repeated 3 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 3 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 3 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 2 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 1 more time]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  [Previous line repeated 4 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 110, in multiply
+    return add(multiply(double(pt), int(n // 2)), pt)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 108, in multiply
+    return multiply(double(pt), n // 2)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/bn128/bn128_curve.py", line 76, in double
+    m = 3 * x**2 / (2 * y)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/fields/field_elements.py", line 130, in __truediv__
+    return self.__div__(other)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/fields/field_elements.py", line 126, in __div__
+    self.n * prime_field_inv(on, self.field_modulus) % self.field_modulus
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/py_ecc/utils.py", line 31, in prime_field_inv
+    nm, new = hm - lm * r, high - low * r
+KeyboardInterrupt
+[FILE] UserRank.sol
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: LandAccessControl
+Function name: constructor
+PC address: 296
+Estimated Gas Usage: 7622 - 67642
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: UserRank.sol:97
+
+der == landManagement.ownerAddres
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: LandAccessControl
+Function name: isGamePaused()
+PC address: 347
+Estimated Gas Usage: 2181 - 37354
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: UserRank.sol:156
+
+g (bytes4 => bool) allo
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x421c10c05420fffff, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: isGamePaused(), txdata: 0x0422ddf3, value: 0x0
+Caller: [ATTACKER], function: isGamePaused(), txdata: 0x0422ddf3, value: 0x0
+
+
+[FILE] ICOStartReservation.sol
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: pay()
+PC address: 2794
+Estimated Gas Usage: 18917 - 164934
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:343
+
+= deposits[msg.sender];
+    require(deposit
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x3fffe, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: deposit(address), txdata: 0xf340fa0100000000000000000000000002, value: 0x1
+Caller: [CREATOR], function: pay(), txdata: 0x1b9265b8, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: pay()
+PC address: 2916
+Estimated Gas Usage: 18917 - 164934
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:346
+
+lected.sub(
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x3fffe, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: deposit(address), txdata: 0xf340fa0100000000000000000000000002, value: 0x1
+Caller: [CREATOR], function: pay(), txdata: 0x1b9265b8, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: pay()
+PC address: 2930
+Estimated Gas Usage: 18917 - 164934
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:346
+
+lected.sub(
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x200, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x400000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x3fffe, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: deposit(address), txdata: 0xf340fa0100000000000000000000000002, value: 0x1
+Caller: [CREATOR], function: pay(), txdata: 0x1b9265b8, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: destroy()
+PC address: 3006
+Estimated Gas Usage: 9035 - 148933
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:286
+
+posi
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: destroy(), txdata: 0x83197ef0, value: 0x0
+
+==== External Call To User-Supplied Address ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: getToken()
+PC address: 3135
+Estimated Gas Usage: 2203 - 37376
+A call to a user-supplied address is executed.
+The callee address of an external message call can be set by the caller. Note that the callee can contain arbitrary code and may re-enter any function in this contract. Review the business logic carefully to prevent averse effects on the contract state.
+--------------------
+In file: ICOStartReservation.sol:286
+
+posit() and 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x8e00004200000002, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: deposit(address), txdata: 0xf340fa0100000000000000000000000001, value: 0x0
+Caller: [ATTACKER], function: getToken(), txdata: 0x21df0da7, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: ICOStartReservation
+Function name: pay()
+PC address: 3135
+Estimated Gas Usage: 18917 - 164934
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: ICOStartReservation.sol:286
+
+posit() and 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x0, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x200000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x20, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: deposit(address), txdata: 0xf340fa0101010101010101010101010110, value: 0x1
+Caller: [CREATOR], function: pay(), txdata: 0x1b9265b8, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: destroy()
+PC address: 3135
+Estimated Gas Usage: 9035 - 148933
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:286
+
+posit() and 
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: destroy(), txdata: 0x83197ef0, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: destroy()
+PC address: 4288
+Estimated Gas Usage: 9035 - 148933
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:390
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: destroy(), txdata: 0x83197ef0, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: ICOStartReservation
+Function name: destroy()
+PC address: 4452
+Estimated Gas Usage: 9035 - 148933
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:388
+
+
+   }
+}
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: destroy(), txdata: 0x83197ef0, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Low
+Contract: ICOStartReservation
+Function name: destroy()
+PC address: 4480
+Estimated Gas Usage: 9035 - 148933
+Persistent state read after call
+The contract account state is changed after an external call to a fixed address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: ICOStartReservation.sol:390
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: destroy(), txdata: 0x83197ef0, value: 0x0
+
+
+[FILE] MineableToken.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Exception occurred, aborting analysis. Please report this issue to the Mythril GitHub page.
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 172, in fire_lasers
+    custom_modules_directory=self.custom_modules_directory,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/symbolic.py", line 164, in __init__
+    world_state=world_state,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/svm.py", line 166, in sym_exec
+    self, creation_code, contract_name, world_state=world_state
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/transaction/symbolic.py", line 150, in execute_contract_creation
+    laser_evm.exec(True)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/svm.py", line 247, in exec
+    new_states, op_code = self.execute_state(global_state)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/svm.py", line 337, in execute_state
+    ).evaluate(global_state)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/instructions.py", line 240, in evaluate
+    result = instruction_mutator(global_state)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/instructions.py", line 187, in wrapper
+    new_global_states = self.call_on_state_copy(func, func_obj, global_state)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/instructions.py", line 122, in call_on_state_copy
+    return func(func_obj, global_state_copy)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/instructions.py", line 1427, in mstore_
+    state.memory.write_word_at(mstart, value)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/state/memory.py", line 101, in write_word_at
+    self[index : index + 32] = list(bytearray(_bytes))
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/state/memory.py", line 198, in __setitem__
+    itr.value
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/ethereum/state/memory.py", line 204, in __setitem__
+    if bv_key >= len(self):
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/smt/bool.py", line 79, in __bool__
+    return self.value
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/smt/bool.py", line 44, in value
+    elif self.is_false:
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/smt/bool.py", line 23, in is_false
+    self.simplify()
+  File "/usr/local/lib/python3.6/dist-packages/mythril/laser/smt/expression.py", line 46, in simplify
+    self.raw = cast(T, z3.simplify(self.raw))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 8204, in simplify
+    return _to_expr_ref(Z3_simplify(a.ctx_ref(), a.as_ast()), a.ctx)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 1028, in _to_expr_ref
+    sk = Z3_get_sort_kind(ctx_ref, Z3_get_sort(ctx_ref, a))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3core.py", line 2748, in Z3_get_sort
+    r = _elems.f(a0, a1)
+ctypes.ArgumentError: argument 2: <class 'KeyboardInterrupt'>: 
+
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 728, in execute_command
+    "text": report.as_text(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 224, in as_text
+    template = Report.environment.get_template("report_as_text.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 581, in compile
+    defer_init=defer_init)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 543, in _generate
+    optimized=self.optimized)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 82, in generate
+    generator.visit(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 754, in visit_Template
+    self.blockvisit(node.body, frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 378, in blockvisit
+    self.visit(node, frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 1160, in visit_If
+    self.blockvisit(node.body, if_frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 378, in blockvisit
+    self.visit(node, frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 1040, in visit_For
+    loop_frame.symbols.analyze_node(node, for_branch='body')
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/idtracking.py", line 41, in analyze_node
+    visitor.visit(node, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/idtracking.py", line 190, in visit_For
+    self.sym_visitor.visit(item)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/idtracking.py", line 234, in visit_If
+    elif_symbols = inner_visit(node.elif_)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/idtracking.py", line 227, in inner_visit
+    self.symbols = rv = original_symbols.copy()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/idtracking.py", line 70, in copy
+    rv = object.__new__(self.__class__)
+KeyboardInterrupt
