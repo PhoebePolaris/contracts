@@ -1,0 +1,639 @@
+[FILE] FoMoRapid.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] Fomo12H.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] Fomo3DQuick.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] Fomo3H.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] Fomo60Min.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FomoDD.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FomoSuper.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FomoXP.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FuMoToken.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] FullFOMO.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] GameOfSwords.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] GoalbonanzaPlus.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] GoalbonanzaPlusLong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] GrandTheftFOMO.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] H3FoMo3Dlong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] JanKenPon.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] LEGALBLOCK.sol
+[FILE] LOLlong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] LastUnicorn.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] MC2long.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] MonkeyScam.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] MultiBuyer.sol
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 664
+Estimated Gas Usage: 4541 - 74515
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiBuyer.sol:243
+
+ddres
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: MultiBuyer
+Function name: reclaimToken(address)
+PC address: 1010
+Estimated Gas Usage: 4541 - 74515
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiBuyer.sol:243
+
+ddres
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x80000000000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1300
+Estimated Gas Usage: 4541 - 74515
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: MultiBuyer.sol:141
+
+ )
+    internal
+  {
+    r
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x400000000200c1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x2000000000001831, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1300
+Estimated Gas Usage: 4541 - 74515
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiBuyer.sol:141
+
+ )
+    internal
+  {
+    r
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: MultiBuyer
+Function name: buy(address,uint256,address[],bytes,uint256[],uint256[])
+PC address: 1440
+Estimated Gas Usage: 1120 - 12121
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: MultiBuyer.sol:259
+
+ call failed");
+
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x18000c083062d89c4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x100000000000000, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x100242160043000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [ATTACKER], function: buy(address,uint256,address[],bytes,uint256[],uint256[]), txdata: 0x31649115ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000079000000000000000000000000000000000000000000000000000000000000000080, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: MultiBuyer
+Function name: reclaimToken(address)
+PC address: 4612
+Estimated Gas Usage: 4541 - 74515
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: MultiBuyer.sol:141
+
+ )
+    internal
+  {
+    r
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: MultiBuyer
+Function name: reclaimToken(address)
+PC address: 4612
+Estimated Gas Usage: 4541 - 74515
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiBuyer.sol:141
+
+ )
+    internal
+  {
+    r
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x80000000000, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: MultiBuyer
+Function name: buy(address,uint256,address[],bytes,uint256[],uint256[])
+PC address: 4729
+Estimated Gas Usage: 12782 - 265529
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: MultiBuyer.sol:96
+
+ncating the quotie
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x8c812222, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x3480880200c08, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: buy(address,uint256,address[],bytes,uint256[],uint256[]), txdata: 0x3164911500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000001d000000000000000000000000000000000000000000000000000000000000000080, value: 0x0
+
+
+[FILE] MultiSeller.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+MultiSeller.sol:198:14: ParserError: Expected identifier, got 'LParen'
+  constructor() public {
+             ^
+ 
+[FILE] NewChance.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+NewChance.sol:164:16: ParserError: Expected identifier, got 'LParen'
+    constructor()
+               ^
+ 
+[FILE] OK3D.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+OK3D.sol:180:16: ParserError: Expected identifier, got 'LParen'
+    constructor()
+               ^
+ 
+[FILE] OwnedUpgradeabilityProxy.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+OwnedUpgradeabilityProxy.sol:257:16: ParserError: Expected identifier, got 'LParen'
+    constructor() public {
+               ^
+ 
+[FILE] POHMO.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+POHMO.sol:167:16: ParserError: Expected identifier, got 'LParen'
+    constructor(address whaleContract, address playerbook)
+               ^
+ 
+[FILE] POOHMO.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+POOHMO.sol:168:16: ParserError: Expected identifier, got 'LParen'
+    constructor(address whaleContract, address playerbook)
+               ^
+ 
+[FILE] POOHMOX.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+POOHMOX.sol:168:16: ParserError: Expected identifier, got 'LParen'
+    constructor(address whaleContract, address playerbook)
+               ^
+ 
+[FILE] PercentageTransferManagerFactory.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PercentageTransferManagerFactory.sol:307:14: ParserError: Expected identifier, got 'LParen'
+  constructor(string _name, string _symbol, uint8 _decimals) public {
+             ^
+ 
+[FILE] PlayCoinKey.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PlayCoinKey.sol:185:16: ParserError: Expected identifier, got 'LParen'
+    constructor()
+               ^
+ 
+[FILE] PoHMO4D.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PoHMO4D.sol:163:16: ParserError: Expected identifier, got 'LParen'
+    constructor()
+               ^
+ 
+[FILE] PoaCrowdsale.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PoaCrowdsale.sol:1:1: SyntaxError: Source file requires different compiler version (current compiler is 0.4.21+commit.dfe3193c.Linux.g++ - note that nightly builds are considered to be strictly less than the released version
+pragma solidity 0.4.24;
+^---------------------^
+
+SolidityVersionMismatch: Try adding the option "--solv 0.4.24"
+ 
+[FILE] PoaManager.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PoaManager.sol:25:14: ParserError: Expected identifier, got 'LParen'
+  constructor() public {
+             ^
+ 
+[FILE] PoaToken.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PoaToken.sol:279:14: ParserError: Expected identifier, got 'LParen'
+  constructor() public {
+             ^
+ 
+[FILE] PonziPwn.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PonziPwn.sol:15:16: ParserError: Expected identifier, got 'LParen'
+    constructor() public {}
+               ^
+ 
+[FILE] PwnFoMo3D.sol
+mythril.interfaces.cli [ERROR]: Solc experienced a fatal error.
+
+PwnFoMo3D.sol:46:14: ParserError: Expected identifier, got 'LParen'
+  constructor() public payable {
+             ^
+ 
+[FILE] MultiSeller.sol
+==== Use of tx.origin ====
+SWC ID: 111
+Severity: Medium
+Contract: MultiSeller
+Function name: fallback
+PC address: 133
+Estimated Gas Usage: 82 - 177
+Use of tx.origin is deprecated.
+The smart contract retrieves the transaction origin (tx.origin) using msg.origin. Use of msg.origin is deprecated and the instruction may be removed in the  future. Use msg.sender instead.
+See also: https://solidity.readthedocs.io/en/develop/security-considerations.html#tx-origin
+--------------------
+In file: MultiSeller.sol:280
+
+   requir
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1a8000000000002, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: unknown, txdata: 0x, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 664
+Estimated Gas Usage: 4541 - 74515
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiSeller.sol:267
+
+     
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: MultiSeller
+Function name: reclaimToken(address)
+PC address: 999
+Estimated Gas Usage: 4541 - 74515
+Persistent state read after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiSeller.sol:267
+
+     
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1300
+Estimated Gas Usage: 4541 - 74515
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: MultiSeller.sol:168
+
+require(token.transferFro
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: CanReclaimToken
+Function name: reclaimToken(address)
+PC address: 1300
+Estimated Gas Usage: 4541 - 74515
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiSeller.sol:168
+
+require(token.transferFro
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+==== Multiple Calls in a Single Transaction ====
+SWC ID: 113
+Severity: Low
+Contract: MultiSeller
+Function name: reclaimToken(address)
+PC address: 4508
+Estimated Gas Usage: 4541 - 74515
+Multiple calls are executed in the same transaction.
+This call is executed after a previous call in the same transaction. Try to isolate each call, transfer or send into its own transaction.
+--------------------
+In file: MultiSeller.sol:168
+
+require(token.transferFro
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320, value: 0x0
+
+==== State change after external call ====
+SWC ID: 107
+Severity: Medium
+Contract: MultiSeller
+Function name: reclaimToken(address)
+PC address: 4508
+Estimated Gas Usage: 4541 - 74515
+Persistent state write after call
+The contract account state is changed after an external call to a user defined address. Consider that the called contract could re-enter the function before this state change takes place
+--------------------
+In file: MultiSeller.sol:168
+
+require(token.transferFro
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: reclaimToken(address), txdata: 0x17ffc320efefefefefefefefefefefefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef, value: 0x0
+
+
+[FILE] NewChance.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] OK3D.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] OwnedUpgradeabilityProxy.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 729, in execute_command
+    "markdown": report.as_markdown(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 294, in as_markdown
+    template = Report.environment.get_template("report_as_markdown.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 581, in compile
+    defer_init=defer_init)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 543, in _generate
+    optimized=self.optimized)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 82, in generate
+    generator.visit(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 754, in visit_Template
+    self.blockvisit(node.body, frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 378, in blockvisit
+    self.visit(node, frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 1160, in visit_If
+    self.blockvisit(node.body, if_frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 378, in blockvisit
+    self.visit(node, frame)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 1034, in visit_For
+    only=('body',)), ('loop',))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 115, in find_undeclared
+    visitor.visit(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 39, in visit
+    return self.generic_visit(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 44, in generic_visit
+    self.visit(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 39, in visit
+    return self.generic_visit(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 43, in generic_visit
+    for node in node.iter_child_nodes():
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/nodes.py", line 169, in iter_child_nodes
+    for field, item in self.iter_fields(exclude, only):
+KeyboardInterrupt

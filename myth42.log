@@ -1,0 +1,169 @@
+[FILE] Sale1.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] SnowStorm.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] SpicyPot.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] SuperFoMo3D.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] TokedoDaico.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 728, in execute_command
+    "text": report.as_text(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 224, in as_text
+    template = Report.environment.get_template("report_as_text.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 579, in compile
+    source = self._parse(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 497, in _parse
+    return Parser(self, source, name, encode_filename(filename)).parse()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 901, in parse
+    result = nodes.Template(self.subparse(), lineno=1)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 213, in parse_if
+    'name:endif'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 199, in parse_for
+    body = self.parse_statements(('name:endfor', 'name:else'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 213, in parse_if
+    'name:endif'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 199, in parse_for
+    body = self.parse_statements(('name:endfor', 'name:else'))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 165, in parse_statements
+    result = self.subparse(end_tokens)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 883, in subparse
+    rv = self.parse_statement()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 130, in parse_statement
+    return getattr(self, 'parse_' + self.stream.current.value)()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 211, in parse_if
+    node.test = self.parse_tuple(with_condexpr=False)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 620, in parse_tuple
+    args.append(parse())
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 612, in <lambda>
+    parse = lambda: self.parse_expression(with_condexpr=False)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 433, in parse_expression
+    return self.parse_or()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 450, in parse_or
+    left = self.parse_and()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 460, in parse_and
+    while self.stream.skip_if('name:and'):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 347, in skip_if
+    return self.next_if(expr) is not None
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 343, in next_if
+    return next(self)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 359, in __next__
+    self.current = next(self._iter)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 562, in wrap
+    for lineno, token, value in stream:
+KeyboardInterrupt
+[FILE] BigOne.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] BasicMultiTokenDeployer.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Exception ignored in: <bound method AstRef.__del__ of 0>
+Traceback (most recent call last):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/z3/z3.py", line 312, in __del__
+    def __del__(self):
+KeyboardInterrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 728, in execute_command
+    "text": report.as_text(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 224, in as_text
+    template = Report.environment.get_template("report_as_text.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 579, in compile
+    source = self._parse(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 497, in _parse
+    return Parser(self, source, name, encode_filename(filename)).parse()
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/parser.py", line 40, in __init__
+    self.stream = environment._tokenize(source, name, filename, state)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 529, in _tokenize
+    stream = self.lexer.tokenize(source, name, filename, state)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 407, in get_lexer
+    lexer = Lexer(environment)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 497, in __init__
+    for n, r in root_tag_rules
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/lexer.py", line 422, in <lambda>
+    c = lambda x: re.compile(x, re.M | re.S)
+  File "/usr/lib/python3.6/re.py", line 233, in compile
+    return _compile(pattern, flags)
+  File "/usr/lib/python3.6/re.py", line 301, in _compile
+    p = sre_compile.compile(pattern, flags)
+  File "/usr/lib/python3.6/sre_compile.py", line 562, in compile
+  File "/usr/lib/python3.6/sre_parse.py", line 855, in parse
+    p = _parse_sub(source, pattern, flags & SRE_FLAG_VERBOSE, 0)
+  File "/usr/lib/python3.6/sre_parse.py", line 416, in _parse_sub
+    not nested and not items))
+  File "/usr/lib/python3.6/sre_parse.py", line 765, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+  File "/usr/lib/python3.6/sre_parse.py", line 416, in _parse_sub
+    not nested and not items))
+  File "/usr/lib/python3.6/sre_parse.py", line 765, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+  File "/usr/lib/python3.6/sre_parse.py", line 416, in _parse_sub
+    not nested and not items))
+  File "/usr/lib/python3.6/sre_parse.py", line 765, in _parse
+    p = _parse_sub(source, state, sub_verbose, nested + 1)
+  File "/usr/lib/python3.6/sre_parse.py", line 416, in _parse_sub
+    not nested and not items))
+  File "/usr/lib/python3.6/sre_parse.py", line 502, in _parse
+    code = _escape(source, this, state)
+  File "/usr/lib/python3.6/sre_parse.py", line 376, in _escape
+    elif c in DIGITS:
+KeyboardInterrupt

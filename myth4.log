@@ -1,0 +1,258 @@
+[FILE] RC_KYC.sol
+[FILE] RC_KYC_ADV.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 729, in execute_command
+    "markdown": report.as_markdown(),
+  File "/usr/local/lib/python3.6/dist-packages/mythril/analysis/report.py", line 294, in as_markdown
+    template = Report.environment.get_template("report_as_markdown.jinja2")
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 830, in get_template
+    return self._load_template(name, self.make_globals(globals))
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 804, in _load_template
+    template = self.loader.load(self, name, globals)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/loaders.py", line 125, in load
+    code = environment.compile(source, name, filename)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 581, in compile
+    defer_init=defer_init)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/environment.py", line 543, in _generate
+    optimized=self.optimized)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 82, in generate
+    generator.visit(node)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/visitor.py", line 38, in visit
+    return f(node, *args, **kwargs)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/compiler.py", line 722, in visit_Template
+    for import_ in node.find_all(nodes.ImportedName):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/nodes.py", line 191, in find_all
+    for result in child.find_all(node_type):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/nodes.py", line 191, in find_all
+    for result in child.find_all(node_type):
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/nodes.py", line 191, in find_all
+    for result in child.find_all(node_type):
+  [Previous line repeated 4 more times]
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/nodes.py", line 188, in find_all
+    for child in self.iter_child_nodes():
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/jinja2/nodes.py", line 170, in iter_child_nodes
+    if isinstance(item, list):
+KeyboardInterrupt
+[FILE] RatScam.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] SVIndex.sol
+[FILE] Sale1.sol
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 7, in <module>
+    from mythril.interfaces.cli import main
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 17, in <module>
+    import mythril.support.signatures as sigs
+  File "/usr/local/lib/python3.6/dist-packages/mythril/support/signatures.py", line 11, in <module>
+    from typing import List, Set, DefaultDict, Dict
+  File "/usr/lib/python3.6/typing.py", line 2340, in <module>
+    class BinaryIO(IO[bytes]):
+  File "/usr/lib/python3.6/typing.py", line 2346, in BinaryIO
+    def write(self, s: Union[bytes, bytearray]) -> int:
+  File "/usr/lib/python3.6/typing.py", line 679, in inner
+    return cached(*args, **kwds)
+  File "/usr/lib/python3.6/typing.py", line 803, in __getitem__
+    return self.__class__(parameters, origin=self, _root=True)
+  File "/usr/lib/python3.6/typing.py", line 743, in __new__
+    parameters = _remove_dups_flatten(parameters)
+  File "/usr/lib/python3.6/typing.py", line 628, in _remove_dups_flatten
+    all_params = set(params)
+KeyboardInterrupt
+[FILE] USDTieredSTOFactory.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] UpgradeabilityProxyFactory.sol
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: UpgradeabilityProxy
+Function name: constructor
+PC address: 195
+Estimated Gas Usage: 294 - 3350
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: UpgradeabilityProxyFactory.sol:130
+
+
+
+  /**
+   * @dev Returns the current implementation.
+   * @return Address of t
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: AdminUpgradeabilityProxy
+Function name: constructor
+PC address: 196
+Estimated Gas Usage: 297 - 3353
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: UpgradeabilityProxyFactory.sol:130
+
+
+
+  /**
+   * @dev Returns the current implementation.
+   * @return Address of t
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+
+==== Jump to an arbitrary instruction ====
+SWC ID: 127
+Severity: Medium
+Contract: UpgradeabilityProxyFactory
+Function name: createProxyAndCall(address,address,bytes)
+PC address: 1017
+Estimated Gas Usage: 35957 - 110416
+The caller can jump to any point in the code.
+This can lead to unintended consequences.Please avoid using low level code as much as possible
+--------------------
+In file: UpgradeabilityProxyFactory.sol:340
+
+l function to create an upgradeable proxy.
+   * @param implementation Address of the initial implementation.
+   * @return Address of the new proxy.
+   */
+  function _createProxy(address implementation) internal returns (AdminUpgradeabilityProxy) {
+    AdminUpgradeabilityProxy proxy = new AdminUpgradeabilityPro
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x1, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [CREATOR], function: createProxyAndCall(address,address,bytes), txdata: 0xc6e8b4f3, value: 0x0
+
+
+[FILE] WorldFomo.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] X3Dlong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] ZaynixKey.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] CAE4Dlong.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] CDPCreator.sol
+mythril.mythril.mythril_analyzer [CRITICAL]: Keyboard Interrupt
+Traceback (most recent call last):
+  File "/usr/local/bin/myth", line 11, in <module>
+    sys.exit(main())
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 257, in main
+    parse_args_and_execute(parser=parser, args=args)
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 798, in parse_args_and_execute
+    disassembler=disassembler, address=address, parser=parser, args=args
+  File "/usr/local/lib/python3.6/dist-packages/mythril/interfaces/cli.py", line 723, in execute_command
+    transaction_count=args.transaction_count,
+  File "/usr/local/lib/python3.6/dist-packages/mythril/mythril/mythril_analyzer.py", line 180, in fire_lasers
+    modules, self.custom_modules_directory
+KeyboardInterrupt
+[FILE] CappedSTOFactory.sol
+==== Exception State ====
+SWC ID: 110
+Severity: Low
+Contract: StandardToken
+Function name: increaseApproval(address,uint256)
+PC address: 4097
+Estimated Gas Usage: 1011 - 1486
+A reachable exception has been detected.
+It is possible to trigger an exception (opcode 0xfe). Exceptions can be caused by type errors, division by zero, out-of-bounds array access, or assert violations. Note that explicit `assert()` should only be used to check invariants. Use `require()` for regular input checking.
+--------------------
+In file: CappedSTOFactory.sol:113
+
+th no allowanc
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x4, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x1420020047900, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: approve(address,uint256), txdata: 0x095ea7b3000000000000000000000000000000000000000000000000000000800000100001, value: 0x0
+Caller: [SOMEGUY], function: increaseApproval(address,uint256), txdata: 0xd73dd6230000000000000000000000000000000000000000000000000000008000001000ff, value: 0x0
+
+
+[FILE] Blocklancer_Payment.sol
+==== Unchecked Call Return Value ====
+SWC ID: 104
+Severity: Low
+Contract: Blocklancer_Payment
+Function name: fallback
+PC address: 64
+Estimated Gas Usage: 775 - 35056
+The return value of a message call is not checked.
+External calls return a boolean value. If the callee contract halts with an exception, 'false' is returned and execution continues in the caller. It is usually recommended to wrap external calls into a require statement to prevent unexpected states.
+--------------------
+In file: Blocklancer_Payment.sol:5
+
+ess(0x0581cee36a85Ed9e76109A9EfE3193de1628Ac2A).call.value(msg.value)();
+  
+
+--------------------
+Initial State:
+
+Account: [CREATOR], balance: 0x2, nonce:0, storage:{}
+Account: [ATTACKER], balance: 0x0, nonce:0, storage:{}
+Account: [SOMEGUY], balance: 0x0, nonce:0, storage:{}
+
+Transaction Sequence:
+
+Caller: [CREATOR], data: [CONTRACT_CREATION], value: 0x0
+Caller: [SOMEGUY], function: unknown, txdata: 0x, value: 0x0
+Caller: [ATTACKER], function: unknown, txdata: 0x, value: 0x0
+
+
+[FILE] AirdropTryer.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] GasToken2.sol
+[FILE] TrinityContractCore.sol
+The analysis was completed successfully. No issues were detected.
+
+[FILE] fomo3D4eva.sol
+The analysis was completed successfully. No issues were detected.
+
