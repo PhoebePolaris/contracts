@@ -1,0 +1,186 @@
+{
+  "decompiled": true,
+  "securifyErrors": {
+    "errors": []
+  },
+  "finished": true,
+  "patternResults": {
+    "DAO": {
+      "completed": true,
+      "hasViolations": true,
+      "hasWarnings": false,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [
+        10260
+      ],
+      "warnings": [],
+      "safe": [],
+      "conflicts": []
+    },
+    "DAOConstantGas": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [],
+      "conflicts": []
+    },
+    "LockedEther": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": true,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [
+        1
+      ],
+      "safe": [],
+      "conflicts": []
+    },
+    "MissingInputValidation": {
+      "completed": true,
+      "error": "not supported",
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [],
+      "conflicts": []
+    },
+    "RepeatedCall": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        10260
+      ],
+      "conflicts": []
+    },
+    "TODAmount": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": true,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [
+        10260
+      ],
+      "safe": [],
+      "conflicts": []
+    },
+    "TODReceiver": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": true,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [
+        10260
+      ],
+      "safe": [],
+      "conflicts": []
+    },
+    "UnhandledException": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        10260
+      ],
+      "conflicts": []
+    },
+    "UnrestrictedEtherFlow": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": true,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [
+        10260
+      ],
+      "safe": [],
+      "conflicts": []
+    },
+    "UnrestrictedWrite": {
+      "completed": true,
+      "hasViolations": true,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": true,
+      "violations": [
+        3386,
+        4061,
+        4426,
+        4487,
+        4529,
+        4565,
+        5055,
+        5274,
+        6204,
+        8254,
+        8283,
+        8313,
+        8529,
+        8947,
+        9003,
+        9026,
+        7284,
+        7322,
+        5601,
+        10394,
+        10404,
+        10422,
+        10462,
+        9759,
+        9784,
+        9821,
+        9846,
+        10165,
+        10327
+      ],
+      "warnings": [],
+      "safe": [
+        4739,
+        5236,
+        9997,
+        10050,
+        9452
+      ],
+      "conflicts": [
+        3769,
+        4687,
+        9086,
+        9116,
+        9161,
+        9188,
+        9367,
+        9388,
+        9932,
+        9254,
+        9283,
+        9313,
+        3676,
+        9481,
+        9521
+      ]
+    }
+  }
+}

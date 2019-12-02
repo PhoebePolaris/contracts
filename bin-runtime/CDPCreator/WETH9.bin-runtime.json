@@ -1,0 +1,263 @@
+{
+  "decompiled": true,
+  "securifyErrors": {
+    "errors": []
+  },
+  "finished": true,
+  "patternResults": {
+    "DAO": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [],
+      "conflicts": []
+    },
+    "DAOConstantGas": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        1391
+      ],
+      "conflicts": []
+    },
+    "LockedEther": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        1
+      ],
+      "conflicts": []
+    },
+    "MissingInputValidation": {
+      "completed": true,
+      "hasViolations": true,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [
+        1591,
+        1591,
+        1591,
+        1450,
+        1591,
+        1450,
+        1591,
+        1450,
+        1607,
+        1591,
+        1450,
+        1607,
+        1591,
+        1450,
+        1607,
+        940,
+        1591,
+        1450,
+        1607,
+        940,
+        1026,
+        1591,
+        1450,
+        1607,
+        940,
+        1026,
+        1591,
+        1450,
+        1607,
+        940,
+        1026,
+        1591,
+        1450,
+        1607,
+        940,
+        1026
+      ],
+      "warnings": [],
+      "safe": [
+        1016,
+        1016,
+        1016,
+        761,
+        1016,
+        761,
+        1016,
+        761,
+        817,
+        1016,
+        761,
+        817,
+        1016,
+        761,
+        817,
+        1016,
+        761,
+        817,
+        1468,
+        1016,
+        761,
+        817,
+        1468,
+        1436,
+        1016,
+        761,
+        817,
+        1468,
+        1436,
+        1307
+      ],
+      "conflicts": []
+    },
+    "RepeatedCall": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        1391
+      ],
+      "conflicts": []
+    },
+    "TODAmount": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        1391
+      ],
+      "conflicts": []
+    },
+    "TODReceiver": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        1391
+      ],
+      "conflicts": []
+    },
+    "UnhandledException": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": false,
+      "hasSafe": true,
+      "hasConflicts": false,
+      "violations": [],
+      "warnings": [],
+      "safe": [
+        1391
+      ],
+      "conflicts": []
+    },
+    "UnrestrictedEtherFlow": {
+      "completed": true,
+      "hasViolations": true,
+      "hasWarnings": false,
+      "hasSafe": false,
+      "hasConflicts": false,
+      "violations": [
+        1391
+      ],
+      "warnings": [],
+      "safe": [],
+      "conflicts": []
+    },
+    "UnrestrictedWrite": {
+      "completed": true,
+      "hasViolations": false,
+      "hasWarnings": true,
+      "hasSafe": true,
+      "hasConflicts": true,
+      "violations": [],
+      "warnings": [
+        1239,
+        1270,
+        1239,
+        1270,
+        1239,
+        1270,
+        1239,
+        1270
+      ],
+      "safe": [
+        1207,
+        1239,
+        1207,
+        1239,
+        1207,
+        1239,
+        1207,
+        1239,
+        791,
+        1207,
+        1239,
+        791,
+        1207,
+        1239,
+        791,
+        1207,
+        1239,
+        791,
+        980,
+        1207,
+        1239,
+        791,
+        980,
+        1207,
+        1207,
+        1239,
+        791,
+        980,
+        1207,
+        1207,
+        1239,
+        791,
+        980,
+        1207,
+        1207,
+        1239,
+        791,
+        980,
+        1207,
+        1367
+      ],
+      "conflicts": [
+        1270,
+        1270,
+        1270,
+        1270,
+        1270,
+        1270,
+        1270,
+        1270,
+        1270,
+        1270,
+        1270
+      ]
+    }
+  }
+}
