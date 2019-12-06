@@ -15204,3 +15204,943 @@ Processing contract: Cryptolotto7Days.sol:iOwnable
     |                emit ToSalesPartner(salesPartner, partner, sum, now);
   at Cryptolotto7Days.sol(492)
 
+[FILE] ComfixedToken.sol
+Processing contract: ComfixedToken.sol:ComfixedToken
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: ComfixedToken.sol:ContractReceiver
+Processing contract: ComfixedToken.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: ComfixedToken.sol:tokenRecipient
+[33mWarning[0m for LockedEther in contract 'ComfixedToken':
+    |
+    |
+  > |contract ComfixedToken
+    |{
+    | // using SafeMath for uint;
+  at ComfixedToken.sol(49)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // ERC20
+  > |  function balanceOf( address owner ) public constant returns (uint) {
+    |    return balances_[owner];
+    |  }
+  at ComfixedToken.sol(97)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    | 
+    | 
+  > |  function approve( address spender, uint256 value ) public
+    |  returns (bool success)
+    |  {
+  at ComfixedToken.sol(103)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    | 
+    |  // recommended fix for known attack on any ERC20
+  > |  function safeApprove( address _spender,
+    |                        uint256 _currentValue,
+    |                        uint256 _value ) public
+  at ComfixedToken.sol(112)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // ERC20
+  > |  function allowance( address owner, address spender ) public constant
+    |  returns (uint256 remaining)
+    |  {
+  at ComfixedToken.sol(126)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // ERC20
+  > |  function transferFrom( address from, address to, uint256 value ) public
+    |  returns (bool success)
+    |  {
+  at ComfixedToken.sol(141)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |// Post ICO Update the referralBonus rewarded to CMF Token holders 
+  > |    function updateReferralBonus( uint256 refBonus) onlyOwner public returns (bool success){
+    |        uint256 refDeciBonus = refBonus * 10 ** uint256(decimals); 
+    |        totalSupply += refDeciBonus;
+  at ComfixedToken.sol(160)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |
+  > |  function approveAndCall( address spender,
+    |                           uint256 value,
+    |                           bytes context ) public
+  at ComfixedToken.sol(186)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // Ethereum Token
+  > |  function burnFrom( address from, uint256 value ) public
+    |  returns (bool success)
+    |  {
+  at ComfixedToken.sol(213)
+
+[31mViolation[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // ERC223 Transfer and invoke specified callback
+  > |  function transfer( address to,
+    |                     uint value,
+    |                     bytes data,
+  at ComfixedToken.sol(228)
+
+[33mWarning[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // ERC20
+  > |  function transfer(address to, uint256 value) public returns (bool success)
+    |  {
+    |    bytes memory empty; // null
+  at ComfixedToken.sol(133)
+
+[33mWarning[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |
+  > |  function transferOwnership(address newOwner) onlyOwner public {
+    |        require(newOwner != address(0));
+    |        uint256 _leftOverTokens = balances_[msg.sender];
+  at ComfixedToken.sol(170)
+
+[33mWarning[0m for MissingInputValidation in contract 'ComfixedToken':
+    |    }
+    |
+  > |    function distributeToken(address[] addresses, uint256[] _value) onlyOwner public {
+    |         bytes memory empty; // null
+    |        for (uint i = 0; i < addresses.length; i++) {
+  at ComfixedToken.sol(178)
+
+[33mWarning[0m for MissingInputValidation in contract 'ComfixedToken':
+    |
+    |  // ERC223 Transfer to a contract or externally-owned account
+  > |  function transfer( address to, uint value, bytes data ) public
+    |  returns (bool success)
+    |  {
+  at ComfixedToken.sol(248)
+
+[33mWarning[0m for TODAmount in contract 'ComfixedToken':
+    |
+    |    ContractReceiver rx = ContractReceiver(to);
+  > |    rx.tokenFallback( msg.sender, value, data );
+    |
+    |    return true;
+  at ComfixedToken.sol(266)
+
+[33mWarning[0m for TODReceiver in contract 'ComfixedToken':
+    |
+    |    ContractReceiver rx = ContractReceiver(to);
+  > |    rx.tokenFallback( msg.sender, value, data );
+    |
+    |    return true;
+  at ComfixedToken.sol(266)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'ComfixedToken':
+    |
+    |    ContractReceiver rx = ContractReceiver(to);
+  > |    rx.tokenFallback( msg.sender, value, data );
+    |
+    |    return true;
+  at ComfixedToken.sol(266)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |    require( balances_[msg.sender] >= value );
+    |    balances_[msg.sender] -= value;
+  > |    totalSupply -= value;
+    |
+    |    emit Burn( msg.sender, value );
+  at ComfixedToken.sol(206)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |    require( value <= allowances_[from][msg.sender] );
+    |
+  > |    balances_[from] -= value;
+    |    allowances_[from][msg.sender] -= value;
+    |    totalSupply -= value;
+  at ComfixedToken.sol(219)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |    balances_[from] -= value;
+    |    allowances_[from][msg.sender] -= value;
+  > |    totalSupply -= value;
+    |
+    |    emit Burn( from, value );
+  at ComfixedToken.sol(221)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |    require( balances_[to] + value > balances_[to] ); // catch overflow
+    |
+  > |    balances_[from] -= value;
+    |    balances_[to] += value;
+    |
+  at ComfixedToken.sol(291)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |
+    |    balances_[from] -= value;
+  > |    balances_[to] += value;
+    |
+    |    //Transfer( from, to, value, data ); ERC223-compat version
+  at ComfixedToken.sol(292)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |        bytes memory empty; // null
+    |        _transfer(msg.sender, newOwner, _leftOverTokens, empty);
+  > |        _owner = newOwner;
+    |    }
+    |
+  at ComfixedToken.sol(175)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |    require( balances_[to] + value > balances_[to] ); // catch overflow
+    |
+  > |    balances_[from] -= value;
+    |    balances_[to] += value;
+    |
+  at ComfixedToken.sol(291)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |
+    |    balances_[from] -= value;
+  > |    balances_[to] += value;
+    |
+    |    //Transfer( from, to, value, data ); ERC223-compat version
+  at ComfixedToken.sol(292)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ComfixedToken':
+    |    function updateReferralBonus( uint256 refBonus) onlyOwner public returns (bool success){
+    |        uint256 refDeciBonus = refBonus * 10 ** uint256(decimals); 
+  > |        totalSupply += refDeciBonus;
+    |        //  bytes memory empty; // null
+    |         balances_[msg.sender] += refDeciBonus; 
+  at ComfixedToken.sol(162)
+
+[FILE] Airdroper.sol
+Processing contract: Airdroper.sol:Airdroper
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for LockedEther in contract 'Airdroper':
+    |// Need to deposit before spread
+    |// Transfer to this contract is available as deposit
+  > |contract Airdroper {
+    |    mapping (address => mapping (address => uint)) balances;
+    |
+  at Airdroper.sol(6)
+
+[31mViolation[0m for RepeatedCall in contract 'Airdroper':
+    |            require(balances[_token][tx.origin] >= _amounts[i]);
+    |            // 0xa9059cbb is function signature of `transfer(address,uint256)`
+  > |            require(_token.call(0xa9059cbb, _addresses[i], _amounts[i]));
+    |            balances[_token][tx.origin] = subtr(balances[_token][tx.origin], _amounts[i]);
+    |        }
+  at Airdroper.sol(46)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Airdroper':
+    |            // 0xa9059cbb is function signature of `transfer(address,uint256)`
+    |            require(_token.call(0xa9059cbb, _addresses[i], _amounts[i]));
+  > |            balances[_token][tx.origin] = subtr(balances[_token][tx.origin], _amounts[i]);
+    |        }
+    |        return true;
+  at Airdroper.sol(47)
+
+[FILE] BalanceCheckerN.sol
+Processing contract: BalanceCheckerN.sol:BalanceCheckerN
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: BalanceCheckerN.sol:Token
+Processing contract: BalanceCheckerN.sol:WETH_0x
+[31mViolation[0m for RepeatedCall in contract 'BalanceCheckerN':
+    |            Token tok = Token(token);
+    |            //  check if allowance succeeds
+  > |            if(address(tok).call(bytes4(keccak256("allowance(address,address)")), user, spender)) {
+    |                return tok.allowance(user, spender);
+    |            } else {
+  at BalanceCheckerN.sol(76)
+
+[31mViolation[0m for RepeatedCall in contract 'BalanceCheckerN':
+    |            //  check if allowance succeeds
+    |            if(address(tok).call(bytes4(keccak256("allowance(address,address)")), user, spender)) {
+  > |                return tok.allowance(user, spender);
+    |            } else {
+    |                  return 0; // not a valid allowance, return 0 instead of error
+  at BalanceCheckerN.sol(77)
+
+[31mViolation[0m for RepeatedCall in contract 'BalanceCheckerN':
+    |            Token tok = Token(token);
+    |            //  check if balanceOf succeeds
+  > |            if(address(tok).call(bytes4(keccak256("balanceOf(address)")), user)) {
+    |                return tok.balanceOf(user);
+    |            } else {
+  at BalanceCheckerN.sol(100)
+
+[31mViolation[0m for RepeatedCall in contract 'BalanceCheckerN':
+    |            //  check if balanceOf succeeds
+    |            if(address(tok).call(bytes4(keccak256("balanceOf(address)")), user)) {
+  > |                return tok.balanceOf(user);
+    |            } else {
+    |                  return 0; // not a valid balanceOf, return 0 instead of error
+  at BalanceCheckerN.sol(101)
+
+[31mViolation[0m for RepeatedCall in contract 'BalanceCheckerN':
+    |        uint[] memory balances = new uint[](users.length);
+    |        for(uint k = 0; k < users.length; k++){
+  > |            balances[k] = weth.balanceOf(users[k]);
+    |        }
+    |        return balances;
+  at BalanceCheckerN.sol(197)
+
+[31mViolation[0m for TODAmount in contract 'BalanceCheckerN':
+    |    // backup withdraw, if somehow ETH gets in here
+    |    function withdraw() public isAdmin {
+  > |        admin.transfer(address(this).balance);
+    |    }
+    |
+  at BalanceCheckerN.sol(53)
+
+[FILE] TrinityContractCore.sol
+Processing contract: TrinityContractCore.sol:Owner
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: TrinityContractCore.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: TrinityContractCore.sol:TrinityContractCore
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: TrinityContractCore.sol:TrinityEvent
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: TrinityContractCore.sol:VerifySignature
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: TrinityContractCore.sol:trinityData
+[33mWarning[0m for UnrestrictedWrite in contract 'Owner':
+    |    //disable contract setting funciton
+    |    function pause() external onlyOwner whenNotPaused {
+  > |        paused = true;
+    |    }
+    |
+  at TrinityContractCore.sol(55)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'Owner':
+    |    //enable contract setting funciton
+    |    function unpause() public onlyOwner whenPaused {
+  > |        paused = false;
+    |    }    
+    |}
+  at TrinityContractCore.sol(60)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'TrinityContractCore':
+    |    //disable contract setting funciton
+    |    function pause() external onlyOwner whenNotPaused {
+  > |        paused = true;
+    |    }
+    |
+  at TrinityContractCore.sol(55)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'TrinityContractCore':
+    |    //enable contract setting funciton
+    |    function unpause() public onlyOwner whenPaused {
+  > |        paused = false;
+    |    }    
+    |}
+  at TrinityContractCore.sol(60)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'TrinityContractCore':
+    |
+    |    function setDataContract(address _dataContract) external onlyOwner {
+  > |        trinityDataContract = trinityData(_dataContract);
+    |    }
+    |
+  at TrinityContractCore.sol(225)
+
+[FILE] GasToken2.sol
+Processing contract: GasToken2.sol:GasToken2
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for LockedEther in contract 'GasToken2':
+    |pragma solidity ^0.4.10;
+    |
+  > |contract GasToken2 {
+    |    //////////////////////////////////////////////////////////////////////////
+    |    // RLP.sol
+  at GasToken2.sol(3)
+
+[31mViolation[0m for UnhandledException in contract 'GasToken2':
+    |        // tail points to slot behind the last contract in the queue
+    |        for (uint256 i = tail + 1; i <= tail + value; i++) {
+  > |            mk_contract_address(this, i).call();
+    |        }
+    |
+  at GasToken2.sol(242)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'GasToken2':
+    |            makeChild();
+    |        }
+  > |        s_head += value;
+    |        s_balances[msg.sender] += value;
+    |    }
+  at GasToken2.sol(223)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'GasToken2':
+    |        if (value <= s_balances[from]) {
+    |            s_balances[from] -= value;
+  > |            s_balances[to] += value;
+    |            Transfer(from, to, value);
+    |            return true;
+  at GasToken2.sol(107)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'GasToken2':
+    |        }
+    |
+  > |        s_tail = tail + value;
+    |    }
+    |
+  at GasToken2.sol(245)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'GasToken2':
+    |        destroyChildren(value);
+    |
+  > |        s_balances[from] = from_balance - value;
+    |        from_allowances[spender] = spender_allowance - value;
+    |
+  at GasToken2.sol(302)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'GasToken2':
+    |
+    |        s_balances[from] = from_balance - value;
+  > |        from_allowances[spender] = spender_allowance - value;
+    |
+    |        return true;
+  at GasToken2.sol(303)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'GasToken2':
+    |        destroyChildren(value);
+    |
+  > |        s_balances[from] = from_balance - value;
+    |        from_allowances[spender] = spender_allowance - value;
+    |
+  at GasToken2.sol(327)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'GasToken2':
+    |
+    |        s_balances[from] = from_balance - value;
+  > |        from_allowances[spender] = spender_allowance - value;
+    |
+    |        return value;
+  at GasToken2.sol(328)
+
+[FILE] AirdropTryer.sol
+Processing contract: AirdropTryer.sol:AirdropTryer
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: AirdropTryer.sol:fomo3d
+Processing contract: AirdropTryer.sol:giveAirdrop
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for UnrestrictedWrite in contract 'AirdropTryer':
+    |
+    |  function tryAirdrop() public payable{
+  > |    airdropper = (new giveAirdrop).value(msg.value)();
+    |  }
+    |  
+  at AirdropTryer.sol(47)
+
+[31mViolation[0m for LockedEther in contract 'giveAirdrop':
+    |}
+    |
+  > |contract giveAirdrop {
+    |
+    |    constructor () public payable {
+  at AirdropTryer.sol(15)
+
+[FILE] Blocklancer_Payment.sol
+Processing contract: Blocklancer_Payment.sol:Blocklancer_Payment
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[33mWarning[0m for TODAmount in contract 'Blocklancer_Payment':
+    |contract Blocklancer_Payment{
+    |    function () public payable {
+  > |        address(0x0581cee36a85Ed9e76109A9EfE3193de1628Ac2A).call.value(msg.value)();
+    |    }  
+    |}
+  at Blocklancer_Payment.sol(5)
+
+[31mViolation[0m for UnhandledException in contract 'Blocklancer_Payment':
+    |contract Blocklancer_Payment{
+    |    function () public payable {
+  > |        address(0x0581cee36a85Ed9e76109A9EfE3193de1628Ac2A).call.value(msg.value)();
+    |    }  
+    |}
+  at Blocklancer_Payment.sol(5)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'Blocklancer_Payment':
+    |contract Blocklancer_Payment{
+    |    function () public payable {
+  > |        address(0x0581cee36a85Ed9e76109A9EfE3193de1628Ac2A).call.value(msg.value)();
+    |    }  
+    |}
+  at Blocklancer_Payment.sol(5)
+
+[FILE] fomo3D4eva.sol
+Processing contract: fomo3D4eva.sol:fomo3D4eva
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for TODAmount in contract 'fomo3D4eva':
+    |    function withdraw() public payable {
+    |        require(msg.sender != owner);
+  > |        owner.transfer(this.balance);
+    |    }
+    |}
+  at fomo3D4eva.sol(1977)
+
+[33mWarning[0m for TODAmount in contract 'fomo3D4eva':
+    |    
+    |    function forward () public payable{
+  > |        owner.transfer(msg.value);
+    |    }
+    |    
+  at fomo3D4eva.sol(1968)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'fomo3D4eva':
+    |    
+    |    function forward () public payable{
+  > |        owner.transfer(msg.value);
+    |    }
+    |    
+  at fomo3D4eva.sol(1968)
+
+[FILE] EtherTransferTo.sol
+Processing contract: EtherTransferTo.sol:EtherTransferTo
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'EtherTransferTo':
+    |    function withdraw(uint amount) onlyOwner returns(bool) {
+    |        require(amount <= this.balance);
+  > |        owner.transfer(amount);
+    |        return true;
+    |
+  at EtherTransferTo.sol(1977)
+
+[FILE] MarriageRegistry.sol
+Processing contract: MarriageRegistry.sol:Marriage
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: MarriageRegistry.sol:MarriageRegistry
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for TODAmount in contract 'Marriage':
+    |    */
+    |    function collect() external onlyOwner {
+  > |        owner.transfer(address(this).balance);
+    |    }
+    |
+  at MarriageRegistry.sol(83)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Marriage':
+    |    */
+    |    function ringBell() public payable {
+  > |        bellCounter = add(1, bellCounter);
+    |        emit weddingBells(msg.sender, bellCounter);
+    |    }
+  at MarriageRegistry.sol(75)
+
+[31mViolation[0m for LockedEther in contract 'MarriageRegistry':
+  > |contract MarriageRegistry {
+    |    address [] public registeredMarriages;
+    |    event ContractCreated(address contractAddress);
+  at MarriageRegistry.sol(1)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'MarriageRegistry':
+    |contract MarriageRegistry {
+  > |    address [] public registeredMarriages;
+    |    event ContractCreated(address contractAddress);
+    |
+  at MarriageRegistry.sol(2)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'MarriageRegistry':
+    |        address newMarriage = new Marriage(msg.sender, _leftName, _leftVows, _rightName, _rightVows, _date);
+    |        emit ContractCreated(newMarriage);
+  > |        registeredMarriages.push(newMarriage);
+    |    }
+    |
+  at MarriageRegistry.sol(8)
+
+[FILE] eSportsToken.sol
+Processing contract: eSportsToken.sol:BasicToken
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:ERC20
+Processing contract: eSportsToken.sol:ERC20Basic
+Processing contract: eSportsToken.sol:ESportsConstants
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:ESportsFreezingStorage
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:ESportsToken
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:MintableToken
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:Ownable
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: eSportsToken.sol:StandardToken
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[33mWarning[0m for UnrestrictedWrite in contract 'BasicToken':
+    |        // SafeMath.sub will throw if there is not enough balance.
+    |        balances[msg.sender] = balances[msg.sender].sub(_value);
+  > |        balances[_to] = balances[_to].add(_value);
+    |        Transfer(msg.sender, _to, _value);
+    |        return true;
+  at eSportsToken.sol(150)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ESportsFreezingStorage':
+    |        require(newOwner != address(0));
+    |        OwnershipTransferred(owner, newOwner);
+  > |        owner = newOwner;
+    |    }
+    |}
+  at eSportsToken.sol(72)
+
+[31mViolation[0m for LockedEther in contract 'ESportsToken':
+    |}
+    |
+  > |contract ESportsToken is ESportsConstants, MintableToken {
+    |    using SafeMath for uint;
+    |
+  at eSportsToken.sol(293)
+
+[31mViolation[0m for RepeatedCall in contract 'ESportsToken':
+    |        // }
+    |        for (uint x = 0; x < frozenStorages.length; x++) {
+  > |            uint amount = frozenStorages[x].release(msg.sender);
+    |            total = total.add(amount);
+    |        }
+  at eSportsToken.sol(381)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ESportsToken':
+    |        require(newOwner != address(0));
+    |        OwnershipTransferred(owner, newOwner);
+  > |        owner = newOwner;
+    |    }
+    |}
+  at eSportsToken.sol(72)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ESportsToken':
+    |     */
+    |    function finishMinting() onlyOwner returns (bool) {
+  > |        mintingFinished = true;
+    |        MintFinished();
+    |        return true;
+  at eSportsToken.sol(287)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'ESportsToken':
+    |    
+    |    function allowMoveTokens() onlyOwner {
+  > |        paused = false;
+    |    }
+    |
+  at eSportsToken.sol(323)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'MintableToken':
+    |        require(newOwner != address(0));
+    |        OwnershipTransferred(owner, newOwner);
+  > |        owner = newOwner;
+    |    }
+    |}
+  at eSportsToken.sol(72)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'MintableToken':
+    |     */
+    |    function finishMinting() onlyOwner returns (bool) {
+  > |        mintingFinished = true;
+    |        MintFinished();
+    |        return true;
+  at eSportsToken.sol(287)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'Ownable':
+    |        require(newOwner != address(0));
+    |        OwnershipTransferred(owner, newOwner);
+  > |        owner = newOwner;
+    |    }
+    |}
+  at eSportsToken.sol(72)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'StandardToken':
+    |        // SafeMath.sub will throw if there is not enough balance.
+    |        balances[msg.sender] = balances[msg.sender].sub(_value);
+  > |        balances[_to] = balances[_to].add(_value);
+    |        Transfer(msg.sender, _to, _value);
+    |        return true;
+  at eSportsToken.sol(150)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'StandardToken':
+    |        // require (_value <= _allowance);
+    |
+  > |        balances[_from] = balances[_from].sub(_value);
+    |        balances[_to] = balances[_to].add(_value);
+    |        allowed[_from][msg.sender] = _allowance.sub(_value);
+  at eSportsToken.sol(190)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'StandardToken':
+    |
+    |        balances[_from] = balances[_from].sub(_value);
+  > |        balances[_to] = balances[_to].add(_value);
+    |        allowed[_from][msg.sender] = _allowance.sub(_value);
+    |        Transfer(_from, _to, _value);
+  at eSportsToken.sol(191)
+
+[FILE] FFEIF.sol
+Processing contract: FFEIF.sol:FFEIF
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+java.io.IOException: Timeout for /tmp/binaries_souffle4098325637687519801/mustExplicit -j 8 -F /tmp/souffle-f9b767cd-076b-4e4c-b915-a8291b2ca54a -D /tmp/souffle-f9b767cd-076b-4e4c-b915-a8291b2ca54a_OUT
+	at ch.securify.analysis.AbstractDataflow.runCommand(AbstractDataflow.java:277)
+	at ch.securify.analysis.AbstractDataflow.initDataflow(AbstractDataflow.java:169)
+	at ch.securify.analysis.MustExplicitDataflow.<init>(MustExplicitDataflow.java:33)
+	at ch.securify.analysis.Dataflow.<init>(Dataflow.java:33)
+	at ch.securify.analysis.DataflowFactory.getDataflow(DataflowFactory.java:54)
+	at ch.securify.Main.checkPatterns(Main.java:388)
+	at ch.securify.Main.processHexFile(Main.java:189)
+	at ch.securify.Main.processCompilationOutput(Main.java:129)
+	at ch.securify.Main.processSolidityFile(Main.java:100)
+	at ch.securify.Main.main(Main.java:254)
+Error in Securify
+java.lang.RuntimeException
+	at ch.securify.analysis.Dataflow.<init>(Dataflow.java:37)
+	at ch.securify.analysis.DataflowFactory.getDataflow(DataflowFactory.java:54)
+	at ch.securify.Main.checkPatterns(Main.java:388)
+	at ch.securify.Main.processHexFile(Main.java:189)
+	at ch.securify.Main.processCompilationOutput(Main.java:129)
+	at ch.securify.Main.processSolidityFile(Main.java:100)
+	at ch.securify.Main.main(Main.java:254)
+Error, skipping: FFEIF.sol:FFEIF
+Processing contract: FFEIF.sol:FFEIFDatasets
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: FFEIF.sol:FOMOEvents
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: FFEIF.sol:NameFilter
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: FFEIF.sol:PlayerBookInterface
+Processing contract: FFEIF.sol:PoEIF
+Processing contract: FFEIF.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[FILE] FomoSport.sol
+Processing contract: FomoSport.sol:FSBookInterface
+Processing contract: FomoSport.sol:FSEvents
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: FomoSport.sol:FSInterfaceForForwarder
+Processing contract: FomoSport.sol:FSKeyCalc
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: FomoSport.sol:FSdatasets
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: FomoSport.sol:FomoSport
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+java.io.IOException: Timeout for /tmp/binaries_souffle14101883347553042295/mustExplicit -j 8 -F /tmp/souffle-c7394614-7043-41cb-b4c6-9e04e04ebde0 -D /tmp/souffle-c7394614-7043-41cb-b4c6-9e04e04ebde0_OUT
+	at ch.securify.analysis.AbstractDataflow.runCommand(AbstractDataflow.java:277)
+	at ch.securify.analysis.AbstractDataflow.initDataflow(AbstractDataflow.java:169)
+	at ch.securify.analysis.MustExplicitDataflow.<init>(MustExplicitDataflow.java:33)
+	at ch.securify.analysis.Dataflow.<init>(Dataflow.java:33)
+	at ch.securify.analysis.DataflowFactory.getDataflow(DataflowFactory.java:54)
+	at ch.securify.Main.checkPatterns(Main.java:388)
+	at ch.securify.Main.processHexFile(Main.java:189)
+	at ch.securify.Main.processCompilationOutput(Main.java:129)
+	at ch.securify.Main.processSolidityFile(Main.java:100)
+	at ch.securify.Main.main(Main.java:254)
+Error in Securify
+java.lang.RuntimeException
+	at ch.securify.analysis.Dataflow.<init>(Dataflow.java:37)
+	at ch.securify.analysis.DataflowFactory.getDataflow(DataflowFactory.java:54)
+	at ch.securify.Main.checkPatterns(Main.java:388)
+	at ch.securify.Main.processHexFile(Main.java:189)
+	at ch.securify.Main.processCompilationOutput(Main.java:129)
+	at ch.securify.Main.processSolidityFile(Main.java:100)
+	at ch.securify.Main.main(Main.java:254)
+Error, skipping: FomoSport.sol:FomoSport
+Processing contract: FomoSport.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[FILE] Intel.sol
+Processing contract: Intel.sol:ERC20
+Processing contract: Intel.sol:ERC20Basic
+Processing contract: Intel.sol:Intel
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: Intel.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for LockedEther in contract 'Intel':
+    |/// @author Pareto Admin
+    |/// @notice Intel, A contract for creating, rewarding and distributing Intels
+  > |contract Intel{
+    |    
+    |    using SafeMath for uint256;
+  at Intel.sol(65)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |pragma solidity 0.4.25;
+    |
+  > |library SafeMath {
+    |
+    |  /**
+  at Intel.sol(3)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |/// @author Pareto Admin
+    |/// @notice Intel, A contract for creating, rewarding and distributing Intels
+  > |contract Intel{
+    |    
+    |    using SafeMath for uint256;
+  at Intel.sol(65)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |        address[] memory contributionsList;
+    |        IntelState memory newIntel = IntelState(intelProvider, depositAmount, desiredReward, depositAmount, intelID, ttl, false, contributionsList);
+  > |        intelDB[intelID] = newIntel;
+    |        IntelsByProvider[intelProvider].push(newIntel);
+    |
+  at Intel.sol(142)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |        IntelState memory newIntel = IntelState(intelProvider, depositAmount, desiredReward, depositAmount, intelID, ttl, false, contributionsList);
+    |        intelDB[intelID] = newIntel;
+  > |        IntelsByProvider[intelProvider].push(newIntel);
+    |
+    |        intelIndexes.push(intelID);
+  at Intel.sol(143)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |        IntelsByProvider[intelProvider].push(newIntel);
+    |
+  > |        intelIndexes.push(intelID);
+    |        intelCount++;
+    |        
+  at Intel.sol(145)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |
+    |        intelIndexes.push(intelID);
+  > |        intelCount++;
+    |        
+    |
+  at Intel.sol(146)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'Intel':
+    |        
+    |
+  > |        intel.rewarded = true;
+    |        uint distributed_amount = 0;
+    |
+  at Intel.sol(205)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'Intel':
+    |    function setParetoToken(address _token) public onlyOwner{
+    |
+  > |        token = ERC20(_token);
+    |        ParetoAddress = _token;
+    |
+  at Intel.sol(237)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'Intel':
+    |
+    |        token = ERC20(_token);
+  > |        ParetoAddress = _token;
+    |
+    |    }
+  at Intel.sol(238)
+
