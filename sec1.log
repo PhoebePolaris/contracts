@@ -16144,3 +16144,389 @@ Processing contract: Intel.sol:SafeMath
     |    }
   at Intel.sol(238)
 
+[FILE] EternalStorageProxyForAirdropper.sol
+Processing contract: EternalStorageProxyForAirdropper.sol:EternalStorage
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: EternalStorageProxyForAirdropper.sol:EternalStorageProxyForAirdropper
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: EternalStorageProxyForAirdropper.sol:OwnedUpgradeabilityProxy
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: EternalStorageProxyForAirdropper.sol:Proxy
+Processing contract: EternalStorageProxyForAirdropper.sol:UpgradeabilityOwnerStorage
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: EternalStorageProxyForAirdropper.sol:UpgradeabilityProxy
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: EternalStorageProxyForAirdropper.sol:UpgradeabilityStorage
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+[33mWarning[0m for TODAmount in contract 'EternalStorageProxyForAirdropper':
+    |    function upgradeToAndCall(string version, address implementation, bytes data) payable public onlyProxyOwner {
+    |        upgradeTo(version, implementation);
+  > |        require(address(this).call.value(msg.value)(data));
+    |    }
+    |}
+  at EternalStorageProxyForAirdropper.sol(112)
+
+[33mWarning[0m for TODReceiver in contract 'EternalStorageProxyForAirdropper':
+    |    function upgradeToAndCall(string version, address implementation, bytes data) payable public onlyProxyOwner {
+    |        upgradeTo(version, implementation);
+  > |        require(address(this).call.value(msg.value)(data));
+    |    }
+    |}
+  at EternalStorageProxyForAirdropper.sol(112)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'EternalStorageProxyForAirdropper':
+    |    function upgradeToAndCall(string version, address implementation, bytes data) payable public onlyProxyOwner {
+    |        upgradeTo(version, implementation);
+  > |        require(address(this).call.value(msg.value)(data));
+    |    }
+    |}
+  at EternalStorageProxyForAirdropper.sol(112)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'EternalStorageProxyForAirdropper':
+    |        require(_implementation != implementation);
+    |        _version = version;
+  > |        _implementation = implementation;
+    |        emit Upgraded(version, implementation);
+    |    }
+  at EternalStorageProxyForAirdropper.sol(77)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'EternalStorageProxyForAirdropper':
+    |
+    |
+  > |contract EternalStorageProxyForAirdropper is OwnedUpgradeabilityProxy, EternalStorage {
+    |
+    |    constructor(address _owner) public OwnedUpgradeabilityProxy(_owner) {}
+  at EternalStorageProxyForAirdropper.sol(117)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'EternalStorageProxyForAirdropper':
+    |
+    |    function setUpgradeabilityOwner(address newUpgradeabilityOwner) internal {
+  > |        _upgradeabilityOwner = newUpgradeabilityOwner;
+    |    }
+    |
+  at EternalStorageProxyForAirdropper.sol(23)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'EternalStorageProxyForAirdropper':
+    |
+    |
+  > |contract EternalStorageProxyForAirdropper is OwnedUpgradeabilityProxy, EternalStorage {
+    |
+    |    constructor(address _owner) public OwnedUpgradeabilityProxy(_owner) {}
+  at EternalStorageProxyForAirdropper.sol(117)
+
+[33mWarning[0m for TODAmount in contract 'OwnedUpgradeabilityProxy':
+    |    function upgradeToAndCall(string version, address implementation, bytes data) payable public onlyProxyOwner {
+    |        upgradeTo(version, implementation);
+  > |        require(address(this).call.value(msg.value)(data));
+    |    }
+    |}
+  at EternalStorageProxyForAirdropper.sol(112)
+
+[33mWarning[0m for TODReceiver in contract 'OwnedUpgradeabilityProxy':
+    |    function upgradeToAndCall(string version, address implementation, bytes data) payable public onlyProxyOwner {
+    |        upgradeTo(version, implementation);
+  > |        require(address(this).call.value(msg.value)(data));
+    |    }
+    |}
+  at EternalStorageProxyForAirdropper.sol(112)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'OwnedUpgradeabilityProxy':
+    |    function upgradeToAndCall(string version, address implementation, bytes data) payable public onlyProxyOwner {
+    |        upgradeTo(version, implementation);
+  > |        require(address(this).call.value(msg.value)(data));
+    |    }
+    |}
+  at EternalStorageProxyForAirdropper.sol(112)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'OwnedUpgradeabilityProxy':
+    |        require(_implementation != implementation);
+    |        _version = version;
+  > |        _implementation = implementation;
+    |        emit Upgraded(version, implementation);
+    |    }
+  at EternalStorageProxyForAirdropper.sol(77)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'OwnedUpgradeabilityProxy':
+    |
+    |
+  > |contract OwnedUpgradeabilityProxy is UpgradeabilityOwnerStorage, UpgradeabilityProxy {
+    |    event ProxyOwnershipTransferred(address previousOwner, address newOwner);
+    |
+  at EternalStorageProxyForAirdropper.sol(83)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'OwnedUpgradeabilityProxy':
+    |
+    |    function setUpgradeabilityOwner(address newUpgradeabilityOwner) internal {
+  > |        _upgradeabilityOwner = newUpgradeabilityOwner;
+    |    }
+    |
+  at EternalStorageProxyForAirdropper.sol(23)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'OwnedUpgradeabilityProxy':
+    |
+    |
+  > |contract OwnedUpgradeabilityProxy is UpgradeabilityOwnerStorage, UpgradeabilityProxy {
+    |    event ProxyOwnershipTransferred(address previousOwner, address newOwner);
+    |
+  at EternalStorageProxyForAirdropper.sol(83)
+
+[31mViolation[0m for LockedEther in contract 'UpgradeabilityStorage':
+    |
+    |
+  > |contract UpgradeabilityStorage {
+    |
+    |    string internal _version;
+  at EternalStorageProxyForAirdropper.sol(54)
+
+[FILE] fathercontract.sol
+Processing contract: fathercontract.sol:ERC20
+Processing contract: fathercontract.sol:father
+Processing contract: fathercontract.sol:fathercontract
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: fathercontract.sol:getfreetoken
+  Attempt to decompile the contract with methods...
+  Success. Inlining methods...
+  Propagating constants...
+  Verifying patterns...
+[31mViolation[0m for MissingInputValidation in contract 'fathercontract':
+    |        owner = msg.sender;
+    |    }
+  > |    function use(uint _value) public {
+    |        
+    |        value[msg.sender] = _value*1e18;
+  at fathercontract.sol(23)
+
+[31mViolation[0m for MissingInputValidation in contract 'fathercontract':
+    |        contr[_sender].call.value(0)();
+    |    }
+  > |    function fallback(uint num,address sender,uint amount) public {
+    |        require(contr[sender] == msg.sender);
+    |        if (num == 10){
+  at fathercontract.sol(43)
+
+[33mWarning[0m for RepeatedCall in contract 'fathercontract':
+    |    function getsometokenn(address _sender,uint _value) internal{
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function getsometoken(address _sender,uint _value) internal {
+  at fathercontract.sol(36)
+
+[33mWarning[0m for TODAmount in contract 'fathercontract':
+    |    }
+    |    function getsometokenn(address _sender,uint _value) internal{
+  > |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+    |    }
+  at fathercontract.sol(35)
+
+[33mWarning[0m for TODAmount in contract 'fathercontract':
+    |    function getsometokenn(address _sender,uint _value) internal{
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function getsometoken(address _sender,uint _value) internal {
+  at fathercontract.sol(36)
+
+[33mWarning[0m for TODAmount in contract 'fathercontract':
+    |    function getsometoken(address _sender,uint _value) internal {
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+  > |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+    |    }
+  at fathercontract.sol(40)
+
+[33mWarning[0m for TODAmount in contract 'fathercontract':
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function fallback(uint num,address sender,uint amount) public {
+  at fathercontract.sol(41)
+
+[33mWarning[0m for TODReceiver in contract 'fathercontract':
+    |    }
+    |    function getsometokenn(address _sender,uint _value) internal{
+  > |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+    |    }
+  at fathercontract.sol(35)
+
+[33mWarning[0m for TODReceiver in contract 'fathercontract':
+    |    function getsometokenn(address _sender,uint _value) internal{
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function getsometoken(address _sender,uint _value) internal {
+  at fathercontract.sol(36)
+
+[33mWarning[0m for TODReceiver in contract 'fathercontract':
+    |    function getsometoken(address _sender,uint _value) internal {
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+  > |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+    |    }
+  at fathercontract.sol(40)
+
+[33mWarning[0m for TODReceiver in contract 'fathercontract':
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function fallback(uint num,address sender,uint amount) public {
+  at fathercontract.sol(41)
+
+[31mViolation[0m for UnhandledException in contract 'fathercontract':
+    |    function getsometokenn(address _sender,uint _value) internal{
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function getsometoken(address _sender,uint _value) internal {
+  at fathercontract.sol(36)
+
+[31mViolation[0m for UnhandledException in contract 'fathercontract':
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function fallback(uint num,address sender,uint amount) public {
+  at fathercontract.sol(41)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'fathercontract':
+    |    }
+    |    function getsometokenn(address _sender,uint _value) internal{
+  > |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+    |    }
+  at fathercontract.sol(35)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'fathercontract':
+    |    function getsometokenn(address _sender,uint _value) internal{
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function getsometoken(address _sender,uint _value) internal {
+  at fathercontract.sol(36)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'fathercontract':
+    |    function getsometoken(address _sender,uint _value) internal {
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+  > |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+    |    }
+  at fathercontract.sol(40)
+
+[33mWarning[0m for UnrestrictedEtherFlow in contract 'fathercontract':
+    |        contr[msg.sender] = new getfreetoken(this,_sender);
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+  > |        contr[_sender].call.value(0)();
+    |    }
+    |    function fallback(uint num,address sender,uint amount) public {
+  at fathercontract.sol(41)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'fathercontract':
+    |    }
+    |    function getsometoken(address _sender,uint _value) internal {
+  > |        contr[msg.sender] = new getfreetoken(this,_sender);
+    |        ERC20(NEO).transfer(contr[_sender],_value);
+    |        contr[_sender].call.value(0)();
+  at fathercontract.sol(39)
+
+[33mWarning[0m for UnrestrictedWrite in contract 'fathercontract':
+    |            ERC20(NEO).transfer(sender,amount-a);
+    |            ERC20(NEO).transfer(owner,a);
+  > |            value[sender] = 0;
+    |        }else{
+    |            getsometokenn(sender,amount);
+  at fathercontract.sol(49)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'getfreetoken':
+    |        
+    |        ERC20(NEO).transfer(fatherr,ERC20(NEO).balanceOf(this));
+  > |        num++;
+    |        father(fatherr).fallback(num,sender,A);
+    |        
+  at fathercontract.sol(76)
+
+[31mViolation[0m for UnrestrictedWrite in contract 'getfreetoken':
+    |        father(fatherr).fallback(num,sender,A);
+    |        
+  > |        if (num == 10){num = 0;}
+    |    }
+    |}
+  at fathercontract.sol(79)
+
+[FILE] ZaynixKey.sol
+Processing contract: ZaynixKey.sol:KeysCalc
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: ZaynixKey.sol:NameFilter
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: ZaynixKey.sol:PlayerBookInterface
+Processing contract: ZaynixKey.sol:SafeMath
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: ZaynixKey.sol:ZaynixKey
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+java.io.IOException: Timeout for /tmp/binaries_souffle18083281067072916910/mustExplicit -j 8 -F /tmp/souffle-c8585d2d-188f-4a78-b528-4e1ad196006d -D /tmp/souffle-c8585d2d-188f-4a78-b528-4e1ad196006d_OUT
+	at ch.securify.analysis.AbstractDataflow.runCommand(AbstractDataflow.java:277)
+	at ch.securify.analysis.AbstractDataflow.initDataflow(AbstractDataflow.java:169)
+	at ch.securify.analysis.MustExplicitDataflow.<init>(MustExplicitDataflow.java:33)
+	at ch.securify.analysis.Dataflow.<init>(Dataflow.java:33)
+	at ch.securify.analysis.DataflowFactory.getDataflow(DataflowFactory.java:54)
+	at ch.securify.Main.checkPatterns(Main.java:388)
+	at ch.securify.Main.processHexFile(Main.java:189)
+	at ch.securify.Main.processCompilationOutput(Main.java:129)
+	at ch.securify.Main.processSolidityFile(Main.java:100)
+	at ch.securify.Main.main(Main.java:254)
+Error in Securify
+java.lang.RuntimeException
+	at ch.securify.analysis.Dataflow.<init>(Dataflow.java:37)
+	at ch.securify.analysis.DataflowFactory.getDataflow(DataflowFactory.java:54)
+	at ch.securify.Main.checkPatterns(Main.java:388)
+	at ch.securify.Main.processHexFile(Main.java:189)
+	at ch.securify.Main.processCompilationOutput(Main.java:129)
+	at ch.securify.Main.processSolidityFile(Main.java:100)
+	at ch.securify.Main.main(Main.java:254)
+Error, skipping: ZaynixKey.sol:ZaynixKey
+Processing contract: ZaynixKey.sol:ZaynixKeyDatasets
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
+Processing contract: ZaynixKey.sol:ZaynixKeyevents
+  Attempt to decompile the contract with methods...
+  Failed to decompile methods. Attempt to decompile the contract without identifying methods...
+  Propagating constants...
+  Verifying patterns...
